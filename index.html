@@ -90,6 +90,7 @@ input{font-family:inherit;font-size:inherit;color:inherit}
 .meal-kcal{font-family:var(--mono);font-size:11px;color:var(--ink-3)}
 .meal h3{font-size:17px;font-weight:600;margin-top:6px}
 .meal .ing{font-size:13px;color:var(--ink-2);margin-top:6px}
+.meal .eta{font-family:var(--mono);font-size:10.5px;color:var(--ink-3);margin-top:5px;letter-spacing:.02em}
 .meal .go{font-size:12px;color:var(--basil);font-weight:600;margin-top:9px;display:inline-flex;align-items:center;gap:5px}
 
 .meal.free{background:var(--plum-soft);border-color:#E4CEDC}
@@ -617,40 +618,44 @@ const WEEKS = [
     sm:['grana','mandorle','grana_mand'],
     sp:['fesa','cotto_pane','mozzarella'],
     bl:[
-      {id:'A', gg:[0,1,2], pranzo:'pf_tonno',    cena:'tacc_zuc_pat'},
-      {id:'B', gg:[3,4],   pranzo:'lenticchie',  cena:'frittata_provola'},
-      {id:'C', gg:[5,6],   pranzo:'pasta_tonno', cena:'nasello'}
+      {id:'A', cook:6, prev:true, pranzi:[0,1],   cene:[0],   pranzo:'pf_tonno',   cena:'tacc_zuc_pat'},
+      {id:'B', cook:1,            pranzi:[2,3],   cene:[1,2], pranzo:'lenticchie', cena:'frittata_provola'},
+      {id:'C', cook:3,            pranzi:[4,5,6], cene:[3,4], pranzo:'pasta_tonno',cena:'nasello'},
+      {id:'D', cook:6,            pranzi:[],      cene:[6],   pranzo:null,         cena:'straccetti'}
     ]},
   { n:2, tema:'Piselli e straccetti',
     sm:['mandorle','grana','noci'],
     sp:['cotto_pane','frutto_gr','speck_pane'],
     bl:[
-      {id:'A', gg:[0,1,2], pranzo:'pf_piselli',  cena:'tacc_spi_car'},
-      {id:'B', gg:[3,4],   pranzo:'fagioli',     cena:'straccetti'},
-      {id:'C', gg:[5,6],   pranzo:'riso_tonno',  cena:'frittata_spinaci'}
+      {id:'A', cook:6, prev:true, pranzi:[0,1],   cene:[0],   pranzo:'pf_uova',    cena:'tacc_spi_car'},
+      {id:'B', cook:1,            pranzi:[2,3],   cene:[1,2], pranzo:'fagioli',    cena:'straccetti'},
+      {id:'C', cook:3,            pranzi:[4,5,6], cene:[3,4], pranzo:'riso_tonno', cena:'frittata_spinaci'},
+      {id:'D', cook:6,            pranzi:[],      cene:[6],   pranzo:null,         cena:'tacc_zuc_pat'}
     ]},
   { n:3, tema:'Pesto e piatto freddo',
     sm:['grana','noci','grana_mand'],
     sp:['mozzarella','fesa','stracchino'],
     bl:[
-      {id:'A', gg:[0,1,2], pranzo:'pf_pesto',    cena:'tacc_zuc_pat'},
-      {id:'B', gg:[3,4],   pranzo:'pf_uova',     cena:'piatto_freddo'},
-      {id:'C', gg:[5,6],   pranzo:'pasta_zuc_uovo', cena:'nasello'}
+      {id:'A', cook:6, prev:true, pranzi:[0,1],   cene:[0],   pranzo:'pasta_zuc_uovo', cena:'tacc_zuc_pat'},
+      {id:'B', cook:1,            pranzi:[2,3],   cene:[1,2], pranzo:'pf_cotto',   cena:'piatto_freddo'},
+      {id:'C', cook:3,            pranzi:[4,5,6], cene:[3,4], pranzo:'pf_pesto',   cena:'nasello'},
+      {id:'D', cook:6,            pranzi:[],      cene:[6],   pranzo:null,         cena:'straccetti'}
     ]},
   { n:4, tema:'Chiusura ciclo',
     sm:['mandorle','grana','grana_mand'],
     sp:['cotto_pane','phila_pane','fesa'],
     bl:[
-      {id:'A', gg:[0,1,2], pranzo:'pf_cotto',    cena:'tacc_spi_car'},
-      {id:'B', gg:[3,4],   pranzo:'lenticchie',  cena:'straccetti'},
-      {id:'C', gg:[5,6],   pranzo:'pf_tonno',    cena:'frittata_provola'}
+      {id:'A', cook:6, prev:true, pranzi:[0,1],   cene:[0],   pranzo:'pf_uova',    cena:'tacc_spi_car'},
+      {id:'B', cook:1,            pranzi:[2,3],   cene:[1,2], pranzo:'fagioli',    cena:'frittata_provola'},
+      {id:'C', cook:3,            pranzi:[4,5,6], cene:[3,4], pranzo:'pf_piselli', cena:'tacc_zuc_pat'},
+      {id:'D', cook:6,            pranzi:[],      cene:[6],   pranzo:null,         cena:'nasello'}
     ]}
 ];
 
 const GG   = ['Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato','Domenica'];
 const GG_S = ['LUN','MAR','MER','GIO','VEN','SAB','DOM'];
 const FREE_DAY = 5;            // sabato sera libera
-const PREP_DAYS = {0:'A', 3:'B', 5:'C'};
+const PREP_DAYS = {1:['B'], 3:['C'], 6:['D','A']};   // mar, gio, dom sera
 
 /* ══════════════════════════════════════════════════════════
    5. STORAGE  (window.storage in Claude · localStorage da file · memoria)
@@ -704,9 +709,8 @@ function weekNeeds(wi){
   for(let d=0; d<7; d++){ add(SM[w.sm[d%3]].ing); add(SP[w.sp[d%3]].ing); }
 
   w.bl.forEach(b=>{
-    add(R[b.pranzo].ing, b.gg.length);
-    const cene = b.gg.filter(g => g !== FREE_DAY).length;
-    add(R[b.cena].ing, cene);
+    if(b.pranzo) add(R[b.pranzo].ing, b.pranzi.length);
+    if(b.cena)   add(R[b.cena].ing, b.cene.filter(g => g !== FREE_DAY).length);
   });
   return out;
 }
@@ -762,19 +766,28 @@ function drawHeader(){
 /* ══════════════════════════════════════════════════════════
    9. VISTA — OGGI
    ══════════════════════════════════════════════════════════ */
-function blockOf(w,d){ return w.bl.find(b => b.gg.includes(d)); }
+function pranzoDi(w,d){ return w.bl.find(b => b.pranzi.includes(d)); }
+function cenaDi(w,d){   return w.bl.find(b => b.cene.includes(d)); }
+/* giorni di frigo fra la cottura e il pasto */
+function eta(b,d,tipo){
+  if(tipo==='cena' && d===b.cook && !b.prev) return 0;
+  let g = d - b.cook; if(b.prev || g < 0) g += 7;
+  return g;
+}
+function etaTxt(g){ return g===0 ? 'appena cucinato' : (g===1 ? 'cucinato ieri sera' : `cucinato ${g} giorni fa`); }
 
 function ingLine(r){
   return Object.entries(r.ing).map(([k,v]) => `${ING[k].n.split(' (')[0].toLowerCase()} ${v}${ING[k].u==='pz'?'':' '+ING[k].u}`).join(' · ');
 }
 
 function renderOggi(){
-  const p = pos(), w = WEEKS[p.w], b = blockOf(w,p.d);
+  const p = pos(), w = WEEKS[p.w];
+  const bp = pranzoDi(w,p.d), bc = cenaDi(w,p.d);
   const isFree = p.d === FREE_DAY;
   const sm = SM[w.sm[p.d%3]], sp = SP[w.sp[p.d%3]];
-  const pr = R[b.pranzo], ce = R[b.cena];
+  const pr = R[bp.pranzo], ce = bc ? R[bc.cena] : null;
   const nC=nutri(COLAZIONE.ing), nSM=nutri(sm.ing), nP=nutri(pr.ing), nSP=nutri(sp.ing);
-  const nE = isFree ? {kcal:0,p:0,c:0,g:0} : nutri(ce.ing);
+  const nE = (isFree || !ce) ? {kcal:0,p:0,c:0,g:0} : nutri(ce.ing);
   const tot = {kcal:nC.kcal+nSM.kcal+nP.kcal+nSP.kcal+nE.kcal,
                p:nC.p+nSM.p+nP.p+nSP.p+nE.p,
                c:nC.c+nSM.c+nP.c+nSP.c+nE.c,
@@ -783,17 +796,29 @@ function renderOggi(){
   let h = '';
 
   if(PREP_DAYS[p.d]){
-    const nb = w.bl.find(x=>x.id===PREP_DAYS[p.d]);
-    const nPr = nb.gg.length, nCe = nb.gg.filter(g=>g!==FREE_DAY).length;
+    const sess = PREP_DAYS[p.d].map(id => w.bl.find(x=>x.id===id)).filter(Boolean);
+    const righe = sess.map(nb=>{
+      const parti = [];
+      if(nb.pranzo && nb.pranzi.length) parti.push(`${nb.pranzi.length} × <b>${R[nb.pranzo].nome}</b>`);
+      if(nb.cena){
+        const fresche = nb.cene.filter(d=>d===p.d).length, dopo = nb.cene.length - fresche;
+        if(fresche && dopo) parti.push(`<b>${R[nb.cena].nome}</b> per stasera + ${dopo} porzione${dopo>1?'i':''}`);
+        else if(fresche)    parti.push(`<b>${R[nb.cena].nome}</b> per stasera`);
+        else                parti.push(`${nb.cene.length} × <b>${R[nb.cena].nome}</b>`);
+      }
+      return parti.join(' e ');
+    });
+    const ultimo = Math.max(...sess.flatMap(x=>[...x.pranzi,...x.cene].map(d=>{
+      let g=d-p.d; if(g<0) g+=7; return g;})));
     h += `<div class="cook-note">
-      <div class="h">Oggi si cucina — blocco ${nb.id}</div>
-      <p>${nPr} porzioni di <b>${R[nb.pranzo].nome}</b> e ${nCe} di <b>${R[nb.cena].nome}</b>. Copri fino a ${GG[nb.gg[nb.gg.length-1]].toLowerCase()}.</p>
+      <div class="h">Stasera si cucina</div>
+      <p>${righe.join('. ')}. Ti copre ${ultimo===0?'per oggi':`fino a ${GG[(p.d+ultimo)%7].toLowerCase()}`}.</p>
     </div>`;
   }
 
   h += simpleCard('Colazione', COLAZIONE, nC);
   h += snackCard('Spuntino · mattina', sm, nSM, 'sm', w.sm, p.d%3);
-  h += mealCard('Pranzo', b.pranzo);
+  h += mealCard('Pranzo', bp.pranzo, etaTxt(eta(bp,p.d,'pranzo')));
   h += snackCard('Spuntino · pomeriggio', sp, nSP, 'sp', w.sp, p.d%3);
   h += isFree
     ? `<div class="meal free">
@@ -801,7 +826,7 @@ function renderOggi(){
          <h3>Cena libera</h3>
          <div class="ing" style="color:#7B3560;opacity:.85">Mangia quello che vuoi, senza pesare niente.</div>
        </div>`
-    : mealCard('Cena', b.cena);
+    : mealCard('Cena', bc.cena, etaTxt(eta(bc,p.d,'cena')));
 
   h += `<div class="sec-label">Totale della giornata</div>
     <div class="card">
@@ -828,11 +853,12 @@ function simpleCard(slot, item, n){
   </div>`;
 }
 
-function mealCard(slot, key){
+function mealCard(slot, key, eta){
   const r = R[key], n = nutri(r.ing);
   return `<button class="meal" onclick="openR('${key}')">
     <div class="meal-top"><span class="meal-slot">${slot}${r.freddo?' · freddo':''}</span><span class="meal-kcal">${n.kcal} kcal · ${r.tempo} min</span></div>
     <h3>${r.nome}</h3>
+    ${eta?`<div class="eta">${eta}</div>`:''}
     <div class="ing">${ingTxt(r.ing)}</div>
     <span class="go">Come si prepara
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
@@ -879,17 +905,18 @@ function renderPiano(){
 
   h += `<div class="sec-label">I sette giorni</div><div class="card">`;
   for(let d=0; d<7; d++){
-    const b = blockOf(w,d), isFree = d===FREE_DAY;
+    const bp = pranzoDi(w,d), bc = cenaDi(w,d), isFree = d===FREE_DAY;
+    const cucina = PREP_DAYS[d];
     h += `<div class="day-row">
-      <div class="dtag ${PREP_DAYS[d]?'cooking':''}">${GG_S[d]}${PREP_DAYS[d]?'<br><span style="font-size:9px">CUCINA</span>':''}</div>
+      <div class="dtag ${cucina?'cooking':''}">${GG_S[d]}${cucina?'<br><span style="font-size:9px">CUCINI</span>':''}</div>
       <div class="day-body">
         <div class="dline"><i>Col</i><span>${COLAZIONE.nome}</span></div>
         <div class="dline"><i>Spunt</i><span>${SM[w.sm[d%3]].nome}</span></div>
-        <div class="dline"><i>Pranzo</i><button onclick="openR('${b.pranzo}')">${R[b.pranzo].nome}</button></div>
+        <div class="dline"><i>Pranzo</i><button onclick="openR('${bp.pranzo}')">${R[bp.pranzo].nome}</button></div>
         <div class="dline"><i>Merenda</i><span>${SP[w.sp[d%3]].nome}</span></div>
         <div class="dline"><i>Cena</i>${isFree
           ? '<span class="lib">Libera</span>'
-          : `<button onclick="openR('${b.cena}')">${R[b.cena].nome}</button>`}</div>
+          : `<button onclick="openR('${bc.cena}')">${R[bc.cena].nome}</button>`}</div>
       </div>
     </div>`;
   }

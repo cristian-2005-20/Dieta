@@ -268,35 +268,48 @@ input{font-family:inherit;font-size:inherit;color:inherit}
    ══════════════════════════════════════════════════════════ */
 const ING = {
   latte:      {n:'Latte parz. scremato',            u:'ml', c:'Latticini', k:46,  p:3.3, ca:4.9, g:1.6},
-  yogurt:     {n:'Yogurt greco magro 0%',           u:'g',  c:'Latticini', k:57,  p:10,  ca:4,   g:0.4},
   grana:      {n:'Grana / Parmigiano',              u:'g',  c:'Latticini', k:392, p:33,  ca:0,   g:28},
-  filante:    {n:'Formaggio filante (provola)',     u:'g',  c:'Latticini', k:320, p:25,  ca:2,   g:24},
+  filante:    {n:'Provola / scamorza',              u:'g',  c:'Latticini', k:320, p:25,  ca:2,   g:24},
+  mozzarella: {n:'Mozzarella',                      u:'g',  c:'Latticini', k:250, p:18,  ca:1,   g:19},
+  stracchino: {n:'Stracchino',                      u:'g',  c:'Latticini', k:300, p:18,  ca:1,   g:25},
+  philadelphia:{n:'Philadelphia',                   u:'g',  c:'Latticini', k:250, p:6,   ca:4,   g:24},
   uova:       {n:'Uova',                            u:'pz', c:'Proteine',  k:78,  p:6.3, ca:0.4, g:5.3, pz:1},
   tacchino:   {n:'Petto di tacchino a fette',       u:'g',  c:'Proteine',  k:107, p:24,  ca:0,   g:1},
   nasello:    {n:'Filetti di nasello / merluzzo',   u:'g',  c:'Proteine',  k:86,  p:17,  ca:0,   g:2},
   tonno:      {n:'Tonno al naturale (sgocciolato)', u:'g',  c:'Proteine',  k:116, p:26,  ca:0,   g:1},
-  ceci:       {n:'Ceci precotti',                   u:'g',  c:'Legumi',    k:120, p:7,   ca:17,  g:2.5},
+  cotto:      {n:'Prosciutto cotto',                u:'g',  c:'Salumi',    k:145, p:20,  ca:1,   g:7},
+  crudo:      {n:'Prosciutto crudo',                u:'g',  c:'Salumi',    k:270, p:26,  ca:0,   g:18},
+  speck:      {n:'Speck',                           u:'g',  c:'Salumi',    k:300, p:28,  ca:0,   g:21},
+  fesa:       {n:'Fesa di tacchino a fette',        u:'g',  c:'Salumi',    k:110, p:22,  ca:1,   g:2},
   lenticchie: {n:'Lenticchie precotte',             u:'g',  c:'Legumi',    k:105, p:8,   ca:15,  g:0.5},
+  fagioli:    {n:'Fagioli cannellini precotti',     u:'g',  c:'Legumi',    k:91,  p:6.5, ca:13,  g:0.5},
+  piselli:    {n:'Piselli (surgelati o precotti)',  u:'g',  c:'Legumi',    k:80,  p:5.5, ca:10,  g:0.5},
   pasta_int:  {n:'Pasta integrale',                 u:'g',  c:'Cereali',   k:340, p:13,  ca:64,  g:2.5},
-  pasta:      {n:'Pasta',                           u:'g',  c:'Cereali',   k:355, p:12,  ca:72,  g:1.5},
+  pasta:      {n:'Pasta (formato corto)',           u:'g',  c:'Cereali',   k:355, p:12,  ca:72,  g:1.5},
   riso:       {n:'Riso',                            u:'g',  c:'Cereali',   k:340, p:7,   ca:78,  g:0.6},
   pane:       {n:'Pane',                            u:'g',  c:'Cereali',   k:265, p:8.5, ca:50,  g:1.5},
   biscotti:   {n:'Biscotti secchi',                 u:'g',  c:'Colazione', k:430, p:7,   ca:75,  g:11},
-  fette:      {n:'Fette biscottate',                u:'g',  c:'Colazione', k:400, p:11,  ca:75,  g:6},
-  granola:    {n:'Granola / cereali',               u:'g',  c:'Colazione', k:430, p:9,   ca:65,  g:14},
-  avena:      {n:"Fiocchi d'avena",                 u:'g',  c:'Colazione', k:375, p:13,  ca:60,  g:7},
-  miele:      {n:'Miele',                           u:'g',  c:'Colazione', k:300, p:0,   ca:80,  g:0},
-  marmell:    {n:'Marmellata',                      u:'g',  c:'Colazione', k:250, p:0,   ca:60,  g:0},
   zucchine:   {n:'Zucchine',                        u:'g',  c:'Verdura',   k:17,  p:1.3, ca:2,   g:0.3},
   spinaci:    {n:'Spinaci',                         u:'g',  c:'Verdura',   k:23,  p:2.9, ca:1,   g:0.4},
-  insalata:   {n:'Insalata',                        u:'g',  c:'Verdura',   k:15,  p:1.4, ca:1.5, g:0.2},
+  carote:     {n:'Carote',                          u:'g',  c:'Verdura',   k:41,  p:0.9, ca:9.6, g:0.2},
   patate:     {n:'Patate',                          u:'g',  c:'Verdura',   k:77,  p:2,   ca:17,  g:0.1},
-  funghi:     {n:'Funghi champignon',               u:'g',  c:'Verdura',   k:22,  p:3,   ca:1,   g:0.3},
   frutta:     {n:'Frutta (media, ~150 g)',          u:'pz', c:'Verdura',   k:90,  p:1,   ca:20,  g:0.3, pz:1},
   passata:    {n:'Passata di pomodoro',             u:'g',  c:'Dispensa',  k:32,  p:1.5, ca:6,   g:0.2},
   pesto:      {n:'Pesto',                           u:'g',  c:'Dispensa',  k:450, p:6,   ca:6,   g:45},
+  mandorle:   {n:'Mandorle',                        u:'g',  c:'Dispensa',  k:580, p:21,  ca:5,   g:50},
+  noci:       {n:'Noci sgusciate',                  u:'g',  c:'Dispensa',  k:650, p:15,  ca:4,   g:63},
   olio:       {n:'Olio EVO',                        u:'g',  c:'Dispensa',  k:900, p:0,   ca:0,   g:100}
 };
+function nutri(ing){
+  let o={kcal:0,p:0,c:0,g:0};
+  for(const key in ing){
+    const n=ING[key]; if(!n) continue;
+    const f = n.pz ? ing[key] : ing[key]/100;
+    o.kcal+=n.k*f; o.p+=n.p*f; o.c+=n.ca*f; o.g+=n.g*f;
+  }
+  for(const k in o) o[k]=Math.round(o[k]);
+  return o;
+}
 /* calcolo nutrizionale reale a partire dagli ingredienti */
 function nutri(ing){
   let o={kcal:0,p:0,c:0,g:0};
@@ -308,257 +321,291 @@ function nutri(ing){
   for(const k in o) o[k]=Math.round(o[k]);
   return o;
 }
-const CATS = ['Proteine','Latticini','Legumi','Cereali','Verdura','Colazione','Dispensa'];
+const CATS = ['Proteine','Salumi','Latticini','Legumi','Cereali','Verdura','Colazione','Dispensa'];
 
 /* ══════════════════════════════════════════════════════════
    2. RICETTE  (ingredienti = 1 porzione)
    ══════════════════════════════════════════════════════════ */
 const R = {
 
-pasta_zuc_uovo:{
-  nome:'Pasta con zucchine e uova', tempo:20, porz:3,
-  ing:{pasta_int:130, zucchine:200, uova:2, grana:38, olio:11},
-  libere:["½ spicchio d'aglio","Sale, pepe nero"],
+pf_tonno:{
+  nome:'Pasta fredda con tonno, zucchine e provola', tempo:20, porz:3, freddo:true,
+  ing:{pasta:100, zucchine:150, carote:80, tonno:145, filante:50, olio:12},
+  libere:['Basilico','Limone','Sale, pepe'],
   passi:[
-    {t:'Metti su l\'acqua', d:'Un litro d\'acqua ogni 100 g di pasta. Sala solo quando bolle: prima allunga i tempi di ebollizione.'},
-    {t:'Taglia le zucchine', d:'A rondelle sottili, 3–4 mm. Più sono sottili, più in fretta si dorano invece di lessare.'},
-    {t:'Insaporisci l\'olio', d:'Scalda l\'olio in padella con lo spicchio d\'aglio schiacciato. Quando sfrigola togli l\'aglio, ha già ceduto il sapore.'},
-    {t:'Rosola le zucchine', d:'8–10 minuti a fuoco medio con un pizzico di sale, finché sono dorate ai bordi ma ancora sode. Se si asciugano, due cucchiai di acqua di cottura.'},
-    {t:'Cuoci la pasta', d:'Al dente, un minuto in meno rispetto alla confezione: finisce di cuocere in padella.'},
-    {t:'Prepara la crema', d:'In una ciotola sbatti le due uova con il grana grattugiato e una macinata di pepe.'},
-    {t:'Manteca a fuoco spento', d:'Scola la pasta tenendo un mestolo di acqua di cottura, versala sulle zucchine, spegni il fuoco. Aggiungi uova e grana e mescola senza fermarti: il calore residuo crea una crema. Allunga con l\'acqua se serve.'}
+    {t:'Cuoci la pasta', d:'Formato corto che regge il freddo: fusilli, farfalle o penne. Acqua salata.'},
+    {t:'Raffredda subito', d:'Scola un minuto prima del tempo e passala sotto acqua fredda corrente finché è completamente fredda. Blocca la cottura e le impedisce di impastarsi.'},
+    {t:'Un filo d\'olio subito', d:'Un cucchiaino appena, mescolando. Fa da pellicola e i pezzi non si attaccano mentre prepari il resto.'},
+    {t:'Zucchine e carote in friggitrice', d:'Zucchine a rondelle spesse e carote a bastoncini, un filo d\'olio e sale. 180 °C per 14–15 minuti, scuotendo il cestello a metà. Falle raffreddare.'},
+    {t:'Prepara il resto', d:'Tonno ben sgocciolato, provola a cubetti da un centimetro.'},
+    {t:'Assembla', d:'Tutto in ciotola con il resto dell\'olio, basilico spezzato a mano, limone, sale e pepe.'},
+    {t:'Fai riposare', d:'Almeno 30 minuti in frigo. I sapori hanno bisogno di tempo per legare: appena fatta sa di poco.'}
   ],
-  warn:'Il fuoco deve essere spento quando aggiungi le uova. Con la fiamma accesa si stracciano e ti ritrovi una frittata dentro la pasta.',
-  keep:'Tre giorni in frigo in contenitore chiuso. Riscalda in padella con due cucchiai d\'acqua a fuoco basso, oppure 90 secondi al microonde mescolando a metà. Non congelare: l\'uovo diventa gommoso.'
+  keep:'Tre giorni in frigo, e migliora col riposo. Il piatto più comodo del piano da portare fuori.'
 },
 
-tacchino_spinaci:{
-  nome:'Tacchino alla piastra, spinaci e patate', tempo:35, porz:3,
-  ing:{tacchino:210, spinaci:250, pane:130, patate:195, olio:14},
-  libere:["½ spicchio d'aglio","Rosmarino","Sale, pepe","Limone (facoltativo)"],
+pf_piselli:{
+  nome:'Pasta fredda con tonno e piselli', tempo:20, porz:3, freddo:true,
+  ing:{pasta:100, tonno:130, piselli:100, carote:80, filante:42, olio:11},
+  libere:['Prezzemolo','Limone','Sale, pepe'],
   passi:[
-    {t:'Accendi il forno', d:'200 °C ventilato. Le patate partono per prime perché sono la cosa più lenta.'},
-    {t:'Inforna le patate', d:'A cubetti da 2 cm, in teglia con carta forno, un terzo dell\'olio, sale e rosmarino. 25 minuti.'},
-    {t:'Prepara gli spinaci', d:'Freschi: lavali in acqua abbondante. Surgelati: scongelali in anticipo, 3 minuti al microonde o in padella coperta.'},
-    {t:'Scalda la padella a vuoto', d:'Antiaderente, fuoco vivo, due minuti senza olio. Una padella tiepida fa lessare la carne invece di rosolarla.'},
-    {t:'Asciuga e cuoci il tacchino', d:'Tampona le fettine con carta da cucina, sala un lato solo. 2–3 minuti per lato. È pronto quando è dorato fuori e non più rosa al centro. Oltre i 3 minuti diventa stopposo.'},
-    {t:'Salta gli spinaci', d:'Nella stessa padella, resto dell\'olio e aglio schiacciato. 3–4 minuti a fuoco medio, sale e pepe alla fine.'},
-    {t:'Impiatta', d:'Una spruzzata di limone sul tacchino: alza il sapore senza aggiungere nulla al conto calorico. Pane a parte.'}
+    {t:'Cuoci la pasta', d:'Formato corto in acqua salata, scolala un minuto prima.'},
+    {t:'Raffredda', d:'Sotto acqua fredda corrente, poi un filo d\'olio e una mescolata.'},
+    {t:'Cuoci i piselli', d:'In acqua bollente salata, 4–5 minuti se surgelati. Scolali e passali subito sotto acqua fredda: restano verdi e sodi invece di diventare grigi e molli.'},
+    {t:'Carote in friggitrice', d:'A bastoncini con un filo d\'olio e sale, 180 °C per 15 minuti. Falle raffreddare.'},
+    {t:'Assembla', d:'Pasta, piselli, carote, tonno sgocciolato e provola a cubetti.'},
+    {t:'Condisci', d:'Resto dell\'olio, prezzemolo, limone, sale e pepe. Mezz\'ora di frigo prima di mangiarla.'}
   ],
-  keep:'Tre giorni in frigo, carne e contorni in scomparti separati. Riscalda il tacchino 60–90 secondi al microonde, non di più. Le patate si riprendono meglio in forno a 180 °C per 8 minuti.'
+  keep:'Tre giorni in frigo. Si mangia freddo, nessun riscaldamento.'
 },
 
-tacchino_spinaci_patate:{
-  nome:'Tacchino con spinaci e patate al forno', tempo:40, porz:3,
-  ing:{tacchino:210, spinaci:250, patate:360, pane:88, olio:14},
-  libere:["½ spicchio d'aglio","Rosmarino","Sale, pepe"],
+pf_uova:{
+  nome:'Pasta fredda con uova saltate e tonno', tempo:25, porz:3, freddo:true,
+  ing:{pasta:100, uova:2, tonno:110, zucchine:150, carote:80, grana:22, olio:11},
+  libere:['Prezzemolo','Limone','Sale, pepe'],
   passi:[
-    {t:'Accendi il forno', d:'200 °C ventilato. Mentre scalda prepari tutto il resto.'},
-    {t:'Taglia le patate', d:'Sbucciate e a cubetti da 2 cm. Cubetti uguali cuociono uniformemente: è l\'unica regola che conta davvero.'},
-    {t:'Inforna le patate', d:'Teglia con carta forno, metà dell\'olio, sale e rosmarino. Mescola con le mani per condirle tutte. 30 minuti, girandole a metà.'},
-    {t:'Cuoci il tacchino', d:'Nel frattempo: padella antiaderente rovente, fettine asciugate con carta da cucina, 2–3 minuti per lato.'},
-    {t:'Salta gli spinaci', d:'Stessa padella, resto dell\'olio e aglio, 3–4 minuti a fuoco medio. Sale alla fine.'},
-    {t:'Componi', d:'Patate fuori dal forno quando sono dorate ai bordi, tacchino e spinaci a fianco.'}
+    {t:'Cuoci la pasta', d:'Formato corto, scolala un minuto prima e raffreddala sotto acqua corrente.'},
+    {t:'Zucchine e carote in friggitrice', d:'A cubetti, filo d\'olio e sale, 180 °C per 14 minuti. Raffreddare.'},
+    {t:'Sbatti le uova', d:'Con sale, pepe e il grana grattugiato. Trenta secondi di forchetta.'},
+    {t:'Uova sbriciolate in padella', d:'Padella antiaderente con poco olio, fuoco medio-basso. Versa le uova e mescola in continuazione con una spatola, rompendole in pezzetti piccoli.'},
+    {t:'Toglile presto', d:'Quando sono ancora leggermente umide, non asciutte. Continuano a rassodarsi nel piatto e altrimenti diventano gommose. Falle raffreddare.'},
+    {t:'Assembla', d:'Tutto in ciotola con il tonno sgocciolato, il resto dell\'olio, prezzemolo, limone, sale e pepe.'}
   ],
-  keep:'Tre giorni in frigo. Le patate si riprendono in forno a 180 °C per 8 minuti; al microonde diventano molli.'
+  keep:'Due giorni in frigo, non tre: con l\'uovo dentro conviene non tirare troppo.'
 },
 
-tacchino_zuc_forno:{
-  nome:'Tacchino, zucchine e patate al forno', tempo:35, porz:2,
-  ing:{tacchino:210, zucchine:200, insalata:100, pane:137, patate:175, olio:14},
-  libere:['Rosmarino o timo','Sale, pepe'],
+pf_cotto:{
+  nome:'Pasta fredda con cotto e mozzarella', tempo:20, porz:3, freddo:true,
+  ing:{pasta:100, cotto:75, mozzarella:70, zucchine:150, piselli:80, olio:11},
+  libere:['Basilico','Sale, pepe'],
   passi:[
-    {t:'Accendi il forno', d:'200 °C ventilato.'},
-    {t:'Prima le patate', d:'A cubetti da 2 cm, in teglia con carta forno, un terzo dell\'olio, sale e rosmarino. 15 minuti da sole.'},
-    {t:'Prepara le zucchine', d:'A bastoncini o rondelle spesse un centimetro. Condiscile con un altro terzo dell\'olio, sale, pepe ed erbe: mescola con le mani, il pennello non arriva ovunque.'},
-    {t:'Aggiungi le zucchine', d:'Nella stessa teglia, a fianco delle patate. Altri 15 minuti.'},
-    {t:'Aggiungi il tacchino', d:'Fettine condite con l\'olio rimasto e un pizzico di sale. Ultimi 10–12 minuti.'},
-    {t:'Servi', d:'Insalata condita a parte, così non appassisce, e il pane.'}
+    {t:'Cuoci la pasta', d:'Formato corto, scolala un minuto prima e raffredda sotto acqua corrente.'},
+    {t:'Cuoci i piselli', d:'4–5 minuti in acqua bollente salata, poi acqua fredda per fissare il colore.'},
+    {t:'Zucchine in friggitrice', d:'A rondelle con filo d\'olio e sale, 180 °C per 14 minuti. Raffreddare.'},
+    {t:'Scola la mozzarella', d:'Tagliala a cubetti e lasciala in uno scolapasta 10 minuti. Se la metti gocciolante, il giorno dopo trovi il fondo del contenitore pieno d\'acqua e la pasta slavata.'},
+    {t:'Taglia il cotto', d:'A striscioline o cubetti.'},
+    {t:'Assembla', d:'Tutto in ciotola con l\'olio, basilico spezzato a mano, sale e pepe.'}
   ],
-  warn:'Il tacchino entra in forno per ultimo. Cuoce in metà tempo delle verdure e se lo metti subito esce secco.',
-  keep:'Tre giorni in frigo. Con il forno acceso conviene raddoppiare le dosi: stesso tempo, doppia resa.'
+  keep:'Due giorni in frigo. Con la mozzarella dentro non conviene andare oltre.'
 },
 
-tacchino_funghi:{
-  nome:'Tacchino ai funghi con patate', tempo:35, porz:2,
-  ing:{tacchino:210, funghi:200, insalata:100, pane:133, patate:175, olio:14},
-  libere:["½ spicchio d'aglio",'Prezzemolo','Rosmarino','Sale, pepe'],
+pf_pesto:{
+  nome:'Pasta fredda al pesto con provola e mandorle', tempo:20, porz:3, freddo:true,
+  ing:{pasta:105, pesto:28, zucchine:200, filante:60, mandorle:14},
+  libere:['Sale','Basilico'],
   passi:[
-    {t:'Inforna le patate', d:'Forno a 200 °C ventilato. Cubetti da 2 cm, un terzo dell\'olio, sale e rosmarino. 25 minuti.'},
-    {t:'Pulisci i funghi', d:'Con un panno umido o carta da cucina. Non sotto l\'acqua corrente: la assorbono come spugne e poi lessano.'},
-    {t:'Affetta', d:'Fette da 5 mm circa.'},
-    {t:'Rosola i funghi', d:'Un terzo dell\'olio e l\'aglio in padella a fuoco vivo, poi i funghi. 6–8 minuti finché sono dorati. Sala solo alla fine.'},
-    {t:'Toglili dalla padella', d:'Mettili da parte in un piatto.'},
-    {t:'Cuoci il tacchino', d:'Olio rimasto nella stessa padella, fettine asciugate, 2–3 minuti per lato.'},
-    {t:'Unisci', d:'Rimetti i funghi con la carne, prezzemolo tritato, un minuto insieme per far legare i sapori. Patate a fianco.'}
+    {t:'Cuoci la pasta', d:'Formato corto in acqua salata. Tieni da parte un mestolo di acqua di cottura.'},
+    {t:'Raffredda', d:'Sotto acqua fredda corrente fino a raffreddamento completo.'},
+    {t:'Zucchine in friggitrice', d:'A rondelle, filo d\'olio e sale, 180 °C per 14 minuti. Il pesto porta già i suoi grassi, non serve altro olio.'},
+    {t:'Tosta le mandorle', d:'Tritate grossolanamente, in padella a secco 2–3 minuti finché profumano. Tienile d\'occhio: passano da dorate a bruciate in trenta secondi.'},
+    {t:'Sciogli il pesto', d:'In una ciotola capiente con due cucchiai di acqua di cottura tenuta da parte, fino a crema liscia.'},
+    {t:'Assembla', d:'Pasta, zucchine, provola a cubetti e mandorle nella ciotola con il pesto. Mescola bene.'}
   ],
-  warn:'Non salare i funghi all\'inizio. Il sale tira fuori l\'acqua e invece di rosolare bollono nel proprio liquido.',
-  keep:'Tre giorni in frigo. Riscalda in padella a fuoco basso con un cucchiaio d\'acqua.'
+  warn:'Non scaldare mai il pesto sul fuoco. Il basilico si ossida, il colore vira allo scuro e il sapore diventa amaro.',
+  keep:'Tre giorni in frigo. Se il giorno dopo sembra asciutta, un cucchiaino d\'olio e una mescolata la rimettono a posto.'
 },
 
-nasello_patate:{
-  nome:'Nasello al forno con patate', tempo:40, porz:2,
-  ing:{nasello:250, patate:370, insalata:100, pane:78, grana:15, olio:15},
-  libere:["½ spicchio d'aglio",'Prezzemolo','Rosmarino','Limone','Sale'],
+riso_tonno:{
+  nome:'Riso freddo con tonno, carote e piselli', tempo:20, porz:3, freddo:true,
+  ing:{riso:100, tonno:150, carote:80, piselli:80, grana:22, olio:13, mandorle:8},
+  libere:['Prezzemolo','Limone','Sale, pepe'],
   passi:[
-    {t:'Scongela in anticipo', d:'Se il pesce è surgelato: in frigo la sera prima, oppure sotto acqua fredda corrente ancora nella busta. Mai acqua calda.'},
-    {t:'Accendi il forno', d:'200 °C ventilato.'},
-    {t:'Taglia le patate', d:'A cubetti da 2 cm. Più piccoli, prima cuociono.'},
-    {t:'Inforna le patate', d:'Teglia con carta forno, metà olio, sale, rosmarino. 22 minuti da sole.'},
-    {t:'Condisci il pesce', d:'Asciuga i filetti con carta da cucina. Resto dell\'olio, sale, aglio tritato e prezzemolo.'},
-    {t:'Seconda infornata', d:'Sposta le patate ai lati della teglia, pesce al centro, altri 12–15 minuti.'},
-    {t:'Verifica la cottura', d:'La carne è opaca e si sfalda con una leggera pressione della forchetta. Limone a fine cottura, fuori dal forno, e grana grattugiato sulle patate.'}
+    {t:'Cuoci il riso', d:'In acqua salata, secondo i tempi della confezione.'},
+    {t:'Blocca la cottura', d:'Scolalo un minuto prima e passalo sotto acqua fredda. Così non si impasta in frigo.'},
+    {t:'Piselli', d:'4–5 minuti in acqua bollente, poi acqua fredda.'},
+    {t:'Carote in friggitrice', d:'A cubetti piccoli con filo d\'olio e sale, 180 °C per 15 minuti. Raffreddare.'},
+    {t:'Tosta le mandorle', d:'Tritate, padella a secco, 2 minuti.'},
+    {t:'Condisci', d:'Unisci tutto con il tonno sgocciolato, olio, grana, prezzemolo, limone, sale e pepe.'}
   ],
-  keep:'Il pesce cotto regge due giorni in frigo, non di più. Riscalda in forno a 160 °C per 8 minuti: al microonde diventa gommoso e riempie la cucina di odore.'
-},
-
-nasello_spinaci:{
-  nome:'Nasello al forno con spinaci e patate', tempo:40, porz:2,
-  ing:{nasello:250, spinaci:250, pane:123, patate:180, grana:15, olio:15},
-  libere:["½ spicchio d'aglio",'Prezzemolo','Rosmarino','Limone','Sale'],
-  passi:[
-    {t:'Scongela in anticipo', d:'In frigo la sera prima o sotto acqua fredda corrente nella busta chiusa.'},
-    {t:'Accendi il forno', d:'200 °C ventilato. Patate a cubetti con un terzo dell\'olio, sale e rosmarino: 22 minuti.'},
-    {t:'Condisci il pesce', d:'Filetti asciugati con carta da cucina, in teglia con carta forno. Un terzo dell\'olio, sale, prezzemolo.'},
-    {t:'Inforna', d:'12–15 minuti insieme alle patate. È pronto quando la carne è opaca e si sfalda.'},
-    {t:'Salta gli spinaci', d:'In padella con l\'olio rimasto e l\'aglio schiacciato, 3–4 minuti. Sale alla fine.'},
-    {t:'Servi', d:'Limone sul pesce appena sfornato, grana sulle patate, spinaci e pane a fianco.'}
-  ],
-  keep:'Due giorni in frigo per il pesce. Riscalda in forno a 160 °C, mai al microonde.'
-},
-
-ceci_zucchine:{
-  nome:'Insalata di ceci, zucchine e uovo', tempo:20, porz:2,
-  ing:{ceci:310, zucchine:150, insalata:100, grana:32, uova:1, pane:65, olio:12},
-  libere:['Aceto o limone','Origano','Sale, pepe'],
-  passi:[
-    {t:'Metti su l\'uovo', d:'In acqua fredda, poi 9 minuti da quando bolle per averlo sodo ma non asciutto. Passalo subito sotto acqua fredda: si sbuccia molto meglio.'},
-    {t:'Sciacqua i ceci', d:'In uno scolapasta sotto acqua corrente, 30 secondi. Il liquido di governo è molto salato e gonfia: vale la pena toglierlo.'},
-    {t:'Taglia le zucchine', d:'A fette per lungo, 5 mm di spessore.'},
-    {t:'Griglia', d:'Griglia o padella a fuoco vivo, senza olio. 2–3 minuti per lato finché compaiono le righe scure. Sala solo dopo.'},
-    {t:'Assembla', d:'In una ciotola: ceci, zucchine a pezzi, insalata lavata e asciugata, uovo a spicchi.'},
-    {t:'Condisci', d:'Olio, un cucchiaino di aceto o limone, sale, pepe, origano. Grana a scaglie per ultimo, così resta croccante. Pane a fianco.'}
-  ],
-  keep:'Prepara ceci, zucchine e uovo in anticipo: tengono tre giorni. Insalata e condimento vanno aggiunti al momento o appassisce tutto. Si mangia freddo, comodissimo da portare fuori.'
-},
-
-lenticchie_zucchine:{
-  nome:'Insalata di lenticchie, zucchine e uovo', tempo:20, porz:2,
-  ing:{lenticchie:320, zucchine:150, insalata:100, grana:32, uova:1, pane:78, olio:12},
-  libere:['Aceto','Cipolla rossa (facoltativa)','Sale, pepe'],
-  passi:[
-    {t:'Metti su l\'uovo', d:'Sodo: 9 minuti da quando bolle, poi subito sotto acqua fredda.'},
-    {t:'Sciacqua le lenticchie', d:'Sotto acqua corrente per 30 secondi, come per i ceci.'},
-    {t:'Taglia le zucchine', d:'A cubetti da un centimetro.'},
-    {t:'Saltale in padella', d:'Metà olio, fuoco vivo, 6–7 minuti con un pizzico di sale. Devono dorarsi, non stufare.'},
-    {t:'Unisci e fai intiepidire', d:'Lenticchie e zucchine in una ciotola. Aspetta che scendano di temperatura prima di condire.'},
-    {t:'Condisci', d:'Resto dell\'olio, un cucchiaino di aceto, sale e pepe. Insalata fresca, uovo a spicchi e grana a scaglie al momento di mangiare.'}
-  ],
-  keep:'La base di lenticchie e zucchine tiene tre giorni in frigo. Si mangia fredda o a temperatura ambiente, non serve scaldarla.'
-},
-
-frittata_formaggio:{
-  nome:'Frittata al formaggio', tempo:10, porz:1,
-  ing:{uova:3, filante:55, insalata:120, pane:143, olio:11},
-  libere:['Sale, pepe'],
-  passi:[
-    {t:'Sbatti le uova', d:'In una ciotola con sale e pepe, forchetta, 30 secondi. Non di più: sbattendo troppo incorpori aria e poi la frittata si sgonfia.'},
-    {t:'Taglia il formaggio', d:'A cubetti piccoli, un centimetro, così fonde in fretta.'},
-    {t:'Scalda la padella', d:'Antiaderente da 20–22 cm con l\'olio, fuoco medio-basso.'},
-    {t:'Versa e aspetta', d:'Uova in padella, poi non toccarla per 2–3 minuti, finché i bordi si staccano da soli.'},
-    {t:'Aggiungi il formaggio', d:'Distribuiscilo su metà della superficie.'},
-    {t:'Piega a metà', d:'Con una spatola, a mo\' di omelette. È molto più facile che girarla e non rischi di romperla. Altri 2 minuti.'},
-    {t:'Servi', d:'Insalata condita e pane.'}
-  ],
-  keep:'Si fa in dieci minuti, conviene farla al momento. Se la prepari prima tiene due giorni in frigo ed è buona anche fredda.'
-},
-
-frittata_spinaci:{
-  nome:'Frittata con spinaci', tempo:15, porz:1,
-  ing:{uova:3, spinaci:200, filante:48, insalata:100, pane:127, grana:15, olio:11},
-  libere:["½ spicchio d'aglio",'Sale, pepe'],
-  passi:[
-    {t:'Strizza gli spinaci', d:'Se surgelati: scongelali e strizzali con le mani con decisione. L\'acqua residua è il motivo numero uno delle frittate slegate.'},
-    {t:'Saltali', d:'Padella con poco olio e aglio, 3 minuti. Poi falli intiepidire: se li unisci bollenti cominciano a cuocere le uova nella ciotola.'},
-    {t:'Sbatti le uova', d:'Sale, pepe, grana grattugiato, 30 secondi di forchetta.'},
-    {t:'Unisci', d:'Spinaci nelle uova, mescola per distribuirli uniformemente.'},
-    {t:'Cuoci', d:'Padella antiaderente con il resto dell\'olio, fuoco medio-basso, 3–4 minuti senza toccare.'},
-    {t:'Aggiungi il formaggio e chiudi', d:'Cubetti di provola su metà, poi piega a metà. Altri 2–3 minuti.'}
-  ],
-  keep:'Due giorni in frigo. Ottima fredda, si porta bene in contenitore.'
+  keep:'Tre giorni in frigo, si mangia freddo o a temperatura ambiente. Comodissimo da portare.'
 },
 
 pasta_tonno:{
   nome:'Pasta al pomodoro e tonno', tempo:20, porz:2,
-  ing:{pasta:135, passata:150, tonno:160, grana:18, olio:11},
-  libere:["½ spicchio d'aglio",'Basilico o origano','Sale'],
+  ing:{pasta:105, passata:150, tonno:150, grana:28, olio:14},
+  libere:['Basilico o origano','Sale'],
   passi:[
     {t:'Acqua sul fuoco', d:'Salala quando bolle.'},
-    {t:'Insaporisci l\'olio', d:'Olio e aglio schiacciato in padella. Togli l\'aglio dopo un minuto, prima che scurisca e amareggi.'},
-    {t:'Cuoci il sugo', d:'Passata e sale, fuoco medio, 10 minuti finché si addensa leggermente.'},
+    {t:'Cuoci il sugo', d:'Olio e passata in padella, sale, fuoco medio, 10 minuti finché si addensa leggermente.'},
     {t:'Aggiungi il tonno', d:'Ben sgocciolato, negli ultimi 2–3 minuti. Prima no: cuocendo a lungo si asciuga e diventa stopposo.'},
     {t:'Salta la pasta', d:'Al dente, scolata, 30 secondi in padella con il sugo per farla legare.'},
-    {t:'Profuma', d:'Basilico fresco o origano a fuoco spento, grana grattugiato nel piatto.'}
+    {t:'Profuma', d:'Basilico o origano a fuoco spento, grana nel piatto.'}
   ],
-  keep:'Tre giorni in frigo. Se puoi, conserva sugo e pasta separati e uniscili al momento. Altrimenti riscalda in padella con due cucchiai d\'acqua.'
+  keep:'Tre giorni in frigo. Se puoi conserva sugo e pasta separati, altrimenti riscalda in padella con due cucchiai d\'acqua.'
 },
 
-pasta_zuc_filante:{
-  nome:'Pasta con zucchine e formaggio filante', tempo:20, porz:2,
-  ing:{pasta:135, zucchine:200, filante:72, grana:15, olio:10},
-  libere:["½ spicchio d'aglio",'Sale, pepe'],
+pasta_zuc_uovo:{
+  nome:'Pasta con zucchine e uovo', tempo:20, porz:3,
+  ing:{pasta_int:100, zucchine:200, uova:2, grana:30, olio:14, mandorle:10},
+  libere:['Sale, pepe nero','Basilico'],
   passi:[
-    {t:'Acqua sul fuoco', d:'Salala quando bolle.'},
-    {t:'Rosola le zucchine', d:'A rondelle sottili, in padella con olio e aglio, 8–10 minuti a fuoco medio. Sale alla fine.'},
-    {t:'Taglia il formaggio', d:'A cubetti piccoli: più sono piccoli, meglio filano senza fare grumi.'},
-    {t:'Cuoci la pasta', d:'Al dente. Scola tenendo un mestolo di acqua di cottura.'},
-    {t:'Manteca', d:'Pasta in padella a fuoco basso, formaggio e 2–3 cucchiai di acqua di cottura.'},
-    {t:'Mescola', d:'Un minuto continuo finché il formaggio si scioglie in crema. Grana e pepe nel piatto.'}
+    {t:'Metti su l\'acqua', d:'Un litro ogni 100 g di pasta. Sala quando bolle.'},
+    {t:'Rosola le zucchine', d:'A rondelle sottili, 3–4 mm, in padella con l\'olio a fuoco medio. 8–10 minuti con un pizzico di sale, finché sono dorate ai bordi ma ancora consistenti.'},
+    {t:'Aggiungi le mandorle', d:'Tritate grossolanamente, negli ultimi 2 minuti: si tostano e restano croccanti.'},
+    {t:'Cuoci la pasta', d:'Al dente, un minuto in meno rispetto alla confezione.'},
+    {t:'Prepara la crema', d:'In una ciotola sbatti le uova con il grana grattugiato e una macinata di pepe.'},
+    {t:'Manteca a fuoco spento', d:'Scola tenendo un mestolo di acqua di cottura, versa la pasta sulle zucchine e spegni. Aggiungi uova e grana mescolando senza fermarti: il calore residuo crea la crema.'}
   ],
-  keep:'Due o tre giorni. Riscalda in padella con acqua: il formaggio torna filante.'
+  warn:'Il fuoco deve essere spento quando aggiungi le uova. Con la fiamma accesa si stracciano e ti ritrovi una frittata dentro la pasta.',
+  keep:'Tre giorni in frigo. Riscalda in padella con due cucchiai d\'acqua a fuoco basso. Non congelare: l\'uovo diventa gommoso.'
 },
 
-pasta_pesto:{
-  nome:'Pasta al pesto con zucchine e provola', tempo:15, porz:2,
-  ing:{pasta:135, pesto:26, zucchine:200, filante:66, grana:15},
-  libere:['Sale'],
+lenticchie:{
+  nome:'Insalata di lenticchie con uovo saltato', tempo:20, porz:2, freddo:true,
+  ing:{lenticchie:300, zucchine:150, uova:1, grana:30, pane:50, olio:16},
+  libere:['Prezzemolo','Limone','Sale, pepe'],
   passi:[
-    {t:'Acqua sul fuoco', d:'Salala quando bolle.'},
-    {t:'Salta le zucchine', d:'A rondelle, padella antiaderente, 8 minuti. Non serve aggiungere olio: il pesto ne contiene già a sufficienza.'},
-    {t:'Taglia la provola', d:'A cubetti piccoli, così fonde con il calore della pasta.'},
-    {t:'Cuoci la pasta', d:'Al dente.'},
-    {t:'Sciogli il pesto', d:'In una ciotola capiente, diluito con due cucchiai di acqua di cottura fino a crema liscia.'},
-    {t:'Manteca fuori dal fuoco', d:'Pasta scolata nella ciotola, zucchine e provola, mescola finché il formaggio si ammorbidisce. Grana nel piatto.'}
+    {t:'Sciacqua le lenticchie', d:'Sotto acqua corrente per 30 secondi. Il liquido di governo è molto salato e gonfia.'},
+    {t:'Zucchine in friggitrice', d:'A cubetti con filo d\'olio e sale, 180 °C per 14 minuti.'},
+    {t:'Uovo sbriciolato', d:'Sbattilo con sale e pepe, poi in padella antiaderente a fuoco medio-basso mescolando in continuazione. Toglilo quando è ancora leggermente umido.'},
+    {t:'Fai intiepidire', d:'Lenticchie, zucchine e uovo in una ciotola. Aspetta che scendano di temperatura prima di condire.'},
+    {t:'Condisci', d:'Olio, succo di mezzo limone, prezzemolo tritato, sale e pepe. Grana a scaglie al momento di mangiare, pane a fianco.'}
   ],
-  warn:'Il pesto non va mai scaldato sul fuoco. Il basilico si ossida, il colore vira allo scuro e il sapore diventa amaro.',
-  keep:'Due giorni in frigo. Buona anche fredda, di fatto un\'insalata di pasta.'
+  keep:'Due giorni in frigo. Si mangia fredda o a temperatura ambiente, non serve scaldarla.'
 },
 
-riso_tonno:{
-  nome:'Riso con zucchine e tonno', tempo:20, porz:3,
-  ing:{riso:138, zucchine:200, tonno:160, grana:22, olio:11},
-  libere:["½ spicchio d'aglio",'Limone','Sale, pepe'],
+fagioli:{
+  nome:'Insalata di fagioli con uovo saltato', tempo:20, porz:2, freddo:true,
+  ing:{fagioli:320, zucchine:150, uova:1, grana:30, pane:55, olio:17},
+  libere:['Prezzemolo o salvia','Limone','Sale, pepe'],
   passi:[
-    {t:'Cuoci il riso', d:'In acqua salata, secondo i tempi della confezione.'},
-    {t:'Blocca la cottura', d:'Se lo mangi nei giorni successivi, scolalo un minuto prima e passalo sotto acqua fredda. Così non si impasta in frigo.'},
-    {t:'Salta le zucchine', d:'A cubetti, con olio e aglio, 7–8 minuti a fuoco vivo.'},
-    {t:'Sgocciola il tonno', d:'Bene, premendolo nel coperchio della scatoletta.'},
-    {t:'Condisci', d:'Unisci tutto, sale, pepe, grana e una spruzzata di limone.'}
+    {t:'Sciacqua i fagioli', d:'Sotto acqua corrente, 30 secondi, con delicatezza: i cannellini si rompono facilmente.'},
+    {t:'Zucchine in friggitrice', d:'A rondelle con filo d\'olio e sale, 180 °C per 14 minuti.'},
+    {t:'Uovo sbriciolato', d:'In padella a fuoco medio-basso mescolando in continuazione, tolto quando è ancora leggermente umido.'},
+    {t:'Fai intiepidire', d:'Tutto in ciotola, lascia scendere di temperatura.'},
+    {t:'Condisci', d:'Olio, limone, prezzemolo o qualche foglia di salvia tritata, sale e pepe. Grana e pane a fianco.'}
   ],
-  keep:'Il migliore del piano per il meal prep: tre giorni in frigo, si mangia freddo o tiepido, non serve scaldarlo.'
+  keep:'Due giorni in frigo. Come le lenticchie: si mangia freddo, comodo da portare.'
+},
+
+tacc_zuc_pat:{
+  nome:'Tacchino con zucchine e patate in friggitrice', tempo:30, porz:3,
+  ing:{tacchino:210, zucchine:200, patate:180, pane:60, grana:20, olio:18},
+  libere:['Rosmarino','Limone','Sale, pepe'],
+  passi:[
+    {t:'Patate in friggitrice', d:'A cubetti da 2 cm, un terzo dell\'olio, sale e rosmarino. 190 °C per 18–20 minuti, scuotendo il cestello a metà.'},
+    {t:'Poi le zucchine', d:'A rondelle spesse, filo d\'olio e sale. 180 °C per 13–15 minuti. Falle in un secondo giro: hanno tempi diversi dalle patate e insieme una delle due esce sbagliata.'},
+    {t:'Scalda la padella a vuoto', d:'Antiaderente, fuoco vivo, due minuti senza olio. Una padella tiepida fa lessare la carne invece di rosolarla.'},
+    {t:'Asciuga il tacchino', d:'Tampona le fettine con carta da cucina e sala un lato solo. Se sono bagnate non rosolano.'},
+    {t:'Cuocilo', d:'2–3 minuti per lato con il resto dell\'olio. Dorato fuori, non più rosa al centro. Oltre i 3 minuti diventa stopposo.'},
+    {t:'Servi', d:'Limone sul tacchino, grana sulle patate, pane a fianco.'}
+  ],
+  keep:'Tre giorni in frigo, carne e contorni separati. Riscalda il tacchino 60–90 secondi al microonde. Le patate tornano croccanti in friggitrice, 4 minuti a 180 °C.'
+},
+
+tacc_spi_car:{
+  nome:'Tacchino con spinaci e carote', tempo:25, porz:3,
+  ing:{tacchino:210, spinaci:250, carote:150, pane:70, grana:20, olio:20},
+  libere:['Rosmarino','Limone','Sale, pepe'],
+  passi:[
+    {t:'Carote in friggitrice', d:'A bastoncini, un terzo dell\'olio, sale e rosmarino. 180 °C per 15–18 minuti.'},
+    {t:'Prepara gli spinaci', d:'Freschi: lavali in acqua abbondante. Surgelati: scongelali prima, 3 minuti al microonde o in padella coperta.'},
+    {t:'Scalda la padella a vuoto', d:'Fuoco vivo, due minuti senza olio.'},
+    {t:'Cuoci il tacchino', d:'Fettine asciugate con carta da cucina, salate su un lato, 2–3 minuti per lato con un terzo dell\'olio.'},
+    {t:'Salta gli spinaci', d:'Stessa padella, olio rimasto, 3–4 minuti a fuoco medio. Sale alla fine.'},
+    {t:'Servi', d:'Limone sul tacchino, grana sulle carote, pane a fianco.'}
+  ],
+  keep:'Tre giorni in frigo. Gli spinaci si riscaldano in padella in due minuti.'
+},
+
+straccetti:{
+  nome:'Straccetti di tacchino con zucchine', tempo:25, porz:3,
+  ing:{tacchino:210, zucchine:250, patate:170, pane:60, grana:22, olio:19},
+  libere:['Prezzemolo','Limone','Sale, pepe'],
+  passi:[
+    {t:'Patate in friggitrice', d:'A cubetti, un terzo dell\'olio, sale e rosmarino. 190 °C per 18–20 minuti.'},
+    {t:'Taglia il tacchino', d:'A striscioline larghe un centimetro, nel senso contrario alle fibre. Tagliate così restano tenere.'},
+    {t:'Zucchine a rondelle', d:'Sottili, così cuociono in padella insieme alla carne.'},
+    {t:'Padella rovente', d:'Un terzo dell\'olio a fuoco vivo, poi gli straccetti asciugati. 3–4 minuti mescolando: cuociono in fretta perché sono sottili.'},
+    {t:'Toglili e cuoci le zucchine', d:'Stessa padella con l\'olio rimasto, 8 minuti a fuoco medio, sale alla fine.'},
+    {t:'Unisci', d:'Rimetti gli straccetti con le zucchine, prezzemolo e limone, un minuto insieme.'}
+  ],
+  keep:'Tre giorni in frigo. Riscalda in padella a fuoco basso con un cucchiaio d\'acqua.'
+},
+
+nasello:{
+  nome:'Nasello in friggitrice con patate e carote', tempo:35, porz:2,
+  ing:{nasello:240, patate:220, carote:120, pane:55, grana:20, olio:20},
+  libere:['Prezzemolo','Rosmarino','Limone','Sale'],
+  passi:[
+    {t:'Scongela in anticipo', d:'Se il pesce è surgelato: in frigo la sera prima, oppure sotto acqua fredda corrente ancora nella busta. Mai acqua calda.'},
+    {t:'Patate e carote in friggitrice', d:'Patate a cubetti e carote a bastoncini, metà olio, sale e rosmarino. 190 °C per 18–20 minuti.'},
+    {t:'Asciuga il pesce', d:'Tampona i filetti con carta da cucina. Condisci con il resto dell\'olio, sale e prezzemolo.'},
+    {t:'Cuoci il pesce', d:'In friggitrice a 180 °C per 10–12 minuti. Su carta forno forata o direttamente nel cestello unto, perché si attacca facilmente.'},
+    {t:'Verifica', d:'È pronto quando la carne è opaca e si sfalda con una leggera pressione della forchetta.'},
+    {t:'Servi', d:'Limone appena tolto dal cestello, grana sulle verdure, pane a fianco.'}
+  ],
+  warn:'Non girare il pesce a metà cottura. In friggitrice non serve e i filetti si rompono: si cuoce bene anche da fermo.',
+  keep:'Due giorni in frigo, non di più. Riscalda in friggitrice 4 minuti a 160 °C: al microonde diventa gommoso e riempie la cucina di odore.'
+},
+
+frittata_provola:{
+  nome:'Frittata con provola e zucchine', tempo:20, porz:1,
+  ing:{uova:3, filante:55, zucchine:200, pane:75, grana:15, olio:14},
+  libere:['Sale, pepe'],
+  passi:[
+    {t:'Zucchine in friggitrice', d:'A rondelle con un filo d\'olio e sale, 180 °C per 14 minuti. Falle intiepidire.'},
+    {t:'Sbatti le uova', d:'Con sale, pepe e grana grattugiato, forchetta, 30 secondi. Non di più: sbattendo troppo incorpori aria e poi si sgonfia.'},
+    {t:'Unisci le zucchine', d:'Nelle uova, mescola per distribuirle.'},
+    {t:'Scalda la padella', d:'Antiaderente da 20–22 cm con il resto dell\'olio, fuoco medio-basso.'},
+    {t:'Versa e aspetta', d:'Non toccarla per 3–4 minuti, finché i bordi si staccano da soli.'},
+    {t:'Provola e chiusura', d:'Cubetti su metà della superficie, poi piega a metà con una spatola: molto più facile che girarla. Altri 2 minuti.'}
+  ],
+  keep:'Si fa in venti minuti, conviene farla al momento. Se la prepari prima tiene due giorni in frigo ed è buona anche fredda.'
+},
+
+frittata_spinaci:{
+  nome:'Frittata con spinaci e carote', tempo:25, porz:1,
+  ing:{uova:3, spinaci:200, filante:48, carote:120, pane:70, grana:18, olio:13},
+  libere:['Sale, pepe','Noce moscata'],
+  passi:[
+    {t:'Carote in friggitrice', d:'A bastoncini con filo d\'olio e sale, 180 °C per 15 minuti. Sono il contorno, non vanno nella frittata.'},
+    {t:'Strizza gli spinaci', d:'Se surgelati: scongelali e strizzali con le mani con decisione. L\'acqua residua è il motivo numero uno delle frittate slegate.'},
+    {t:'Saltali', d:'Padella con poco olio, 3 minuti. Falli intiepidire: se li unisci bollenti cominciano a cuocere le uova nella ciotola.'},
+    {t:'Sbatti le uova', d:'Sale, pepe, grana e una grattata di noce moscata. Trenta secondi.'},
+    {t:'Cuoci', d:'Spinaci nelle uova, poi in padella antiaderente con il resto dell\'olio, fuoco medio-basso, 3–4 minuti senza toccare.'},
+    {t:'Provola e chiusura', d:'Cubetti su metà, poi piega. Altri 2–3 minuti. Carote e pane a fianco.'}
+  ],
+  keep:'Due giorni in frigo. Ottima fredda, si porta bene in contenitore.'
+},
+
+piatto_freddo:{
+  nome:'Piatto freddo di affettati e stracchino', tempo:10, porz:1, freddo:true,
+  ing:{cotto:85, speck:35, stracchino:60, zucchine:150, carote:100, pane:75, olio:10},
+  libere:['Limone','Sale, pepe'],
+  passi:[
+    {t:'Zucchine e carote in friggitrice', d:'A rondelle e bastoncini, filo d\'olio e sale. 180 °C per 14–15 minuti. Puoi anche prepararle il giorno prima e tenerle in frigo.'},
+    {t:'Componi il piatto', d:'Affettati distesi senza sovrapporli troppo, stracchino a cucchiaiate a fianco.'},
+    {t:'Condisci le verdure', d:'Resto dell\'olio, limone, sale e pepe. Servile a temperatura ambiente, non fredde di frigo: sanno di più.'},
+    {t:'Pane', d:'A fianco, oppure usalo per lo stracchino.'}
+  ],
+  keep:'Le verdure in friggitrice tengono tre giorni, gli affettati vanno consumati entro la data della confezione. È la cena da tenere per le sere in cui non hai voglia di cucinare: dieci minuti e sei a tavola.'
 }
 };
 
 /* ══════════════════════════════════════════════════════════
    3. COLAZIONI
    ══════════════════════════════════════════════════════════ */
-const B = {
-  latte_bisc:  {nome:'Latte e biscotti',             ing:{latte:300, biscotti:68, yogurt:175, frutta:1}},
-  yog_granola: {nome:'Yogurt greco e granola',       ing:{yogurt:310, granola:73, frutta:1}},
-  yog_avena:   {nome:'Yogurt greco e avena',         ing:{yogurt:310, avena:85, frutta:1}},
-  fette_miele: {nome:'Fette biscottate e miele',     ing:{latte:300, fette:60, miele:14, yogurt:175, frutta:1}},
-  fette_marm:  {nome:'Fette biscottate e marmellata',ing:{latte:300, fette:60, marmell:20, yogurt:175, frutta:1}},
-  fette_frutta:{nome:'Fette biscottate e frutta',    ing:{latte:300, fette:66, yogurt:175, frutta:1}}
+/* colazione: sempre la stessa */
+const COLAZIONE = {nome:'Latte e biscotti', ing:{latte:300, biscotti:52, frutta:1}};
+
+/* spuntino di meta' mattina — ridotto, zero preparazione */
+const SM = {
+  grana:      {nome:'Grana',             ing:{grana:35}},
+  mandorle:   {nome:'Mandorle',          ing:{mandorle:25}},
+  noci:       {nome:'Noci',              ing:{noci:23}},
+  grana_mand: {nome:'Grana e mandorle',  ing:{grana:20, mandorle:15}}
+};
+
+/* spuntino del pomeriggio — piu' sostanzioso */
+const SP = {
+  fesa:       {nome:'Fesa di tacchino e pane',   ing:{fesa:90, pane:25}},
+  cotto_pane: {nome:'Prosciutto cotto e pane',   ing:{cotto:60, pane:30}},
+  mozzarella: {nome:'Mozzarella e pane',         ing:{mozzarella:60, pane:20}},
+  speck_pane: {nome:'Speck e pane',              ing:{speck:32, pane:35}},
+  stracchino: {nome:'Stracchino e pane',         ing:{stracchino:42, pane:28}},
+  phila_pane: {nome:'Philadelphia e pane',       ing:{philadelphia:35, pane:38}},
+  frutto_gr:  {nome:'Frutto e grana',            ing:{frutta:1, grana:20}}
 };
 
 /* ══════════════════════════════════════════════════════════
@@ -567,32 +614,36 @@ const B = {
    ══════════════════════════════════════════════════════════ */
 const WEEKS = [
   { n:1, tema:'La base',
-    col:['latte_bisc','yog_granola','fette_miele'],
+    sm:['grana','mandorle','grana_mand'],
+    sp:['fesa','cotto_pane','mozzarella'],
     bl:[
-      {id:'A', gg:[0,1,2], pranzo:'pasta_zuc_uovo',  cena:'tacchino_spinaci'},
-      {id:'B', gg:[3,4],   pranzo:'ceci_zucchine',   cena:'frittata_formaggio'},
-      {id:'C', gg:[5,6],   pranzo:'pasta_tonno',     cena:'tacchino_zuc_forno'}
+      {id:'A', gg:[0,1,2], pranzo:'pf_tonno',    cena:'tacc_zuc_pat'},
+      {id:'B', gg:[3,4],   pranzo:'lenticchie',  cena:'frittata_provola'},
+      {id:'C', gg:[5,6],   pranzo:'pasta_tonno', cena:'nasello'}
     ]},
-  { n:2, tema:'Pesce e legumi',
-    col:['latte_bisc','yog_avena','fette_marm'],
+  { n:2, tema:'Piselli e straccetti',
+    sm:['mandorle','grana','noci'],
+    sp:['cotto_pane','frutto_gr','speck_pane'],
     bl:[
-      {id:'A', gg:[0,1,2], pranzo:'pasta_zuc_uovo',  cena:'nasello_patate'},
-      {id:'B', gg:[3,4],   pranzo:'lenticchie_zucchine', cena:'tacchino_funghi'},
-      {id:'C', gg:[5,6],   pranzo:'pasta_zuc_filante', cena:'frittata_spinaci'}
+      {id:'A', gg:[0,1,2], pranzo:'pf_piselli',  cena:'tacc_spi_car'},
+      {id:'B', gg:[3,4],   pranzo:'fagioli',     cena:'straccetti'},
+      {id:'C', gg:[5,6],   pranzo:'riso_tonno',  cena:'frittata_spinaci'}
     ]},
-  { n:3, tema:'Cambio formato',
-    col:['latte_bisc','yog_granola','fette_frutta'],
+  { n:3, tema:'Pesto e piatto freddo',
+    sm:['grana','noci','grana_mand'],
+    sp:['mozzarella','fesa','stracchino'],
     bl:[
-      {id:'A', gg:[0,1,2], pranzo:'riso_tonno',      cena:'tacchino_spinaci'},
-      {id:'B', gg:[3,4],   pranzo:'ceci_zucchine',   cena:'frittata_formaggio'},
-      {id:'C', gg:[5,6],   pranzo:'pasta_pesto',     cena:'nasello_patate'}
+      {id:'A', gg:[0,1,2], pranzo:'pf_pesto',    cena:'tacc_zuc_pat'},
+      {id:'B', gg:[3,4],   pranzo:'pf_uova',     cena:'piatto_freddo'},
+      {id:'C', gg:[5,6],   pranzo:'pasta_zuc_uovo', cena:'nasello'}
     ]},
   { n:4, tema:'Chiusura ciclo',
-    col:['latte_bisc','yog_avena','fette_miele'],
+    sm:['mandorle','grana','grana_mand'],
+    sp:['cotto_pane','phila_pane','fesa'],
     bl:[
-      {id:'A', gg:[0,1,2], pranzo:'pasta_zuc_uovo',  cena:'tacchino_spinaci_patate'},
-      {id:'B', gg:[3,4],   pranzo:'lenticchie_zucchine', cena:'frittata_formaggio'},
-      {id:'C', gg:[5,6],   pranzo:'pasta_tonno',     cena:'nasello_spinaci'}
+      {id:'A', gg:[0,1,2], pranzo:'pf_cotto',    cena:'tacc_spi_car'},
+      {id:'B', gg:[3,4],   pranzo:'lenticchie',  cena:'straccetti'},
+      {id:'C', gg:[5,6],   pranzo:'pf_tonno',    cena:'frittata_provola'}
     ]}
 ];
 
@@ -649,11 +700,12 @@ function weekNeeds(wi){
   const w = WEEKS[wi], out = {};
   const add = (ing, mult=1) => { for(const k in ing) out[k] = (out[k]||0) + ing[k]*mult; };
 
-  for(let d=0; d<7; d++) add(B[w.col[d%3]].ing);          // colazioni a rotazione
+  add(COLAZIONE.ing, 7);                                   // colazione fissa, 7 giorni
+  for(let d=0; d<7; d++){ add(SM[w.sm[d%3]].ing); add(SP[w.sp[d%3]].ing); }
 
   w.bl.forEach(b=>{
-    add(R[b.pranzo].ing, b.gg.length);                     // pranzi
-    const cene = b.gg.filter(g => g !== FREE_DAY).length;  // cene, sabato escluso
+    add(R[b.pranzo].ing, b.gg.length);
+    const cene = b.gg.filter(g => g !== FREE_DAY).length;
     add(R[b.cena].ing, cene);
   });
   return out;
@@ -719,39 +771,35 @@ function ingLine(r){
 function renderOggi(){
   const p = pos(), w = WEEKS[p.w], b = blockOf(w,p.d);
   const isFree = p.d === FREE_DAY;
-  const bKey = S.bfast[p.abs] ?? (p.d % 3);
-  const col = B[w.col[bKey]];
+  const sm = SM[w.sm[p.d%3]], sp = SP[w.sp[p.d%3]];
   const pr = R[b.pranzo], ce = R[b.cena];
-  const nC = nutri(col.ing), nP = nutri(pr.ing), nE = isFree ? {kcal:0,p:0,c:0,g:0} : nutri(ce.ing);
-  const tot = {kcal:nC.kcal+nP.kcal+nE.kcal, p:nC.p+nP.p+nE.p, c:nC.c+nP.c+nE.c, g:nC.g+nP.g+nE.g};
+  const nC=nutri(COLAZIONE.ing), nSM=nutri(sm.ing), nP=nutri(pr.ing), nSP=nutri(sp.ing);
+  const nE = isFree ? {kcal:0,p:0,c:0,g:0} : nutri(ce.ing);
+  const tot = {kcal:nC.kcal+nSM.kcal+nP.kcal+nSP.kcal+nE.kcal,
+               p:nC.p+nSM.p+nP.p+nSP.p+nE.p,
+               c:nC.c+nSM.c+nP.c+nSP.c+nE.c,
+               g:nC.g+nSM.g+nP.g+nSP.g+nE.g};
 
   let h = '';
 
   if(PREP_DAYS[p.d]){
     const nb = w.bl.find(x=>x.id===PREP_DAYS[p.d]);
-    const nPr = nb.gg.length;
-    const nCe = nb.gg.filter(g=>g!==FREE_DAY).length;
+    const nPr = nb.gg.length, nCe = nb.gg.filter(g=>g!==FREE_DAY).length;
     h += `<div class="cook-note">
       <div class="h">Oggi si cucina — blocco ${nb.id}</div>
       <p>${nPr} porzioni di <b>${R[nb.pranzo].nome}</b> e ${nCe} di <b>${R[nb.cena].nome}</b>. Copri fino a ${GG[nb.gg[nb.gg.length-1]].toLowerCase()}.</p>
     </div>`;
   }
 
-  h += `<div class="bfast">
-    <div class="meal-top"><span class="meal-slot">Colazione</span><span class="meal-kcal">${nC.kcal} kcal</span></div>
-    <h3 style="font-family:var(--display);font-size:17px;font-weight:600;margin-top:6px">${col.nome}</h3>
-    <div class="ing">${Object.entries(col.ing).map(([k,v])=>`${ING[k].n.split(' (')[0].toLowerCase()} ${v}${ING[k].u==='pz'?'':' '+ING[k].u}`).join(' · ')}</div>
-    <div class="bfast-opts">
-      ${w.col.map((c,i)=>`<button class="bopt ${i===bKey?'on':''}" onclick="pickB(${i})">${B[c].nome.split(' ')[0]}</button>`).join('')}
-    </div>
-  </div>`;
-
+  h += simpleCard('Colazione', COLAZIONE, nC);
+  h += snackCard('Spuntino · mattina', sm, nSM, 'sm', w.sm, p.d%3);
   h += mealCard('Pranzo', b.pranzo);
+  h += snackCard('Spuntino · pomeriggio', sp, nSP, 'sp', w.sp, p.d%3);
   h += isFree
     ? `<div class="meal free">
          <div class="meal-top"><span class="meal-slot">Cena · sabato</span><span class="meal-kcal">—</span></div>
          <h3>Cena libera</h3>
-         <div class="ing" style="color:#7B3560;opacity:.85">Mangia quello che vuoi, senza pesare niente. Se ti va, alleggerisci di 10–15 g pane o pasta a pranzo.</div>
+         <div class="ing" style="color:#7B3560;opacity:.85">Mangia quello che vuoi, senza pesare niente.</div>
        </div>`
     : mealCard('Cena', b.cena);
 
@@ -767,18 +815,40 @@ function renderOggi(){
   document.getElementById('v-oggi').innerHTML = h;
 }
 
-function mealCard(slot, key){
-  const r = R[key];
-  return `<button class="meal" onclick="openR('${key}')">
-    <div class="meal-top"><span class="meal-slot">${slot}</span><span class="meal-kcal">${nutri(r.ing).kcal} kcal · ${r.tempo} min</span></div>
-    <h3>${r.nome}</h3>
-    <div class="ing">${ingLine(r)}</div>
-    <span class="go">Come si prepara
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-    </span>
-  </button>`;
+function ingTxt(ing){
+  return Object.entries(ing).map(([k,v]) =>
+    `${ING[k].n.split(' (')[0].split(' /')[0].toLowerCase()} ${v}${ING[k].u==='pz'?'':' '+ING[k].u}`).join(' · ');
 }
-function pickB(i){ const p=pos(); S.bfast[p.abs]=i; Store.set('bfast',S.bfast); renderOggi(); }
+
+function simpleCard(slot, item, n){
+  return `<div class="bfast">
+    <div class="meal-top"><span class="meal-slot">${slot}</span><span class="meal-kcal">${n.kcal} kcal · P ${n.p} g</span></div>
+    <h3 style="font-family:var(--display);font-size:17px;font-weight:600;margin-top:6px">${item.nome}</h3>
+    <div class="ing">${ingTxt(item.ing)}</div>
+  </div>`;
+}
+
+function snackCard(slot, item, n, tipo, opzioni, idx){
+  const src = tipo==='sm' ? SM : SP;
+  return `<div class="bfast">
+    <div class="meal-top"><span class="meal-slot">${slot}</span><span class="meal-kcal">${n.kcal} kcal · P ${n.p} g</span></div>
+    <h3 style="font-family:var(--display);font-size:17px;font-weight:600;margin-top:6px">${item.nome}</h3>
+    <div class="ing">${ingTxt(item.ing)}</div>
+    <div class="bfast-opts">
+      ${opzioni.map((k,i)=>`<button class="bopt ${i===idx?'on':''}" onclick="pickSnack('${tipo}',${i})">${src[k].nome.split(' ')[0]}</button>`).join('')}
+    </div>
+  </div>`;
+}
+
+function pickSnack(tipo, i){
+  const p = pos(), w = WEEKS[p.w];
+  const lista = tipo==='sm' ? w.sm : w.sp;
+  const day = p.d;
+  // ruota la lista della settimana in modo che l'opzione scelta capiti oggi
+  const shift = ((i - (day%3)) % 3 + 3) % 3;
+  if(shift){ for(let n=0;n<shift;n++) lista.push(lista.shift()); }
+  renderOggi();
+}
 
 /* ══════════════════════════════════════════════════════════
    10. VISTA — PIANO
@@ -798,12 +868,13 @@ function renderPiano(){
   h += `<div class="sec-label">I sette giorni</div><div class="card">`;
   for(let d=0; d<7; d++){
     const b = blockOf(w,d), isFree = d===FREE_DAY;
-    const col = B[w.col[d%3]];
     h += `<div class="day-row">
       <div class="dtag ${PREP_DAYS[d]?'cooking':''}">${GG_S[d]}${PREP_DAYS[d]?'<br><span style="font-size:9px">CUCINA</span>':''}</div>
       <div class="day-body">
-        <div class="dline"><i>Col</i><span>${col.nome}</span></div>
+        <div class="dline"><i>Col</i><span>${COLAZIONE.nome}</span></div>
+        <div class="dline"><i>Spunt</i><span>${SM[w.sm[d%3]].nome}</span></div>
         <div class="dline"><i>Pranzo</i><button onclick="openR('${b.pranzo}')">${R[b.pranzo].nome}</button></div>
+        <div class="dline"><i>Merenda</i><span>${SP[w.sp[d%3]].nome}</span></div>
         <div class="dline"><i>Cena</i>${isFree
           ? '<span class="lib">Libera</span>'
           : `<button onclick="openR('${b.cena}')">${R[b.cena].nome}</button>`}</div>
@@ -823,17 +894,18 @@ function renderPiano(){
 
   h += `<div class="sec-label">Su cosa è calcolato</div>
   <div class="card">
-    <div class="kv"><span class="k">Media giornaliera<small>media delle 24 giornate piene del ciclo</small></span><b>~2400 kcal</b></div>
-    <div class="kv"><span class="k">Proteine<small>1,55 g per kg di peso</small></span><b>~150 g</b></div>
-    <div class="kv"><span class="k">Carboidrati</span><b>~280 g</b></div>
-    <div class="kv"><span class="k">Grassi</span><b>~70 g</b></div>
+    <div class="kv"><span class="k">Struttura</span><b>5 pasti</b></div>
+    <div class="kv"><span class="k">Media giornaliera<small>media delle 24 giornate piene del ciclo</small></span><b>~2420 kcal</b></div>
+    <div class="kv"><span class="k">Proteine<small>~1,5 g per kg di peso</small></span><b>~145 g</b></div>
+    <div class="kv"><span class="k">Carboidrati</span><b>~230 g</b></div>
+    <div class="kv"><span class="k">Grassi</span><b>~98 g</b></div>
     <div class="kv"><span class="k">Deficit stimato<small>perdita attesa 0,5–0,7 kg a settimana</small></span><b>~500 kcal</b></div>
   </div>`;
 
   h += `<div class="sec-label">Come tarare il piano</div>
   <div class="card">
     <p class="note"><b>Pesati una o due volte a settimana</b>, sempre nelle stesse condizioni (mattina, a digiuno), e ragiona sulla media, non sul singolo numero.</p>
-    <p class="note">Meno di 0,3 kg a settimana → togli 150–200 kcal al giorno, per esempio 40 g di pasta o 60 g di pane.</p>
+    <p class="note">Meno di 0,3 kg a settimana → togli 150–200 kcal al giorno: 20 g di frutta secca, oppure 30 g di pasta.</p>
     <p class="note">Più di 1 kg a settimana → aggiungi 150–200 kcal. Scendere troppo in fretta significa perdere anche massa muscolare.</p>
     <p class="note">Tra 0,4 e 0,8 kg a settimana → il piano sta funzionando, non toccare niente.</p>
     <p class="note" style="color:var(--ink-3);margin-top:14px">Calorie e macro sono calcolati dagli ingredienti su tabelle nutrizionali standard (CREA/USDA). I prodotti che compri davvero possono discostarsi del 10–15%: leggi le etichette se vuoi più precisione. Questo piano non sostituisce il parere di un medico o di un nutrizionista.</p>
@@ -849,11 +921,12 @@ function setStart(v){ S.start=v; Store.set('start',v); drawHeader(); renderOggi(
    ══════════════════════════════════════════════════════════ */
 function renderRicette(){
   const groups = {
-    'Piatti di pasta e riso': ['pasta_zuc_uovo','pasta_tonno','pasta_zuc_filante','pasta_pesto','riso_tonno'],
-    'Carne':                  ['tacchino_spinaci','tacchino_spinaci_patate','tacchino_zuc_forno','tacchino_funghi'],
-    'Pesce':                  ['nasello_patate','nasello_spinaci'],
-    'Uova':                   ['frittata_formaggio','frittata_spinaci'],
-    'Legumi':                 ['ceci_zucchine','lenticchie_zucchine']
+    'Pasta fredda e riso': ['pf_tonno','pf_piselli','pf_uova','pf_cotto','pf_pesto','riso_tonno'],
+    'Pasta calda':         ['pasta_tonno','pasta_zuc_uovo'],
+    'Legumi':              ['lenticchie','fagioli'],
+    'Tacchino':            ['tacc_zuc_pat','tacc_spi_car','straccetti'],
+    'Pesce':               ['nasello'],
+    'Uova e piatti veloci':['frittata_provola','frittata_spinaci','piatto_freddo']
   };
   let h = '';
   for(const g in groups){
@@ -866,12 +939,14 @@ function renderRicette(){
   }
   h += `<div class="sec-label">Regole valide sempre</div>
   <div class="card">
-    <p class="note"><b>Olio EVO:</b> 10 g a pasto, un cucchiaio raso. È già contato nelle calorie di ogni piatto.</p>
-    <p class="note"><b>Verdure libere:</b> insalata e zucchine puoi aumentarle senza pesarle. Riempiono e pesano pochissimo sul totale.</p>
-    <p class="note"><b>Fame fuori pasto:</b> un frutto oppure 30 g di grana. Non più di una o due volte a settimana.</p>
-    <p class="note"><b>Giorni di nuoto:</b> puoi aggiungere 20–30 g di pane o 50 g di pasta a pranzo per reggere l'allenamento.</p>
-    <p class="note"><b>Sale:</b> vacci piano e usa spezie ed erbe per insaporire.</p>
+    <p class="note"><b>Friggitrice ad aria:</b> zucchine 180 °C per 13–15 min, patate 190 °C per 18–20 min, carote 180 °C per 15–18 min, nasello 180 °C per 10–12 min. Scuoti il cestello a metà. I tempi vanno tarati sul tuo modello nei primi giri.</p>
+    <p class="note"><b>Uova:</b> mai sode. Sempre saltate in padella a fuoco medio-basso, tolte quando sono ancora leggermente umide.</p>
+    <p class="note"><b>Spuntini:</b> quello del mattino è ridotto, quello del pomeriggio più sostanzioso. Evita di farli entrambi con sola frutta secca o frutta: resteresti troppo basso di proteine.</p>
+    <p class="note"><b>Olio EVO e frutta secca:</b> già conteggiati nei piatti, pesali. Sono la parte che tiene basse pasta e pane.</p>
+    <p class="note"><b>Verdure libere:</b> le zucchine puoi aumentarle senza pesarle.</p>
+    <p class="note"><b>Giorni di nuoto:</b> puoi aggiungere 30 g di pasta o 40 g di pane a pranzo.</p>
   </div>`;
+
   document.getElementById('v-ricette').innerHTML = h;
 }
 

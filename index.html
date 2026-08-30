@@ -239,7 +239,62 @@ input{font-family:inherit;font-size:inherit;color:inherit}
   color:var(--ink-3);height:var(--nav-h)}
 .nav button.on{color:var(--basil)}
 .nav svg{width:21px;height:21px}
-.nav span{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em}
+.nav span{font-family:var(--mono);font-size:9px;letter-spacing:.03em}
+
+.w-in{display:flex;gap:8px;align-items:stretch}
+.w-in input{flex:1;min-width:0;padding:12px;border:1px solid var(--line);border-radius:11px;
+  background:var(--card);font-family:var(--mono);font-size:15px}
+.w-in input[type=date]{flex:1.1;font-size:13px}
+.w-in input:focus{outline:2px solid var(--basil);outline-offset:-1px;border-color:var(--basil)}
+.w-add{background:var(--basil);color:#fff;border-radius:11px;padding:0 18px;font-weight:600;font-size:14px}
+.w-add:active{background:#255440}
+
+.w-big{display:flex;gap:10px;margin:10px 0 0}
+.w-stat{flex:1;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:13px 14px}
+.w-stat .lbl{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
+.w-stat .val{font-family:var(--display);font-size:23px;font-weight:700;margin-top:4px;line-height:1}
+.w-stat .sub{font-size:11.5px;color:var(--ink-3);margin-top:3px}
+.dn{color:var(--basil)} .up{color:#C4562F}
+
+.chart{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 12px 8px}
+.chart svg{width:100%;height:auto;display:block;overflow:visible}
+.chart .gl{stroke:var(--line);stroke-width:1}
+.chart .tgt{stroke:var(--saffron);stroke-width:1.5;stroke-dasharray:5 4}
+.chart .ln{fill:none;stroke:var(--basil);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
+.chart .ar{fill:var(--basil);opacity:.07}
+.chart .pt{fill:var(--card);stroke:var(--basil);stroke-width:2}
+.chart .lastpt{fill:var(--basil);stroke:var(--card);stroke-width:2.5}
+.chart text{font-family:var(--mono);font-size:8.5px;fill:var(--ink-3)}
+
+.wk-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+.wk-row:last-child{border-bottom:0}
+.wk-row .per{flex:1;font-size:13.5px}
+.wk-row .per small{display:block;color:var(--ink-3);font-size:11px;font-family:var(--mono);margin-top:2px}
+.wk-row .med{font-family:var(--mono);font-size:14px;font-weight:700}
+.wk-row .dlt{font-family:var(--mono);font-size:12px;width:56px;text-align:right}
+
+.p-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.p-row:last-child{border-bottom:0}
+.p-row .dt{flex:1;font-family:var(--mono);font-size:12.5px;color:var(--ink-2)}
+.p-row .kg{font-family:var(--mono);font-size:14px;font-weight:700}
+.p-row .x{color:var(--ink-3);padding:4px 8px;font-size:16px;line-height:1}
+
+.tdee{background:var(--basil-soft);border-radius:var(--r);padding:16px}
+.tdee .lbl{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--basil)}
+.tdee .val{font-family:var(--display);font-size:27px;font-weight:700;color:#1E4634;margin-top:5px;line-height:1}
+.tdee p{margin:8px 0 0;font-size:13px;color:#255440;line-height:1.5}
+
+.exp{width:100%;padding:13px;border-radius:11px;background:var(--ink);color:#F2F5F0;
+  font-size:14px;font-weight:600;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px}
+.exp:active{opacity:.85}
+.expbox{width:100%;margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:11px;
+  background:var(--card);font-family:var(--mono);font-size:11.5px;line-height:1.5;min-height:150px;resize:vertical}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--nav-h) + 22px + env(safe-area-inset-bottom));
+  background:var(--ink);color:#F2F5F0;padding:11px 20px;border-radius:24px;font-size:13.5px;font-weight:600;
+  z-index:60;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.on{opacity:1}
+.empty{text-align:center;padding:30px 16px;color:var(--ink-3);font-size:14px}
+.empty b{display:block;font-family:var(--display);font-size:16px;color:var(--ink-2);margin-bottom:5px}
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -262,6 +317,7 @@ input{font-family:inherit;font-size:inherit;color:inherit}
   <section class="view" id="v-piano"></section>
   <section class="view" id="v-ricette"></section>
   <section class="view" id="v-dispensa"></section>
+  <section class="view" id="v-peso"></section>
 </main>
 
 <div class="sheet" id="sheet">
@@ -274,6 +330,7 @@ input{font-family:inherit;font-size:inherit;color:inherit}
   <div class="sheet-body" id="sheetBody"></div>
 </div>
 
+<div class="toast" id="toast"></div>
 <nav class="nav" id="nav"></nav>
 
 <script>
@@ -344,7 +401,7 @@ const R = {
 
 pf_tonno:{
   nome:'Pasta fredda con tonno, zucchine e provola', tempo:20, porz:3, freddo:true,
-  ing:{pasta:100, zucchine:150, carote:80, tonno:145, filante:50, olio:12},
+  ing:{pasta:85, zucchine:150, carote:70, tonno:130, filante:40, olio:10},
   libere:['Basilico','Limone','Sale, pepe'],
   passi:[
     {t:'Cuoci la pasta', d:'Formato corto che regge il freddo: fusilli, farfalle o penne. Acqua salata.'},
@@ -360,7 +417,7 @@ pf_tonno:{
 
 pf_piselli:{
   nome:'Pasta fredda con tonno e piselli', tempo:20, porz:3, freddo:true,
-  ing:{pasta:100, tonno:130, piselli:100, carote:80, filante:42, olio:11},
+  ing:{pasta:85, tonno:120, piselli:90, carote:70, filante:32, olio:10},
   libere:['Prezzemolo','Limone','Sale, pepe'],
   passi:[
     {t:'Cuoci la pasta', d:'Formato corto in acqua salata, scolala un minuto prima.'},
@@ -375,7 +432,7 @@ pf_piselli:{
 
 pf_uova:{
   nome:'Pasta fredda con uova saltate e tonno', tempo:25, porz:3, freddo:true,
-  ing:{pasta:100, uova:2, tonno:110, zucchine:150, carote:80, grana:22, olio:11},
+  ing:{pasta:80, uova:2, tonno:80, zucchine:150, carote:70, grana:18, olio:9},
   libere:['Prezzemolo','Limone','Sale, pepe'],
   passi:[
     {t:'Cuoci la pasta', d:'Formato corto, scolala un minuto prima e raffreddala sotto acqua corrente.'},
@@ -390,7 +447,7 @@ pf_uova:{
 
 pf_cotto:{
   nome:'Pasta fredda con cotto e mozzarella', tempo:20, porz:3, freddo:true,
-  ing:{pasta:100, cotto:75, mozzarella:70, zucchine:150, piselli:80, olio:11},
+  ing:{pasta:88, cotto:82, mozzarella:50, zucchine:150, piselli:70, olio:9},
   libere:['Basilico','Sale, pepe'],
   passi:[
     {t:'Cuoci la pasta', d:'Formato corto, scolala un minuto prima e raffredda sotto acqua corrente.'},
@@ -405,7 +462,7 @@ pf_cotto:{
 
 pf_pesto:{
   nome:'Pasta fredda al pesto con provola e mandorle', tempo:20, porz:3, freddo:true,
-  ing:{pasta:105, pesto:28, zucchine:200, filante:60, mandorle:14},
+  ing:{pasta:95, pesto:22, zucchine:180, filante:68, mandorle:10},
   libere:['Sale','Basilico'],
   passi:[
     {t:'Cuoci la pasta', d:'Formato corto in acqua salata. Tieni da parte un mestolo di acqua di cottura.'},
@@ -421,7 +478,7 @@ pf_pesto:{
 
 riso_tonno:{
   nome:'Riso freddo con tonno, carote e piselli', tempo:20, porz:3, freddo:true,
-  ing:{riso:100, tonno:150, carote:80, piselli:80, grana:22, olio:13, mandorle:8},
+  ing:{riso:85, tonno:130, carote:70, piselli:70, grana:18, olio:10, mandorle:6},
   libere:['Prezzemolo','Limone','Sale, pepe'],
   passi:[
     {t:'Cuoci il riso', d:'In acqua salata, secondo i tempi della confezione.'},
@@ -436,7 +493,7 @@ riso_tonno:{
 
 pasta_tonno:{
   nome:'Pasta al pomodoro e tonno', tempo:20, porz:2,
-  ing:{pasta:105, passata:150, tonno:150, grana:28, olio:14},
+  ing:{pasta:95, passata:130, tonno:130, grana:22, olio:11},
   libere:['Basilico o origano','Sale'],
   passi:[
     {t:'Acqua sul fuoco', d:'Salala quando bolle.'},
@@ -450,7 +507,7 @@ pasta_tonno:{
 
 pasta_zuc_uovo:{
   nome:'Pasta con zucchine e uovo', tempo:20, porz:3,
-  ing:{pasta_int:100, zucchine:200, uova:2, grana:30, olio:14, mandorle:10},
+  ing:{pasta_int:85, zucchine:180, uova:2, grana:35, olio:10, mandorle:8},
   libere:['Sale, pepe nero','Basilico'],
   passi:[
     {t:'Metti su l\'acqua', d:'Un litro ogni 100 g di pasta. Sala quando bolle.'},
@@ -466,7 +523,7 @@ pasta_zuc_uovo:{
 
 lenticchie:{
   nome:'Insalata di lenticchie con uovo saltato', tempo:20, porz:2, freddo:true,
-  ing:{lenticchie:300, zucchine:150, uova:1, grana:30, pane:50, olio:16},
+  ing:{lenticchie:260, zucchine:130, uova:1, grana:33, pane:45, olio:13},
   libere:['Prezzemolo','Limone','Sale, pepe'],
   passi:[
     {t:'Sciacqua le lenticchie', d:'Sotto acqua corrente per 30 secondi. Il liquido di governo è molto salato e gonfia.'},
@@ -480,7 +537,7 @@ lenticchie:{
 
 fagioli:{
   nome:'Insalata di fagioli con uovo saltato', tempo:20, porz:2, freddo:true,
-  ing:{fagioli:320, zucchine:150, uova:1, grana:30, pane:55, olio:17},
+  ing:{fagioli:285, zucchine:130, uova:1, grana:33, pane:48, olio:13},
   libere:['Prezzemolo o salvia','Limone','Sale, pepe'],
   passi:[
     {t:'Sciacqua i fagioli', d:'Sotto acqua corrente, 30 secondi, con delicatezza: i cannellini si rompono facilmente.'},
@@ -494,7 +551,7 @@ fagioli:{
 
 tacc_zuc_pat:{
   nome:'Tacchino con zucchine e patate in friggitrice', tempo:30, porz:3,
-  ing:{tacchino:210, zucchine:200, patate:180, pane:60, grana:20, olio:18},
+  ing:{tacchino:172, zucchine:180, patate:170, pane:55, grana:20, olio:15},
   libere:['Rosmarino','Limone','Sale, pepe'],
   passi:[
     {t:'Patate in friggitrice', d:'A cubetti da 2 cm, un terzo dell\'olio, sale e rosmarino. 190 °C per 18–20 minuti, scuotendo il cestello a metà.'},
@@ -509,7 +566,7 @@ tacc_zuc_pat:{
 
 tacc_spi_car:{
   nome:'Tacchino con spinaci e carote', tempo:25, porz:3,
-  ing:{tacchino:210, spinaci:250, carote:150, pane:70, grana:20, olio:20},
+  ing:{tacchino:172, spinaci:200, carote:130, pane:68, grana:22, olio:17},
   libere:['Rosmarino','Limone','Sale, pepe'],
   passi:[
     {t:'Carote in friggitrice', d:'A bastoncini, un terzo dell\'olio, sale e rosmarino. 180 °C per 15–18 minuti.'},
@@ -524,7 +581,7 @@ tacc_spi_car:{
 
 straccetti:{
   nome:'Straccetti di tacchino con zucchine', tempo:25, porz:3,
-  ing:{tacchino:210, zucchine:250, patate:170, pane:60, grana:22, olio:19},
+  ing:{tacchino:172, zucchine:200, patate:150, pane:58, grana:20, olio:15},
   libere:['Prezzemolo','Limone','Sale, pepe'],
   passi:[
     {t:'Patate in friggitrice', d:'A cubetti, un terzo dell\'olio, sale e rosmarino. 190 °C per 18–20 minuti.'},
@@ -539,7 +596,7 @@ straccetti:{
 
 nasello:{
   nome:'Nasello in friggitrice con patate e carote', tempo:35, porz:2,
-  ing:{nasello:240, patate:220, carote:120, pane:55, grana:20, olio:20},
+  ing:{nasello:210, patate:195, carote:100, pane:55, grana:18, olio:15},
   libere:['Prezzemolo','Rosmarino','Limone','Sale'],
   passi:[
     {t:'Scongela in anticipo', d:'Se il pesce è surgelato: in frigo la sera prima, oppure sotto acqua fredda corrente ancora nella busta. Mai acqua calda.'},
@@ -555,7 +612,7 @@ nasello:{
 
 frittata_provola:{
   nome:'Frittata con provola e zucchine', tempo:20, porz:1,
-  ing:{uova:3, filante:55, zucchine:200, pane:75, grana:15, olio:14},
+  ing:{uova:3, filante:54, zucchine:180, pane:55, grana:14, olio:10},
   libere:['Sale, pepe'],
   passi:[
     {t:'Zucchine in friggitrice', d:'A rondelle con un filo d\'olio e sale, 180 °C per 14 minuti. Falle intiepidire.'},
@@ -570,7 +627,7 @@ frittata_provola:{
 
 frittata_spinaci:{
   nome:'Frittata con spinaci e carote', tempo:25, porz:1,
-  ing:{uova:3, spinaci:200, filante:48, carote:120, pane:70, grana:18, olio:13},
+  ing:{uova:3, spinaci:180, filante:44, carote:100, pane:50, grana:16, olio:9},
   libere:['Sale, pepe','Noce moscata'],
   passi:[
     {t:'Carote in friggitrice', d:'A bastoncini con filo d\'olio e sale, 180 °C per 15 minuti. Sono il contorno, non vanno nella frittata.'},
@@ -585,7 +642,7 @@ frittata_spinaci:{
 
 piatto_freddo:{
   nome:'Piatto freddo di affettati e stracchino', tempo:10, porz:1, freddo:true,
-  ing:{cotto:85, speck:35, stracchino:60, zucchine:150, carote:100, pane:75, olio:10},
+  ing:{cotto:98, speck:28, stracchino:50, zucchine:130, carote:90, pane:70, olio:9},
   libere:['Limone','Sale, pepe'],
   passi:[
     {t:'Zucchine e carote in friggitrice', d:'A rondelle e bastoncini, filo d\'olio e sale. 180 °C per 14–15 minuti. Puoi anche prepararle il giorno prima e tenerle in frigo.'},
@@ -601,25 +658,25 @@ piatto_freddo:{
    3. COLAZIONI
    ══════════════════════════════════════════════════════════ */
 /* colazione: sempre la stessa */
-const COLAZIONE = {nome:'Latte e biscotti', ing:{latte:300, biscotti:52, frutta:1}};
+const COLAZIONE = {nome:'Latte e biscotti', ing:{latte:300, biscotti:45, frutta:1}};
 
 /* spuntino di meta' mattina — ridotto, zero preparazione */
 const SM = {
-  grana:      {nome:'Grana',             ing:{grana:35}},
-  mandorle:   {nome:'Mandorle',          ing:{mandorle:25}},
-  noci:       {nome:'Noci',              ing:{noci:23}},
-  grana_mand: {nome:'Grana e mandorle',  ing:{grana:20, mandorle:15}}
+  grana:      {nome:'Grana',             ing:{grana:33}},
+  mandorle:   {nome:'Mandorle',          ing:{mandorle:22}},
+  noci:       {nome:'Noci',              ing:{noci:20}},
+  grana_mand: {nome:'Grana e mandorle',  ing:{grana:17, mandorle:12}}
 };
 
 /* spuntino del pomeriggio — piu' sostanzioso */
 const SP = {
-  fesa:       {nome:'Fesa di tacchino e pane',   ing:{fesa:90, pane:25}},
-  cotto_pane: {nome:'Prosciutto cotto e pane',   ing:{cotto:60, pane:30}},
-  mozzarella: {nome:'Mozzarella e pane',         ing:{mozzarella:60, pane:20}},
-  speck_pane: {nome:'Speck e pane',              ing:{speck:32, pane:35}},
-  stracchino: {nome:'Stracchino e pane',         ing:{stracchino:42, pane:28}},
-  phila_pane: {nome:'Philadelphia e pane',       ing:{philadelphia:35, pane:38}},
-  frutto_gr:  {nome:'Frutto e grana',            ing:{frutta:1, grana:20}}
+  fesa:       {nome:'Fesa di tacchino e pane',   ing:{fesa:90, pane:20}},
+  cotto_pane: {nome:'Prosciutto cotto e pane',   ing:{cotto:68, pane:25}},
+  mozzarella: {nome:'Mozzarella e pane',         ing:{mozzarella:48, pane:18}},
+  speck_pane: {nome:'Speck e pane',              ing:{speck:26, pane:28}},
+  stracchino: {nome:'Stracchino e pane',         ing:{stracchino:36, pane:24}},
+  phila_pane: {nome:'Philadelphia e pane',       ing:{philadelphia:30, pane:30}},
+  frutto_gr:  {nome:'Frutto e grana',            ing:{frutta:1, grana:16}}
 };
 
 /* ══════════════════════════════════════════════════════════
@@ -694,7 +751,7 @@ const Store = {
 /* ══════════════════════════════════════════════════════════
    6. STATO
    ══════════════════════════════════════════════════════════ */
-let S = { start:null, pantry:{}, scope:'cur', planWeek:0, bfast:{} };
+let S = { start:null, pantry:{}, scope:'cur', planWeek:0, bfast:{}, pesi:[] };
 
 function mondayOf(d){
   const x = new Date(d); x.setHours(0,0,0,0);
@@ -947,11 +1004,22 @@ function renderPiano(){
   h += `<div class="sec-label">Su cosa è calcolato</div>
   <div class="card">
     <div class="kv"><span class="k">Struttura</span><b>5 pasti</b></div>
-    <div class="kv"><span class="k">Media giornaliera<small>media delle 24 giornate piene del ciclo</small></span><b>~2420 kcal</b></div>
-    <div class="kv"><span class="k">Proteine<small>~1,5 g per kg di peso</small></span><b>~145 g</b></div>
-    <div class="kv"><span class="k">Carboidrati</span><b>~230 g</b></div>
-    <div class="kv"><span class="k">Grassi</span><b>~98 g</b></div>
-    <div class="kv"><span class="k">Deficit stimato<small>perdita attesa 0,5–0,7 kg a settimana</small></span><b>~500 kcal</b></div>
+    <div class="kv"><span class="k">Media giornaliera<small>media delle 24 giornate piene del ciclo</small></span><b>~2155 kcal</b></div>
+    <div class="kv"><span class="k">Proteine<small>1,36 g per kg di peso</small></span><b>~131 g</b></div>
+    <div class="kv"><span class="k">Carboidrati</span><b>~205 g</b></div>
+    <div class="kv"><span class="k">Grassi</span><b>~86 g</b></div>
+    <div class="kv"><span class="k">Fabbisogno stimato<small>stima, non misura: da verificare sulla bilancia</small></span><b>2700–2850</b></div>
+  </div>`;
+
+  h += `<div class="sec-label">Misura il tuo fabbisogno vero</div>
+  <div class="card">
+    <p class="note">Il valore di 2700–2850 kcal è una <b>stima</b> ricavata da una formula, non una misura. L'unico modo per sapere il tuo fabbisogno reale è la bilancia.</p>
+    <p class="note">Pesati ogni mattina a digiuno per 14 giorni. Confronta la media della prima settimana con quella della seconda.</p>
+    <p class="note"><b>−0,5 kg</b> in 7 giorni → il tuo fabbisogno è circa 2700 kcal<br>
+    <b>−0,25 kg</b> → circa 2430 kcal<br>
+    <b>peso invariato</b> → il tuo fabbisogno è ~2155, cioè quanto stai mangiando<br>
+    <b>+0,3 kg</b> → sei sopra il mantenimento, va abbassato</p>
+    <p class="note">Con quel numero in mano il piano si taratura sul dato reale invece che su una formula.</p>
   </div>`;
 
   h += `<div class="sec-label">Come tarare il piano</div>
@@ -1124,13 +1192,237 @@ function setPan(k,v){
 function clearPan(){ S.pantry={}; Store.set('pantry',{}); renderDispensa(); }
 
 /* ══════════════════════════════════════════════════════════
+   13-bis. PESO
+   ══════════════════════════════════════════════════════════ */
+const OBIETTIVO = 85;
+
+/* media calorica reale del piano, calcolata dalle ricette */
+function mediaPiano(){
+  const nC = nutri(COLAZIONE.ing); let tot=0, n=0;
+  WEEKS.forEach(w=>{
+    for(let d=0; d<7; d++){
+      if(d===FREE_DAY) continue;
+      const a=nutri(SM[w.sm[d%3]].ing), s2=nutri(SP[w.sp[d%3]].ing);
+      const pr=nutri(R[pranzoDi(w,d).pranzo].ing), ce=nutri(R[cenaDi(w,d).cena].ing);
+      tot += nC.kcal+a.kcal+pr.kcal+s2.kcal+ce.kcal; n++;
+    }});
+  return Math.round(tot/n);
+}
+
+const dt2it = iso => { const [y,m,g]=iso.split('-'); return `${g}/${m}`; };
+const kg = v => v.toFixed(1).replace('.',',');
+
+/* raggruppa le pesate per settimana (lunedì–domenica) */
+function settimane(){
+  const out = {};
+  S.pesi.forEach(x=>{
+    const d = new Date(x.d+'T00:00:00');
+    const lun = new Date(d); lun.setDate(d.getDate() - ((d.getDay()+6)%7));
+    const k = iso(lun);
+    (out[k] = out[k] || []).push(x.v);
+  });
+  return Object.keys(out).sort().map(k=>{
+    const v = out[k];
+    return {inizio:k, n:v.length, media: v.reduce((a,b)=>a+b,0)/v.length};
+  });
+}
+
+/* pendenza in kg/giorno con una regressione lineare sui punti */
+function trend(){
+  const p = S.pesi;
+  if(p.length < 4) return null;
+  const t0 = new Date(p[0].d+'T00:00:00').getTime();
+  const xs = p.map(x=>(new Date(x.d+'T00:00:00').getTime()-t0)/86400000);
+  const giorni = xs[xs.length-1];
+  if(giorni < 13) return null;                       // servono almeno 2 settimane
+  const ys = p.map(x=>x.v);
+  const mx = xs.reduce((a,b)=>a+b,0)/xs.length, my = ys.reduce((a,b)=>a+b,0)/ys.length;
+  let num=0, den=0;
+  xs.forEach((x,i)=>{ num += (x-mx)*(ys[i]-my); den += (x-mx)*(x-mx); });
+  if(!den) return null;
+  return {slope: num/den, giorni: Math.round(giorni), n: p.length};
+}
+
+function graficoSVG(){
+  const p = S.pesi;
+  if(p.length < 2) return '';
+  const W=320, H=140, ml=30, mr=8, mt=10, mb=18;
+  const t0 = new Date(p[0].d+'T00:00:00').getTime();
+  const xs = p.map(x=>(new Date(x.d+'T00:00:00').getTime()-t0)/86400000);
+  const ys = p.map(x=>x.v);
+  const span = Math.max(xs[xs.length-1], 1);
+  let lo = Math.min(...ys), hi = Math.max(...ys);
+  if(OBIETTIVO >= lo-3 && OBIETTIVO <= hi+3){ lo = Math.min(lo, OBIETTIVO); hi = Math.max(hi, OBIETTIVO); }
+  const pad = Math.max((hi-lo)*0.18, 0.6); lo -= pad; hi += pad;
+  const X = v => ml + (v/span)*(W-ml-mr);
+  const Y = v => mt + (1-(v-lo)/(hi-lo))*(H-mt-mb);
+  const pts = xs.map((x,i)=>[X(x), Y(ys[i])]);
+  const linea = pts.map((q,i)=>(i?'L':'M')+q[0].toFixed(1)+' '+q[1].toFixed(1)).join(' ');
+  const area = linea + ` L${pts[pts.length-1][0].toFixed(1)} ${H-mb} L${pts[0][0].toFixed(1)} ${H-mb} Z`;
+  let g = '';
+  [0,0.5,1].forEach(f=>{ const v=lo+(hi-lo)*f, y=Y(v);
+    g += `<line class="gl" x1="${ml}" y1="${y.toFixed(1)}" x2="${W-mr}" y2="${y.toFixed(1)}"/>`;
+    g += `<text x="${ml-5}" y="${(y+3).toFixed(1)}" text-anchor="end">${v.toFixed(1)}</text>`; });
+  if(OBIETTIVO>lo && OBIETTIVO<hi){
+    const y=Y(OBIETTIVO);
+    g += `<line class="tgt" x1="${ml}" y1="${y.toFixed(1)}" x2="${W-mr}" y2="${y.toFixed(1)}"/>`;
+    g += `<text x="${W-mr}" y="${(y-5).toFixed(1)}" text-anchor="end" fill="#E0A32E">obiettivo ${OBIETTIVO}</text>`;
+  }
+  g += `<path class="ar" d="${area}"/><path class="ln" d="${linea}"/>`;
+  const salta = Math.ceil(pts.length/22);
+  pts.forEach((q,i)=>{ if(i%salta && i!==pts.length-1) return;
+    g += `<circle class="${i===pts.length-1?'lastpt':'pt'}" cx="${q[0].toFixed(1)}" cy="${q[1].toFixed(1)}" r="${i===pts.length-1?4:3}"/>`; });
+  g += `<text x="${ml}" y="${H-5}">${dt2it(p[0].d)}</text>`;
+  g += `<text x="${W-mr}" y="${H-5}" text-anchor="end">${dt2it(p[p.length-1].d)}</text>`;
+  return `<div class="chart"><svg viewBox="0 0 ${W} ${H}">${g}</svg></div>`;
+}
+
+function testoExport(){
+  const p = S.pesi;
+  if(!p.length) return 'Nessuna pesata registrata.';
+  let t = `PESO — Piano Alimentare\nPiano seguito: ~${mediaPiano()} kcal/giorno\n\nPESATE (${p.length})\n`;
+  p.forEach(x=> t += `${x.d}  ${kg(x.v)} kg\n`);
+  const w = settimane();
+  if(w.length){
+    t += `\nMEDIE SETTIMANALI\n`;
+    w.forEach((x,i)=>{
+      const d = i ? x.media - w[i-1].media : null;
+      t += `Sett. dal ${x.inizio}: ${kg(x.media)} kg (${x.n} pesate)` + (d!==null ? `  ${d>=0?'+':''}${kg(d)}` : '') + `\n`;
+    });
+  }
+  const tr = trend();
+  if(tr){
+    const sett = tr.slope*7, stima = Math.round(mediaPiano() - tr.slope*7700);
+    t += `\nANDAMENTO\nVariazione: ${sett>=0?'+':''}${kg(sett)} kg a settimana su ${tr.giorni} giorni\n`;
+    t += `Fabbisogno stimato dal trend: ~${stima} kcal/giorno\n`;
+  } else {
+    t += `\nANDAMENTO\nServono almeno 4 pesate su 14 giorni per stimare il fabbisogno.\n`;
+  }
+  return t;
+}
+
+function renderPeso(){
+  const p = S.pesi, ultimo = p.length ? p[p.length-1] : null;
+  const primo = p.length ? p[0] : null;
+  let h = `<div class="sec-label">Registra una pesata</div>
+    <div class="w-in">
+      <input type="date" id="pData" value="${iso(new Date())}" max="${iso(new Date())}">
+      <input type="number" id="pKg" inputmode="decimal" step="0.1" min="30" max="300" placeholder="kg">
+      <button class="w-add" onclick="addPeso()">Salva</button>
+    </div>
+    <p class="note" style="margin-top:9px;color:var(--ink-3)">Pesati al mattino, a digiuno, dopo il bagno. Il singolo numero oscilla anche di un chilo per acqua e sale: conta la media della settimana.</p>`;
+
+  if(!p.length){
+    h += `<div class="card" style="margin-top:16px"><div class="empty"><b>Nessuna pesata</b>Registra il primo peso per iniziare a vedere l'andamento.</div></div>`;
+    document.getElementById('v-peso').innerHTML = h;
+    return;
+  }
+
+  const diff = p.length>1 ? ultimo.v - primo.v : 0;
+  h += `<div class="w-big">
+    <div class="w-stat"><div class="lbl">Ultimo</div><div class="val">${kg(ultimo.v)}</div><div class="sub">${dt2it(ultimo.d)}</div></div>
+    <div class="w-stat"><div class="lbl">Dall'inizio</div><div class="val ${diff<0?'dn':(diff>0?'up':'')}">${diff>0?'+':''}${kg(diff)}</div><div class="sub">${p.length} pesate</div></div>
+    <div class="w-stat"><div class="lbl">All'obiettivo</div><div class="val">${kg(Math.max(0, ultimo.v-OBIETTIVO))}</div><div class="sub">restano</div></div>
+  </div>`;
+
+  if(p.length>1){ h += `<div class="sec-label">Andamento</div>` + graficoSVG(); }
+
+  const tr = trend();
+  h += `<div class="sec-label">Il tuo fabbisogno reale</div>`;
+  if(tr){
+    const sett = tr.slope*7, stima = Math.round(mediaPiano() - tr.slope*7700);
+    const ok = sett <= -0.35 && sett >= -0.9;
+    h += `<div class="tdee">
+      <div class="lbl">Stimato dal tuo andamento</div>
+      <div class="val">~${stima} kcal</div>
+      <p>Stai facendo <b>${sett>=0?'+':''}${kg(sett)} kg a settimana</b> su ${tr.giorni} giorni, mangiando circa ${mediaPiano()} kcal.
+      ${ok ? 'Il ritmo è quello giusto, non cambiare niente.'
+           : (sett > -0.35 ? (sett>=0 ? 'Non stai perdendo peso: il piano va abbassato di 200 kcal.' : 'Stai scendendo lentamente: valuta di togliere 150 kcal.')
+                           : 'Stai scendendo in fretta: aggiungi 150–200 kcal per non perdere massa muscolare.')}</p>
+    </div>`;
+  } else {
+    const mancano = Math.max(0, 4 - p.length);
+    h += `<div class="card"><p class="note">Servono almeno 4 pesate distribuite su 14 giorni.
+      ${mancano ? `Ne mancano ancora ${mancano}.` : 'Continua a pesarti: il periodo non copre ancora due settimane.'}
+      Poi qui comparirà la stima del tuo fabbisogno reale, calcolata dal peso e non da una formula.</p></div>`;
+  }
+
+  const w = settimane();
+  if(w.length>1){
+    h += `<div class="sec-label">Medie settimanali</div><div class="card">`;
+    w.forEach((x,i)=>{
+      const d = i ? x.media - w[i-1].media : null;
+      h += `<div class="wk-row">
+        <div class="per">Settimana dal ${dt2it(x.inizio)}<small>${x.n} pesat${x.n===1?'a':'e'}</small></div>
+        <div class="med">${kg(x.media)}</div>
+        <div class="dlt ${d===null?'':(d<0?'dn':(d>0?'up':''))}">${d===null?'—':(d>0?'+':'')+kg(d)}</div>
+      </div>`;
+    });
+    h += `</div>`;
+  }
+
+  h += `<div class="sec-label">Storico</div><div class="card">`;
+  [...p].reverse().forEach(x=>{
+    h += `<div class="p-row"><span class="dt">${x.d.split('-').reverse().join('/')}</span>
+      <span class="kg">${kg(x.v)} kg</span>
+      <button class="x" onclick="delPeso('${x.d}')" aria-label="elimina">×</button></div>`;
+  });
+  h += `</div>`;
+
+  h += `<div class="sec-label">Esporta</div>
+    <button class="exp" onclick="copiaPeso()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+      Copia tutto negli appunti
+    </button>
+    <textarea class="expbox" id="expBox" readonly onclick="this.select()">${testoExport().replace(/</g,'&lt;')}</textarea>
+    <p class="note" style="color:var(--ink-3);margin-top:8px">Se il pulsante non funziona, tocca il riquadro qui sopra per selezionare tutto e copia a mano.</p>`;
+
+  document.getElementById('v-peso').innerHTML = h;
+}
+
+function addPeso(){
+  const d = document.getElementById('pData').value;
+  const v = parseFloat(String(document.getElementById('pKg').value).replace(',','.'));
+  if(!d || isNaN(v) || v<30 || v>300){ toast('Inserisci un peso valido'); return; }
+  S.pesi = S.pesi.filter(x=>x.d!==d);                 // una pesata per giorno
+  S.pesi.push({d, v:Math.round(v*10)/10});
+  S.pesi.sort((a,b)=>a.d<b.d?-1:1);
+  Store.set('pesi', S.pesi);
+  document.getElementById('pKg').value='';
+  renderPeso(); toast('Pesata salvata');
+}
+function delPeso(d){
+  S.pesi = S.pesi.filter(x=>x.d!==d);
+  Store.set('pesi', S.pesi); renderPeso(); toast('Pesata eliminata');
+}
+async function copiaPeso(){
+  const t = testoExport();
+  try{
+    await navigator.clipboard.writeText(t);
+    toast('Copiato negli appunti');
+  }catch(e){
+    const box = document.getElementById('expBox');
+    box.focus(); box.select();
+    try{ document.execCommand('copy'); toast('Copiato negli appunti'); }
+    catch(_){ toast('Seleziona il testo e copia a mano'); }
+  }
+}
+let tTimer;
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('on');
+  clearTimeout(tTimer); tTimer = setTimeout(()=>el.classList.remove('on'), 1900);
+}
+
+/* ══════════════════════════════════════════════════════════
    14. NAVIGAZIONE
    ══════════════════════════════════════════════════════════ */
 const TABS = [
   {id:'oggi',     l:'OGGI',     p:'M12 2v3M12 19v3M2 12h3M19 12h3M12 7a5 5 0 100 10 5 5 0 000-10z'},
   {id:'piano',    l:'PIANO',    p:'M3 6h18M3 12h18M3 18h18'},
   {id:'ricette',  l:'RICETTE',  p:'M4 3v18M4 3a4 4 0 014 4v4a4 4 0 01-4 4M16 3v7a3 3 0 003 3h1M20 3v18'},
-  {id:'dispensa', l:'SPESA',    p:'M3 4h2l2.4 11.2a2 2 0 002 1.6h7.7a2 2 0 002-1.6L21 8H6M9 21a1 1 0 100-2 1 1 0 000 2zM18 21a1 1 0 100-2 1 1 0 000 2z'}
+  {id:'dispensa', l:'SPESA',    p:'M3 4h2l2.4 11.2a2 2 0 002 1.6h7.7a2 2 0 002-1.6L21 8H6M9 21a1 1 0 100-2 1 1 0 000 2zM18 21a1 1 0 100-2 1 1 0 000 2z'},
+  {id:'peso',     l:'PESO',     p:'M3 20h18M6 20V10M11 20V5M16 20v-8M21 20v-4'}
 ];
 let cur = 'oggi';
 document.getElementById('nav').innerHTML = TABS.map(t=>
@@ -1171,8 +1463,9 @@ function go(id){
   S.pantry = await Store.get('pantry') || {};
   S.scope  = await Store.get('scope')  || 'cur';
   S.bfast  = await Store.get('bfast')  || {};
+  S.pesi   = await Store.get('pesi')   || [];
   S.planWeek = pos().w;
-  drawHeader(); renderOggi(); renderPiano(); renderRicette(); renderDispensa();
+  drawHeader(); renderOggi(); renderPiano(); renderRicette(); renderDispensa(); renderPeso();
 })();
 
 document.addEventListener('keydown', e => { if(e.key==='Escape') closeSheet(); });

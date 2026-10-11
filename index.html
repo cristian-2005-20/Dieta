@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Piano Alimentare</title>
-<meta name="app-versione" content="3.0.0">
+<meta name="app-versione" content="3.1.0">
 <meta name="theme-color" content="#16261F">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -193,7 +193,9 @@ input{font-family:inherit;font-size:inherit;color:inherit}
 /* ── pantry ─────────────────────────── */
 .scope{display:flex;gap:6px;margin-bottom:6px}
 .sbtn{flex:1;padding:9px 4px;border:1px solid var(--line);border-radius:10px;background:var(--card);
-  font-family:var(--mono);font-size:10.5px;color:var(--ink-2);text-align:center;transition:.15s}
+  font-family:var(--mono);font-size:10.5px;color:var(--ink-2);text-align:center;transition:.15s;
+  display:flex;flex-direction:column;align-items:center;gap:3px}
+.sbtn .sb-s{font-size:9.5px;opacity:.75;letter-spacing:.02em}
 .sbtn.on{background:var(--basil);border-color:var(--basil);color:#fff}
 
 .buy{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
@@ -202,9 +204,16 @@ input{font-family:inherit;font-size:inherit;color:inherit}
 .buy-head span{font-family:var(--mono);font-size:11px;color:#8FA89B}
 .buy-cat{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
   color:var(--ink-3);padding:12px 16px 4px;background:var(--paper)}
-.buy-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 16px;border-top:1px solid var(--line)}
-.buy-row .nm{font-size:14px}
+.buy-row{display:flex;width:100%;text-align:left;align-items:center;gap:12px;padding:11px 16px;min-height:46px;border-top:1px solid var(--line)}
+.buy-row .nm{flex:1;min-width:0;font-size:14px}
 .buy-row .qt{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--saffron);white-space:nowrap}
+.buy-row .ck{flex:0 0 22px;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--ink-3);display:flex;align-items:center;justify-content:center;color:#fff}
+.buy-row.done{background:var(--paper)}
+.buy-row.done .ck{background:var(--basil);border-color:var(--basil)}
+.buy-row.done .nm{color:var(--ink-3);text-decoration:line-through}
+.buy-row.done .nm .chip{text-decoration:none;display:inline-block}
+.buy-row.done .qt{color:var(--ink-3);font-weight:500}
+.buy-reset{display:block;width:100%;padding:13px 16px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--ink-3);text-align:center}
 .ok-state{padding:26px 16px;text-align:center;color:var(--ink-2);font-size:14px}
 .ok-state b{display:block;font-family:var(--display);font-size:16px;color:var(--basil);margin-bottom:4px}
 
@@ -922,7 +931,7 @@ const Store = {
 /* ══════════════════════════════════════════════════════════
    6. STATO
    ══════════════════════════════════════════════════════════ */
-let S = { start:null, dieta:null, turni:{}, nuoto:{}, cenaPian:{}, conf:{}, pantry:{}, scope:'cur', planWeek:0, pesi:[] };
+let S = { start:null, dieta:null, turni:{}, nuoto:{}, cenaPian:{}, conf:{}, pantry:{}, spunte:{}, scope:'cur', planWeek:0, pesi:[] };
 
 function mondayOf(d){
   const x = new Date(d); x.setHours(0,0,0,0);
@@ -1464,46 +1473,106 @@ function closeSheet(){
 /* ══════════════════════════════════════════════════════════
    13. VISTA — DISPENSA E SPESA
    ══════════════════════════════════════════════════════════ */
-function listaMancante(needs){
-  const missing = [];
-  for(const k in needs){
-    const have = S.pantry[k] || 0, gap = needs[k] - have;
-    if(gap > 0.001) missing.push([k, roundBuy(gap, k)]);
-  }
-  return missing;
+/* settimana a cui si riferisce la lista: lunedì (data ISO, è la chiave delle spunte) oppure 'all' per le tre settimane insieme */
+function chiaveSpesa(){
+  if(S.scope === 'all') return 'all';
+  const p = pos();
+  return S.scope === 'next' ? addGiorni(p.lun, 7) : p.lun;
 }
-function buyRows(missing){
+/* la lista completa: per ogni ingrediente quanto serve e in che stato è
+   'manca'  = da prendere (quantità = fabbisogno − quello che hai in casa, arrotondata per eccesso)
+   'preso'  = spuntato mentre fai la spesa
+   'incasa' = quello che hai in casa basta già per la settimana */
+function listaSpesa(needs){
+  const sp = S.spunte[chiaveSpesa()] || {};
+  const righe = [];
+  for(const k in needs){
+    if(!(needs[k] > 0.001)) continue;
+    const gap = needs[k] - (S.pantry[k] || 0);
+    if(gap > 0.001) righe.push({k, q:roundBuy(gap, k), t:sp[k] || 0, stato:sp[k] ? 'preso' : 'manca'});
+    else righe.push({k, q:needs[k], t:0, stato:'incasa'});
+  }
+  return righe;
+}
+const CHECK_SVG = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>';
+function rigaSpesa(r){
+  const n = ING[r.k], fatto = r.stato !== 'manca';
+  const qt = r.stato === 'incasa' ? needTxt(r.k, r.q) : fmtBuy(r.k, r.q);
+  const chip = r.stato === 'incasa' ? ' <span class="chip on">in casa</span>' : (n.casa ? ' <span class="chip">ne hai già</span>' : '');
+  const dentro = `<span class="ck" aria-hidden="true">${fatto ? CHECK_SVG : ''}</span><span class="nm">${n.n}${chip}</span><span class="qt">${qt}</span>`;
+  if(r.stato === 'incasa') return `<div class="buy-row done" role="checkbox" aria-checked="true" aria-disabled="true" data-k="${r.k}">${dentro}</div>`;
+  return `<button class="buy-row${fatto ? ' done' : ''}" role="checkbox" aria-checked="${fatto}" data-k="${r.k}" onclick="spunta('${r.k}')">${dentro}</button>`;
+}
+/* in alto quello che manca, per reparto; in fondo e in secondo piano quello già a posto (ultime spunte per prime, poi
+   quello che hai già in casa) */
+function listaHtml(righe){
+  const daFare = righe.filter(r => r.stato === 'manca');
+  const fatte = righe.filter(r => r.stato !== 'manca');
+  const ordCat = r => CATS.indexOf(ING[r.k].c);
+  fatte.sort((a, b) => (a.stato === b.stato ? 0 : a.stato === 'preso' ? -1 : 1) || (b.t - a.t) || (ordCat(a) - ordCat(b)));
   let h = '';
-  CATS.forEach(c=>{
-    const rows = missing.filter(([k]) => ING[k].c === c);
-    if(!rows.length) return;
-    h += `<div class="buy-cat">${c}</div>`;
-    rows.forEach(([k,q]) => h += `<div class="buy-row">
-      <span class="nm">${ING[k].n}${ING[k].casa ? ' <span class="chip">ne hai già</span>' : ''}</span><span class="qt">${fmtBuy(k,q)}</span></div>`);
+  CATS.forEach(c => {
+    const rr = daFare.filter(r => ING[r.k].c === c);
+    if(rr.length) h += `<div class="buy-cat">${c}</div>` + rr.map(rigaSpesa).join('');
   });
+  if(!daFare.length) h += fatte.some(r => r.stato === 'preso')
+    ? `<div class="ok-state"><b>Spesa finita</b>Hai preso tutto quello che serve.</div>`
+    : `<div class="ok-state"><b>Dispensa a posto</b>Hai già tutto quello che serve.</div>`;
+  if(fatte.length){
+    h += `<div class="buy-cat buy-done-head">Già a posto · ${fatte.length}</div>` + fatte.map(rigaSpesa).join('');
+    if(fatte.some(r => r.stato === 'preso')) h += `<button class="buy-reset" onclick="togliSpunte()">Togli tutte le spunte</button>`;
+  }
   return h;
 }
+/* ridisegna solo la lista (senza perdere il focus del campo che stai compilando né la posizione della pagina) */
+function aggiornaLista(){
+  const righe = listaSpesa(scopeNeeds());
+  const body = document.getElementById('buyBody'), nv = document.getElementById('nVoci');
+  if(!body || !nv) return;
+  nv.textContent = `${righe.filter(r => r.stato === 'manca').length} DA PRENDERE`;
+  body.innerHTML = listaHtml(righe);
+}
+function spunta(k){
+  const ch = chiaveSpesa();
+  const sp = S.spunte[ch] || (S.spunte[ch] = {});
+  if(sp[k]) delete sp[k]; else sp[k] = Date.now();
+  if(!Object.keys(sp).length) delete S.spunte[ch];
+  // le spunte di settimane vecchie (più di 4 settimane fa) non servono più
+  const limite = dnum(pos().lun) - 28;
+  Object.keys(S.spunte).forEach(c => { if(c !== 'all' && dnum(c) < limite) delete S.spunte[c]; });
+  Store.set('spunte', S.spunte);
+  aggiornaLista();
+}
+function togliSpunte(){ delete S.spunte[chiaveSpesa()]; Store.set('spunte', S.spunte); aggiornaLista(); }
 const UNITA_BREVE = {vasetto:'vasetti', busta:'buste', scatoletta:'scat.', fetta:'fette', uova:'uova', mela:'mele', banana:'banane'};
 function unitLbl(k){ const n = ING[k]; return n.un ? (UNITA_BREVE[n.u] || n.un[1]) : n.u; }
 function needTxt(k, v){ return fmtBuy(k, aPezzi(k) ? Math.round(v*10)/10 : Math.round(v)); }
+/* «12–18/10» oppure «28/9–4/10» */
+function periodoSett(lun){
+  const [, m1, g1] = lun.split('-'), [, m2, g2] = addGiorni(lun, 6).split('-');
+  return m1 === m2 ? `${+g1}–${+g2}/${+m2}` : `${+g1}/${+m1}–${+g2}/${+m2}`;
+}
+/* sotto ogni tasto: quale settimana e quale turno calcola */
+function scopeSub(s){
+  if(s === 'all') return 'tre turni';
+  const p = pos(), lun = s === 'next' ? addGiorni(p.lun, 7) : p.lun;
+  return `${periodoSett(lun)} · ${TURNI[turnoDi(lun)].breve}`;
+}
 function renderDispensa(){
   const needs = scopeNeeds();
   const labels = {cur:'Questa settimana', next:'La prossima', all:'Tutte e 3'};
 
   let h = `<div class="sec-label">Calcola per</div>
   <div class="scope">${['cur','next','all'].map(s=>
-    `<button class="sbtn ${S.scope===s?'on':''}" onclick="setScope('${s}')">${labels[s].toUpperCase()}</button>`).join('')}</div>
-  <p class="note" style="margin-top:9px;color:var(--ink-3)">Conta i pasti di una settimana intera, lunedì–domenica. Il pranzo del lunedì si cucina la domenica prima: fai la spesa entro sabato. Le due cene libere del weekend non sono nella lista.</p>`;
+    `<button class="sbtn ${S.scope===s?'on':''}" onclick="setScope('${s}')"><span>${labels[s].toUpperCase()}</span><span class="sb-s">${scopeSub(s)}</span></button>`).join('')}</div>
+  <p class="note" style="margin-top:9px;color:var(--ink-3)">Conta i pasti di una settimana intera, lunedì–domenica. Il pranzo del lunedì si cucina la domenica prima: fai la spesa entro sabato. Le due cene libere del weekend non sono nella lista. Mentre fai la spesa tocca una voce per segnarla come presa: va in fondo, così in alto vedi solo quello che ti manca.</p>`;
 
-  const missing = listaMancante(needs);
+  const righe = listaSpesa(needs);
   h += `<div class="sec-label">Da comprare</div><div class="buy">
-    <div class="buy-head"><h3>Lista della spesa</h3><span id="nVoci">${missing.length} VOCI</span></div><div id="buyBody">`;
-  h += missing.length ? buyRows(missing)
-    : `<div class="ok-state"><b>Dispensa a posto</b>Hai già tutto quello che serve per ${labels[S.scope].toLowerCase()}.</div>`;
-  h += `</div></div>`;
+    <div class="buy-head"><h3>Lista della spesa</h3><span id="nVoci">${righe.filter(r => r.stato === 'manca').length} DA PRENDERE</span></div><div id="buyBody">${listaHtml(righe)}</div></div>`;
 
   h += `<div class="sec-label">Cosa hai in casa</div>
-  <div class="card"><p class="note" style="margin-bottom:4px">Scrivi le quantità che hai già, nell'unità indicata. La lista qui sopra si aggiorna da sola sottraendole al fabbisogno. Le voci con «ne hai già» sono quelle di cui hai letto l'etichetta: manca solo la quantità.</p></div>`;
+  <div class="card"><p class="note" style="margin-bottom:4px">Scrivi le quantità che hai già, nell'unità indicata. La lista qui sopra si aggiorna da sola sottraendole al fabbisogno; le voci già coperte restano in fondo alla lista, già a posto. Le voci con «ne hai già» sono quelle di cui hai letto l'etichetta: manca solo la quantità.</p></div>`;
 
   CATS.forEach(c=>{
     const keys = Object.keys(ING).filter(k => ING[k].c === c && needs[k]);
@@ -1532,14 +1601,7 @@ function setPan(k,v){
   if(v==='' || isNaN(n)) delete S.pantry[k]; else S.pantry[k]=Math.max(0,n);
   Store.set('pantry', S.pantry);
   clearTimeout(panTimer);
-  panTimer = setTimeout(()=>{                       // aggiorna solo la lista, senza perdere il focus
-    const missing = listaMancante(scopeNeeds());
-    const body = document.getElementById('buyBody'), nv = document.getElementById('nVoci');
-    if(!body || !nv) return;
-    nv.textContent = `${missing.length} VOCI`;
-    body.innerHTML = missing.length ? buyRows(missing)
-      : `<div class="ok-state"><b>Dispensa a posto</b>Hai già tutto quello che serve.</div>`;
-  }, 250);
+  panTimer = setTimeout(aggiornaLista, 250);               // aggiorna solo la lista, senza perdere il focus
 }
 function clearPan(){ S.pantry={}; Store.set('pantry',{}); renderDispensa(); }
 
@@ -1920,6 +1982,7 @@ function go(id){
   S.start    = S.dieta ? iso(mondayOf(new Date(S.dieta+'T00:00:00'))) : (await Store.get('start') || iso(mondayOf(new Date())));
   S.scope    = await Store.get('scope')    || 'cur';
   S.pesi     = await Store.get('pesi')     || [];
+  S.spunte   = await Store.get('spunte')   || {};
   S.turni    = await Store.get('turni')    || {};
   S.nuoto    = await Store.get('nuoto')    || {};
   S.cenaPian = await Store.get('cenaPian') || {};

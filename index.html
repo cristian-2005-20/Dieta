@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Piano Alimentare</title>
-<meta name="app-versione" content="3.1.1">
+<meta name="app-versione" content="3.2.0">
 <meta name="theme-color" content="#16261F">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -318,6 +318,14 @@ input{font-family:inherit;font-size:inherit;color:inherit}
 .pan-row .need{white-space:normal}
 .kv b{white-space:nowrap}
 .bfast .eta{font-family:var(--mono);font-size:10.5px;color:var(--ink-3);margin-top:5px;letter-spacing:.02em}
+.buy-row .nm .cf{display:block;margin-top:2px;font-family:var(--mono);font-size:11px;color:var(--ink-3)}
+.avviso{background:#FDF6E6;border:1px solid #EDDCB4;border-left:3px solid var(--saffron);border-radius:var(--r);padding:12px 14px;margin-bottom:14px}
+.avviso .h{font-family:var(--display);font-weight:600;font-size:14.5px}
+.avviso p{margin:6px 0 0;font-size:13px;color:#7A5F1E}
+.ghost.cambia{margin-top:0;margin-bottom:14px}
+.dline .mini{margin-left:auto;flex:0 0 auto;align-self:center;white-space:nowrap;font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--basil);text-decoration:none;border:1px solid #C5D3C8;border-radius:20px;padding:2px 9px;background:var(--basil-soft)}
+.pan-row .scad{display:block;margin-top:5px;font-family:var(--mono);font-size:11px;color:var(--ink-3)}
+.pan-row .scad input{width:auto;padding:4px 6px;font-size:12px}
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -371,7 +379,9 @@ const CONF_DEF = {
   greco:       150,   // g di una porzione («vasetto») di yogurt greco: la confezione è da 500 g e Cristian la divide in porzioni da 150 g
   grana_snack: 16.67, // g di una busta di grana «snack» Biraghini: 6 buste in una confezione da 100 g (detto da Cristian)
   tonno:        56,   // g di una scatoletta Rio Mare «4 × 56 g» (letto sulla confezione: 55 kcal e 13 g di proteine a scatoletta)
-  uova:         51    // g di un uovo sgusciato: classe M (53–63 g con guscio, media 58 g) × ~88 % commestibile (stima)
+  uova:         51,   // g di un uovo sgusciato: classe M (53–63 g con guscio, media 58 g) × ~88 % commestibile (stima)
+  mela:        150,   // g di una mela che mangi, senza torsolo (ipotesi): le 6 mele comprate l'11/10 pesavano 183 g l'una intere
+  banana:      100    // g di una banana sbucciata (ipotesi): le 5 banane comprate l'11/10 pesavano 149 g l'una con la buccia, che è circa un terzo
 };
 const ING = {
   /* colazione — etichette */
@@ -400,7 +410,7 @@ const ING = {
   pollo_aff:{n:'Petto di pollo al forno (affettato)', u:'g',  c:'Salumi',    k:96,  p:19,  ca:1.5, g:1.5,  casa:1, src:'etichetta'},
 
   /* legumi */
-  legumi:   {n:'Legumi in scatola (lenticchie o cannellini)', u:'g', c:'Legumi', k:94, p:6.5, ca:12.3, g:0.6, casa:1, src:'etichetta'},
+  legumi:   {n:'Legumi in barattolo (lenticchie al vapore)', u:'g', c:'Legumi', k:102, p:6.3, ca:15.3, g:0.5, casa:1, src:'etichetta'},
   piselli:  {n:'Piselli surgelati',                   u:'g',  c:'Legumi',    k:80,  p:5.5, ca:10,  g:0.5},
 
   /* cereali */
@@ -413,8 +423,8 @@ const ING = {
   spinaci:  {n:'Spinaci surgelati (foglie)',          u:'g',  c:'Verdura',   k:29,  p:2.8, ca:1.5, g:0.7,  casa:1, src:'etichetta'},
   carote:   {n:'Carote',                              u:'g',  c:'Verdura',   k:41,  p:0.9, ca:9.6, g:0.2},
   patate:   {n:'Patate',                              u:'g',  c:'Verdura',   k:77,  p:2,   ca:17,  g:0.1},
-  mela:     {n:'Mela (~150 g)',                       u:'mela', un:['mela','mele'], w:150, c:'Frutta', k:50, p:0.3, ca:12, g:0.2},
-  banana:   {n:'Banana (~100 g sbucciata)',           u:'banana', un:['banana','banane'], w:100, c:'Frutta', k:89, p:1.1, ca:21, g:0.3},
+  mela:     {n:'Mela',                                u:'mela', un:['mela','mele'], conf:'mela', c:'Frutta', k:50, p:0.3, ca:12, g:0.2},
+  banana:   {n:'Banana',                              u:'banana', un:['banana','banane'], conf:'banana', c:'Frutta', k:89, p:1.1, ca:21, g:0.3},
 
   /* dispensa */
   passata:  {n:'Passata di pomodoro',                 u:'g',  c:'Dispensa',  k:36,  p:1.6, ca:5.1, g:0.3,  casa:1, src:'etichetta'},
@@ -423,6 +433,37 @@ const ING = {
   olio:     {n:'Olio extravergine Carli',             u:'g',  c:'Dispensa',  k:900, p:0,   ca:0,   g:100,  casa:1, src:'etichetta'}
 };
 const CATS = ['Proteine','Salumi','Latticini','Legumi','Cereali','Verdura','Frutta','Colazione','Dispensa'];
+
+/* confezioni in cui si compra, SOLO dove la dimensione è nota (detta da Cristian o letta sulla confezione/scontrino dell'11/10/2026).
+   size = contenuto nell'unità della voce (ml, g o pezzi); g:true = la confezione è in grammi ma la voce si conta a pezzi (yogurt);
+   nome = come si chiama la confezione; dett = cosa contiene. Le voci vendute a peso o sfuse (tacchino, salmone, zucchine, frutta)
+   e quelle di cui non conosco la confezione non compaiono: nessuna misura inventata. */
+const CONF_SPESA = {
+  latte:   {size:1000, nome:['brick','brick'], dett:'da 1 L'},
+  greco:   {size:500,  g:true,                 dett:'da 500 g'},
+  gsnack:  {size:6,                            dett:'da 6 buste'},
+  legumi:  {size:420,                          dett:'da 3 barattoli da 140 g'},
+  filante: {size:250,                          dett:'da 250 g'},
+  uova:    {size:6,                            dett:'da 6 uova'},
+  tonno:   {size:4,                            dett:'da 4 scatolette'},
+  cotto:   {size:100,                          dett:'da 100 g'},
+  riso:    {size:1000,                         dett:'da 1 kg'},
+  pane:    {size:16,                           dett:'da 16 fette'},
+  spinaci: {size:1000,                         dett:'da 1 kg'},
+  carote:  {size:450,                          dett:'da 450 g'}
+};
+/* quante confezioni servono per la quantità q (nell'unità della voce); null se la confezione non è nota */
+function nConf(k, q){
+  const c = CONF_SPESA[k]; if(!c) return null;
+  const x = c.g ? q * wOf(k) : q;
+  return Math.max(1, Math.ceil(x / c.size - 0.001));
+}
+/* «4 confezioni da 6 buste», «2 brick da 1 L»; vuoto se la confezione non è nota */
+function confTxt(k, q){
+  const c = CONF_SPESA[k]; if(!c) return '';
+  const n = nConf(k, q), nm = c.nome || ['confezione','confezioni'];
+  return `${n} ${n === 1 ? nm[0] : nm[1]} ${c.dett}`;
+}
 
 /* le misure personali (S.conf) sovrascrivono i valori di CONF_DEF; in assenza di S usa i default */
 function confVal(key){
@@ -932,7 +973,7 @@ const Store = {
 /* ══════════════════════════════════════════════════════════
    6. STATO
    ══════════════════════════════════════════════════════════ */
-let S = { start:null, dieta:null, turni:{}, nuoto:{}, cenaPian:{}, conf:{}, pantry:{}, spunte:{}, scope:'cur', planWeek:0, pesi:[] };
+let S = { start:null, dieta:null, turni:{}, nuoto:{}, cenaPian:{}, conf:{}, pantry:{}, spunte:{}, cambi:{}, scad:{}, scope:'cur', planWeek:0, pesi:[] };
 
 function mondayOf(d){
   const x = new Date(d); x.setHours(0,0,0,0);
@@ -980,11 +1021,25 @@ function cenaPianDi(lun){ const v = S.cenaPian[lun]; return (v===4 || v===5 || v
 /* nuoto quel giorno? (data ISO e giorno della settimana 0–6) */
 function nuotoDi(data, d){ const v = S.nuoto[data]; return v === undefined ? NUOTO_DEF.includes(d) : !!v; }
 
-/* tutto quello che si mangia il giorno d della settimana che inizia il lunedì «lun» */
+/* la cena del piano (senza cambi) del giorno d: lun–gio la cena, nel weekend la pianificata sulla sera scelta, altrimenti nessuna */
+function cenaDiBase(lun, d){
+  const m = MENU[turnoDi(lun)];
+  return d < 4 ? m.c[d] : (cenaPianDi(lun) === d ? m.cp : null);
+}
+/* cambi fatti da Cristian: S.cambi[data] = {c: ricetta oppure '' (cena libera), p: ricetta del pranzo}; valgono solo per quella data */
+function cambioDi(data){
+  const x = (S.cambi && S.cambi[data]) || {}, out = {};
+  if(x.c === '' || (x.c && R[x.c])) out.c = x.c;
+  if(x.p && R[x.p]) out.p = x.p;
+  return out;
+}
+/* tutto quello che si mangia il giorno d della settimana che inizia il lunedì «lun» (con gli eventuali cambi) */
 function giornoPiano(lun, d){
-  const w = turnoDi(lun), m = MENU[w];
-  const cenaKey = d < 4 ? m.c[d] : (cenaPianDi(lun) === d ? m.cp : null);
-  return { w, m, d, pranzo:m.p[d], cena:cenaKey, libera:(cenaKey === null),
+  const w = turnoDi(lun), m = MENU[w], cb = cambioDi(addGiorni(lun, d));
+  const cenaKey = cb.c !== undefined ? (cb.c || null) : cenaDiBase(lun, d);
+  const pranzo = cb.p !== undefined ? cb.p : m.p[d];
+  return { w, m, d, pranzo, cena:cenaKey, libera:(cenaKey === null),
+           cambio:{c:cb.c !== undefined, p:cb.p !== undefined},
            amKey:m.am[d], am:SM[m.am[d]], pmKey:m.pm[d], pm:SP[m.pm[d]] };
 }
 function sommaNutri(list){
@@ -1005,17 +1060,31 @@ function originePranzo(m, d){
   return {tipo:'momento', txt:'Si cucina al momento'};
 }
 
-/* che cosa si cucina nel giorno d: ricetta, porzioni da fare e per quale pasto */
+/* come si presenta il pranzo del giorno d tenendo conto dei cambi: è un avanzo solo se è la cena di ieri */
+function originePranzoDi(lun, d){
+  const g = giornoPiano(lun, d);
+  if(d >= 1 && d <= 4){
+    const ieri = giornoPiano(lun, d - 1);
+    if(ieri.cena && g.pranzo === ieri.cena) return {tipo:'avanzo', txt:'Avanzo di ieri sera (porzione doppia): scaldalo 2 minuti al microonde'};
+  }
+  if(d === 0) return R[g.pranzo].freddo
+    ? {tipo:'domenica', txt:'Cucinato domenica: si mangia freddo'}
+    : {tipo:'domenica', txt:'Cucinato domenica: scaldalo al microonde'};
+  return {tipo:'momento', txt:'Si cucina al momento'};
+}
+
+/* che cosa si cucina nel giorno d: ricetta, porzioni da fare e per quale pasto (con i cambi: se il pranzo di oggi non è
+   l'avanzo di ieri si cucina oggi, e la cena è doppia solo se domani il pranzo è la stessa ricetta) */
 function cucinaOggi(lun, d){
-  const g = giornoPiano(lun, d), m = g.m, out = [];
-  if(d >= 5) out.push({key:g.pranzo, porz:1, txt:'Pranzo di oggi'});
+  const g = giornoPiano(lun, d), out = [];
+  if(originePranzoDi(lun, d).tipo === 'momento') out.push({key:g.pranzo, porz:1, txt:'Pranzo di oggi'});
   if(g.cena){
-    const doppia = d < 4 && m.p[d+1] === g.cena;
+    const doppia = d < 4 && giornoPiano(lun, d + 1).pranzo === g.cena;
     out.push({key:g.cena, porz:doppia ? 2 : 1, txt:doppia ? 'Cena di stasera e pranzo di domani' : 'Cena di stasera'});
   }
   if(d === 6){
-    const prox = MENU[turnoDi(addGiorni(lun, 7))];
-    out.push({key:prox.p[0], porz:1, txt:'Pranzo di domani (lunedì)' + (prox.turno === 2 ? ': puoi anche prepararlo lunedì mattina' : '')});
+    const prox = giornoPiano(addGiorni(lun, 7), 0);
+    out.push({key:prox.pranzo, porz:1, txt:'Pranzo di domani (lunedì)' + (prox.m.turno === 2 ? ': puoi anche prepararlo lunedì mattina' : '')});
   }
   return out;
 }
@@ -1044,10 +1113,21 @@ function weekNeeds(wi){
   add(R[m.cp].ing);
   return out;
 }
+/* come weekNeeds, ma per la settimana che inizia il lunedì «lun» e tenendo conto dei cambi fatti ai pasti */
+function weekNeedsDa(lun){
+  const out = {};
+  const add = ing => { for(const k in ing) out[k] = (out[k]||0) + ing[k]; };
+  for(let d=0; d<7; d++){
+    const g = giornoPiano(lun, d);
+    add(colazione().ing); add(g.am.ing); add(g.pm.ing); add(R[g.pranzo].ing);
+    if(g.cena) add(R[g.cena].ing);
+  }
+  return out;
+}
 function scopeNeeds(){
   const p = pos();
-  if(S.scope === 'cur')  return weekNeeds(p.w);
-  if(S.scope === 'next') return weekNeeds(turnoDi(addGiorni(p.lun, 7)));
+  if(S.scope === 'cur')  return weekNeedsDa(p.lun);
+  if(S.scope === 'next') return weekNeedsDa(addGiorni(p.lun, 7));
   const out = {};
   for(let i=0; i<3; i++){ const n = weekNeeds(i); for(const k in n) out[k] = (out[k]||0) + n[k]; }
   return out;
@@ -1064,6 +1144,66 @@ function fmtBuy(k, q){
   if(n.u === 'ml' && q >= 1000) return (q/1000).toFixed(1).replace('.',',') + ' L';
   if(n.u === 'fetta') return `${q} ${q === 1 ? 'fetta' : 'fette'} (≈ ${Math.round(q*wOf(k))} g)`;
   return fmtQ(k, q);
+}
+
+/* ══════════════════════════════════════════════════════════
+   CAMBIARE I PASTI E SCADENZE
+   ══════════════════════════════════════════════════════════ */
+/* imposta la cena (slot 'c': ricetta oppure '' = libera) o il pranzo (slot 'p') del giorno d della settimana «lun»;
+   se coincide con il piano toglie il cambio */
+function impostaPasto(lun, d, slot, val){
+  const data = addGiorni(lun, d);
+  const base = slot === 'c' ? (cenaDiBase(lun, d) || '') : MENU[turnoDi(lun)].p[d];
+  const cb = S.cambi[data] || (S.cambi[data] = {});
+  if(val === base) delete cb[slot]; else cb[slot] = val;
+  if(!Object.keys(cb).length) delete S.cambi[data];
+}
+/* scambia le cene di due giorni della stessa settimana. Le cene di lunedì–giovedì sono in doppia porzione e il giorno dopo
+   diventano il pranzo: se tutte e due lo sono, si scambiano anche i due pranzi, così la doppia porzione resta */
+function scambiaCene(lun, a, b){
+  const ga = giornoPiano(lun, a), gb = giornoPiano(lun, b);
+  const ca = ga.cena || '', cb = gb.cena || '';
+  const legato = (g, d) => d < 4 && !!g.cena && giornoPiano(lun, d + 1).pranzo === g.cena;
+  const la = legato(ga, a), lb = legato(gb, b);
+  const pa = la ? giornoPiano(lun, a + 1).pranzo : null, pb = lb ? giornoPiano(lun, b + 1).pranzo : null;
+  impostaPasto(lun, a, 'c', cb); impostaPasto(lun, b, 'c', ca);
+  if(la && lb){ impostaPasto(lun, a + 1, 'p', pb); impostaPasto(lun, b + 1, 'p', pa); }
+}
+
+/* gli ingredienti di un giorno, nell'ordine dei pasti: [etichetta del pasto, ingredienti] */
+function pastiDelGiorno(g){
+  const out = [['colazione', colazione().ing], ['lo spuntino della mattina', g.am.ing], ['il pranzo', R[g.pranzo].ing], ['la merenda', g.pm.ing]];
+  if(g.cena) out.push(['la cena', R[g.cena].ing]);
+  return out;
+}
+/* avvisi sulle scadenze scritte da Cristian (S.scad[ingrediente] = data ISO). Segnala solo ciò che serve:
+   'scaduto'      scaduto da non più di 3 giorni
+   'prima'        scade prima del primo uso previsto nel piano
+   'nonprevisto'  scade entro 2 giorni e nei prossimi 28 giorni non è nel piano
+   'presto'       scade oggi o domani (anche se il piano lo usa in tempo) */
+function avvisiScadenze(oggi){
+  const out = [];
+  const inizio = (S.dieta && S.dieta > oggi) ? S.dieta : oggi;
+  Object.keys(S.scad || {}).forEach(k => {
+    const sc = S.scad[k];
+    if(!ING[k] || !/^\d{4}-\d{2}-\d{2}$/.test(sc)) return;
+    const resta = dnum(sc) - dnum(oggi);
+    if(resta < -3) return;
+    let uso = null;
+    for(let i=0; i<28 && !uso; i++){
+      const dt = addGiorni(inizio, i), x = new Date(dt + 'T00:00:00');
+      const g = giornoPiano(iso(mondayOf(x)), (x.getDay() + 6) % 7);
+      const trovato = pastiDelGiorno(g).find(([, ing]) => ing[k] > 0);
+      if(trovato) uso = {data:dt, pasto:trovato[0]};
+    }
+    let tipo = null;
+    if(resta < 0) tipo = 'scaduto';
+    else if(uso && dnum(uso.data) > dnum(sc)) tipo = 'prima';
+    else if(!uso && resta <= 2) tipo = 'nonprevisto';
+    else if(resta <= 1) tipo = 'presto';
+    if(tipo) out.push({k, sc, resta, uso, tipo});
+  });
+  return out.sort((a, b) => a.resta - b.resta);
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -1196,16 +1336,16 @@ function renderOggi(){
   const nC = nutri(col.ing), nSM = nutri(g.am.ing), nP = nutri(R[g.pranzo].ing), nSP = nutri(g.pm.ing);
   const nE = g.libera ? CENA_LIBERA : nutri(R[g.cena].ing);
   const tot = sommaNutri([nC, nSM, nP, nSP, nE]);
-  const orig = originePranzo(g.m, p.d);
+  const orig = originePranzoDi(p.lun, p.d);
   const feriale = p.d < 5;
 
-  let h = '';
+  let h = avvisiHtml();
   if(p.pre) h += preCard() + `<div class="sec-label">Anteprima del primo giorno</div>`;
   else      h += cookNote(cucinaOggi(p.lun, p.d), 'Da cucinare oggi');
 
   h += simpleCard('Colazione', col.nome, col.ing, nC, o.col, 'La tua colazione di sempre, con un vasetto di yogurt greco in più: i frollini da soli non danno proteine e a metà mattina la fame arriva prima.');
   h += simpleCard('Spuntino · mattina', g.am.nome, g.am.ing, nSM, o.am, feriale ? 'Senza frigo e senza preparazione: lo porti da casa.' : '');
-  h += mealCard('Pranzo', g.pranzo, `${o.pr} · ${orig.txt}`);
+  h += mealCard('Pranzo', g.pranzo, `${o.pr} · ${orig.txt}${g.cambio.p ? ' · cambiato rispetto al piano' : ''}`);
   h += simpleCard('Spuntino · pomeriggio', g.pm.nome, g.pm.ing, nSP, o.pm, (feriale && g.pm.dove === 'lavoro') ? 'Regge fuori dal frigo: lo mangi al lavoro.' : '');
 
   if(p.d >= 4){
@@ -1216,7 +1356,8 @@ function renderOggi(){
     </div>`;
   }
   h += g.libera ? cenaLiberaCard(`Cena · ${o.ce}`)
-                : mealCard(`Cena · ${o.ce}`, g.cena, '');
+                : mealCard(`Cena · ${o.ce}`, g.cena, g.cambio.c ? 'Cambiata rispetto al piano' : '');
+  h += `<button class="ghost cambia" onclick="apriCambio('${p.lun}',${p.d})">${p.pre ? 'Cambia la cena del primo giorno' : 'Cambia la cena di oggi'}</button>`;
 
   h += `<div class="sec-label">Totale della giornata</div>
     <div class="card">
@@ -1252,6 +1393,87 @@ function setTurnoSett(lun, i){
 }
 
 /* ══════════════════════════════════════════════════════════
+   9-bis. CAMBIARE UNA CENA, SCADENZE E AVVISI
+   Un cambio vale per una data (S.cambi[data] = {c, p}) e aggiorna Oggi, Piano, lista della spesa e totali.
+   Le scadenze (S.scad[ingrediente] = data) servono solo per gli avvisi: non cambiano il piano.
+   ══════════════════════════════════════════════════════════ */
+const PERIBILI = ['Proteine','Salumi','Latticini','Verdura','Frutta'];       // le categorie per cui si scrive la scadenza
+const CHEV_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>';
+let cambioDa = null;                       // {lun, d}: la sera che si sta cambiando
+
+/* quanti pasti sono stati cambiati rispetto al piano nella settimana che inizia il lunedì «lun» */
+function cambiVale(lun){
+  let n = 0;
+  for(let d=0; d<7; d++){ const c = cambioDi(addGiorni(lun, d)); n += Object.keys(c).length; }
+  return n;
+}
+function salvaCambi(){
+  // i cambi di settimane vecchie (più di 4 settimane fa) non servono più
+  const limite = dnum(pos().lun) - 28;
+  Object.keys(S.cambi).forEach(c => { if(dnum(c) < limite) delete S.cambi[c]; });
+  Store.set('cambi', S.cambi);
+}
+function apriCambio(lun, d){
+  cambioDa = {lun, d};
+  renderCambio();
+  document.getElementById('sheet').classList.add('on');
+  document.getElementById('sheet').scrollTop = 0;
+  document.body.style.overflow = 'hidden';
+}
+function renderCambio(){
+  const {lun, d} = cambioDa, g = giornoPiano(lun, d), data = addGiorni(lun, d);
+  const oggi = iso(new Date()), primo = (S.dieta && S.dieta > oggi) ? S.dieta : oggi;
+  const riga = (azione, titolo, sotto) => `<button class="rlink" onclick="${azione}"><div><h4>${titolo}</h4><p>${sotto}</p></div>${CHEV_SVG}</button>`;
+  let h = `<h2>Cambia la cena di ${GG[d].toLowerCase()} ${dt2it(data)}</h2>
+    <p class="note" style="margin-top:10px">Adesso: <b>${g.cena ? R[g.cena].nome : 'cena libera'}</b>${g.cambio.c ? ' (già cambiata rispetto al piano)' : ''}. Quello che scegli aggiorna lista della spesa e totali del giorno. Vale solo per questa settimana.</p>`;
+  const altre = [0,1,2,3,4,5,6].filter(e => e !== d && addGiorni(lun, e) >= primo);
+  if(altre.length){
+    h += `<div class="sec-label">Scambia con un'altra sera</div><div class="card">`;
+    altre.forEach(e => {
+      const ge = giornoPiano(lun, e);
+      h += riga(`scambiaCena(${e})`, ge.cena ? R[ge.cena].nome : 'Cena libera', `${GG[e].toUpperCase()} ${dt2it(addGiorni(lun, e))}`);
+    });
+    h += `</div>`;
+  }
+  h += `<div class="sec-label">Oppure metti un'altra cena</div><div class="card">`;
+  if(!g.libera) h += riga(`mettiCena('')`, 'Cena libera', `~${CENA_LIBERA.kcal} KCAL · NIENTE DA CUCINARE`);
+  GRUPPI.forEach(gr => Object.keys(R).filter(k => R[k].tipo === gr && k !== g.cena).forEach(k => {
+    h += riga(`mettiCena('${k}')`, R[k].nome, `${R[k].tempo} MIN · ${nutri(R[k].ing).kcal} KCAL`);
+  }));
+  h += `</div>`;
+  if(cambiVale(lun)) h += `<button class="ghost" onclick="rimettiSettimana()">Rimetti il piano di questa settimana</button>`;
+  document.getElementById('sheetBody').innerHTML = h;
+}
+function fineCambio(msg){ salvaCambi(); closeSheet(); drawHeader(); renderOggi(); renderPiano(); renderDispensa(); renderPeso(); toast(msg); }
+function mettiCena(key){ impostaPasto(cambioDa.lun, cambioDa.d, 'c', key); fineCambio(key === '' ? 'Cena libera' : 'Cena cambiata'); }
+function scambiaCena(e){ scambiaCene(cambioDa.lun, cambioDa.d, e); fineCambio('Cene scambiate'); }
+function rimettiSettimana(){
+  for(let d=0; d<7; d++) delete S.cambi[addGiorni(cambioDa.lun, d)];
+  fineCambio('Piano ripristinato');
+}
+
+/* scadenze */
+const quandoTxt = data => `${GG[(new Date(data + 'T00:00:00').getDay() + 6) % 7].toLowerCase()} ${dt2it(data)}`;
+function avvisiHtml(){
+  const av = avvisiScadenze(iso(new Date()));
+  if(!av.length) return '';
+  const righe = av.map(a => {
+    const nome = `<b>${lcFirst(shortN(a.k))}</b>`;
+    if(a.tipo === 'scaduto') return `${nome} aveva scadenza ${dt2it(a.sc)}: controlla la confezione prima di usarlo.`;
+    if(a.tipo === 'prima')   return `${nome} scade ${quandoTxt(a.sc)} ma nel piano lo usi ${quandoTxt(a.uso.data)} (${a.uso.pasto}). Per mangiarlo prima scambia una sera da Piano (tasto «Cambia»); oppure, se la confezione lo permette, congelalo.`;
+    if(a.tipo === 'nonprevisto') return `${nome} scade ${quandoTxt(a.sc)} e nei prossimi giorni non è nel piano: mettilo in un pasto da Piano (tasto «Cambia») oppure, se la confezione lo permette, congelalo.`;
+    return `${nome} scade ${a.resta === 0 ? 'oggi' : 'domani'} (${dt2it(a.sc)}); nel piano lo usi ${quandoTxt(a.uso.data)} (${a.uso.pasto}).`;
+  });
+  return `<div class="avviso"><div class="h">Da usare in tempo</div>${righe.map(r => `<p>${r}</p>`).join('')}</div>`;
+}
+function setScad(k, v){
+  if(/^\d{4}-\d{2}-\d{2}$/.test(v)) S.scad[k] = v; else delete S.scad[k];
+  Store.set('scad', S.scad);
+  const el = document.getElementById('avvisiSpesa'); if(el) el.innerHTML = avvisiHtml();
+  renderOggi();
+}
+
+/* ══════════════════════════════════════════════════════════
    10. VISTA — PIANO
    ══════════════════════════════════════════════════════════ */
 const MISURE = [
@@ -1260,7 +1482,9 @@ const MISURE = [
   {k:'greco',       l:'Vasetto di yogurt greco',         u:'g',  h:'scritto sulla confezione'},
   {k:'grana_snack', l:'Busta di grana «snack»',          u:'g',  h:'scritto sulla confezione'},
   {k:'tonno',       l:'Tonno per scatoletta',            u:'g',  h:'peso scritto sulla scatoletta'},
-  {k:'uova',        l:'Un uovo sgusciato',               u:'g',  h:'taglia M o L sulla confezione'}
+  {k:'uova',        l:'Un uovo sgusciato',               u:'g',  h:'taglia M o L sulla confezione'},
+  {k:'mela',        l:'Una mela (la parte che mangi)',   u:'g',  h:'senza torsolo né picciolo'},
+  {k:'banana',      l:'Una banana sbucciata',            u:'g',  h:'senza buccia'}
 ];
 function setConf(k, v){
   const n = parseFloat(String(v).replace(',','.'));
@@ -1283,26 +1507,32 @@ function renderPiano(){
     <div class="note" style="margin-top:8px"><b>Come si cucina.</b> La cena di lunedì, martedì, mercoledì e giovedì si cucina in doppia porzione: il giorno dopo è il pranzo (si prepara ${t.prep}). Il pranzo del lunedì è un piatto freddo cucinato la domenica. Sabato e domenica a pranzo si cucina al momento.</div>
   </div>`;
 
+  const eff = (wi === p.w);                         // la settimana in corso mostra i pasti davvero previsti, con i cambi
+  const oggiIso = iso(new Date());
   h += `<div class="sec-label">I sette giorni</div><div class="card">`;
   for(let d=0; d<7; d++){
-    const lib = d >= 4;
-    const o = originePranzo(m, d);
+    const gE = eff ? giornoPiano(p.lun, d) : null;
+    const prK = eff ? gE.pranzo : m.p[d];
+    const ceK = eff ? gE.cena : (d < 4 ? m.c[d] : null);
+    const o = eff ? originePranzoDi(p.lun, d) : originePranzo(m, d);
+    const cambiabile = eff && addGiorni(p.lun, d) >= oggiIso;
     h += `<div class="day-row">
       <div class="dtag ${nuotoWeek(d)?'cooking':''}">${GG_S[d]}${nuotoWeek(d) ? '<br><span style="font-size:8px">NUOTO</span>' : ''}</div>
       <div class="day-body">
         <div class="dline"><i>Col</i><span>${colazione().nome}</span></div>
         <div class="dline"><i>Spunt</i><span>${SM[m.am[d]].nome}</span></div>
-        <div class="dline"><i>Pranzo</i><button onclick="openR('${m.p[d]}')">${R[m.p[d]].nome}</button></div>
+        <div class="dline"><i>Pranzo</i><button onclick="openR('${prK}')">${R[prK].nome}</button></div>
         ${(d>=1 && d<=4 && o.tipo==='avanzo') ? '<div class="dline"><i></i><span style="color:var(--ink-3);font-size:12px">avanzo di ieri sera</span></div>' : ''}
         <div class="dline"><i>Merenda</i><span>${SP[m.pm[d]].nome}</span></div>
-        <div class="dline"><i>Cena</i>${lib
-          ? '<span class="lib">Libera (o la pianificata del weekend)</span>'
-          : `<button onclick="openR('${m.c[d]}')">${R[m.c[d]].nome}</button>`}</div>
+        <div class="dline"><i>Cena</i>${ceK
+          ? `<button onclick="openR('${ceK}')">${R[ceK].nome}</button>`
+          : `<span class="lib">${eff ? 'Libera' : 'Libera (o la pianificata del weekend)'}</span>`}${cambiabile ? `<button class="mini" onclick="apriCambio('${p.lun}',${d})">Cambia</button>` : ''}</div>
       </div>
     </div>`;
   }
-  h += `</div>
-  <div class="card"><div class="kv"><span class="k">Cena pianificata del weekend<small>una sola sera fra venerdì, sabato e domenica; le altre due sono libere. Scegli la sera da Oggi.</small></span></div>
+  h += `</div>`;
+  if(eff && cambiVale(p.lun)) h += `<p class="note" style="margin:8px 2px 12px">Questa settimana hai cambiato ${cambiVale(p.lun)} ${cambiVale(p.lun) === 1 ? 'pasto' : 'pasti'} rispetto al piano: la lista della spesa ne tiene conto.</p>`;
+  h += `<div class="card"><div class="kv"><span class="k">Cena pianificata del weekend<small>una sola sera fra venerdì, sabato e domenica; le altre due sono libere. Scegli la sera da Oggi.</small></span></div>
   <button class="rlink" onclick="openR('${m.cp}')"><div><h4>${R[m.cp].nome}</h4><p>${R[m.cp].tempo} MIN · ${nutri(R[m.cp].ing).kcal} KCAL</p></div>
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button></div>`;
 
@@ -1500,7 +1730,8 @@ function rigaSpesa(r){
   const n = ING[r.k], fatto = r.stato !== 'manca';
   const qt = r.stato === 'incasa' ? needTxt(r.k, r.q) : fmtBuy(r.k, r.q);
   const chip = r.stato === 'incasa' ? ' <span class="chip on">in casa</span>' : (n.casa ? ' <span class="chip">ne hai già</span>' : '');
-  const dentro = `<span class="ck" aria-hidden="true">${fatto ? CHECK_SVG : ''}</span><span class="nm">${n.n}${chip}</span><span class="qt">${qt}</span>`;
+  const cf = r.stato === 'incasa' ? '' : confTxt(r.k, r.q);
+  const dentro = `<span class="ck" aria-hidden="true">${fatto ? CHECK_SVG : ''}</span><span class="nm">${n.n}${chip}${cf ? `<small class="cf">${cf}</small>` : ''}</span><span class="qt">${qt}</span>`;
   if(r.stato === 'incasa') return `<div class="buy-row done" role="checkbox" aria-checked="true" aria-disabled="true" data-k="${r.k}">${dentro}</div>`;
   return `<button class="buy-row${fatto ? ' done' : ''}" role="checkbox" aria-checked="${fatto}" data-k="${r.k}" onclick="spunta('${r.k}')">${dentro}</button>`;
 }
@@ -1569,11 +1800,14 @@ function renderDispensa(){
   <p class="note" style="margin-top:9px;color:var(--ink-3)">Conta i pasti di una settimana intera, lunedì–domenica. Il pranzo del lunedì si cucina la domenica prima: fai la spesa entro sabato. Le due cene libere del weekend non sono nella lista. Mentre fai la spesa tocca una voce per segnarla come presa: va in fondo, così in alto vedi solo quello che ti manca.</p>`;
 
   const righe = listaSpesa(needs);
+  const lunScope = S.scope === 'next' ? addGiorni(pos().lun, 7) : pos().lun;
+  if(S.scope !== 'all' && cambiVale(lunScope)) h += `<p class="note" style="margin-top:9px">La lista tiene conto dei pasti che hai cambiato rispetto al piano in quella settimana (${cambiVale(lunScope)}).</p>`;
+  h += `<div id="avvisiSpesa" style="margin-top:14px">${avvisiHtml()}</div>`;
   h += `<div class="sec-label">Da comprare</div><div class="buy">
     <div class="buy-head"><h3>Lista della spesa</h3><span id="nVoci">${righe.filter(r => r.stato === 'manca').length} DA PRENDERE</span></div><div id="buyBody">${listaHtml(righe)}</div></div>`;
 
   h += `<div class="sec-label">Cosa hai in casa</div>
-  <div class="card"><p class="note" style="margin-bottom:4px">Scrivi le quantità che hai già, nell'unità indicata. La lista qui sopra si aggiorna da sola sottraendole al fabbisogno; le voci già coperte restano in fondo alla lista, già a posto. Le voci con «ne hai già» sono quelle di cui hai letto l'etichetta: manca solo la quantità.</p></div>`;
+  <div class="card"><p class="note" style="margin-bottom:4px">Scrivi le quantità che hai già, nell'unità indicata. La lista qui sopra si aggiorna da sola sottraendole al fabbisogno; le voci già coperte restano in fondo alla lista, già a posto. Le voci con «ne hai già» sono quelle di cui hai letto l'etichetta: manca solo la quantità. Per i freschi puoi scrivere anche la scadenza: se scade prima di quando il piano lo usa, te lo segnalo.</p></div>`;
 
   CATS.forEach(c=>{
     const keys = Object.keys(ING).filter(k => ING[k].c === c && needs[k]);
@@ -1582,7 +1816,7 @@ function renderDispensa(){
     keys.forEach(k=>{
       const n = ING[k];
       h += `<div class="pan-row">
-        <span class="nm">${n.n}<br><span class="need">serve ${needTxt(k, needs[k])}</span></span>
+        <span class="nm">${n.n}<br><span class="need">serve ${needTxt(k, needs[k])}</span>${PERIBILI.includes(c) ? `<label class="scad">scade <input type="date" value="${S.scad[k] || ''}" onchange="setScad('${k}',this.value)" aria-label="Scadenza: ${n.n}"></label>` : ''}</span>
         <input type="number" inputmode="decimal" min="0" step="any" value="${S.pantry[k] ?? ''}"
                placeholder="0" oninput="setPan('${k}',this.value)" aria-label="${n.n}">
         <span class="u">${unitLbl(k)}</span>
@@ -1988,6 +2222,8 @@ function go(id){
   S.nuoto    = await Store.get('nuoto')    || {};
   S.cenaPian = await Store.get('cenaPian') || {};
   S.conf     = await Store.get('conf')     || {};
+  S.cambi    = await Store.get('cambi')    || {};
+  S.scad     = await Store.get('scad')     || {};
   // versione dei dati: la dispensa della vecchia versione usava altre unità (es. tonno in grammi), si riparte da zero
   if(await Store.get('ver') !== 3){ S.pantry = {}; Store.set('pantry', {}); Store.set('ver', 3); }
   else S.pantry = await Store.get('pantry') || {};

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Piano Alimentare</title>
-<meta name="app-versione" content="3.1.0">
+<meta name="app-versione" content="3.1.1">
 <meta name="theme-color" content="#16261F">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -368,10 +368,10 @@ input{font-family:inherit;font-size:inherit;color:inherit}
 const CONF_DEF = {
   tazza:       200,   // ml di latte nella tazza (dato non noto: ipotesi)
   frollini:     40,   // g di frollini a colazione (dato non noto: ipotesi)
-  greco:       150,   // g di un vasetto di yogurt greco (ipotesi: formato più comune)
-  grana_snack:  30,   // g di una busta di grana «snack» (ipotesi, da verificare sulla confezione)
-  tonno:        56,   // g sgocciolati di una scatoletta da 80 g (ipotesi, da verificare)
-  uova:         55    // g di un uovo medio sgusciato (taglia non nota: ipotesi)
+  greco:       150,   // g di una porzione («vasetto») di yogurt greco: la confezione è da 500 g e Cristian la divide in porzioni da 150 g
+  grana_snack: 16.67, // g di una busta di grana «snack» Biraghini: 6 buste in una confezione da 100 g (detto da Cristian)
+  tonno:        56,   // g di una scatoletta Rio Mare «4 × 56 g» (letto sulla confezione: 55 kcal e 13 g di proteine a scatoletta)
+  uova:         51    // g di un uovo sgusciato: classe M (53–63 g con guscio, media 58 g) × ~88 % commestibile (stima)
 };
 const ING = {
   /* colazione — etichette */
@@ -380,10 +380,10 @@ const ING = {
   frollini: {n:'Frollini integrali',                  u:'g',  c:'Colazione', k:446, p:8.8, ca:66,  g:15,   casa:1, src:'etichetta'},
 
   /* latticini */
-  greco:    {n:'Yogurt greco 0 % (vasetto)',          u:'vasetto', un:['vasetto','vasetti'], conf:'greco', c:'Latticini', k:57, p:10, ca:4, g:0.2},
+  greco:    {n:'Yogurt greco 0 % (vasetto)',          u:'vasetto', un:['vasetto','vasetti'], conf:'greco', c:'Latticini', k:58, p:10, ca:4.5, g:0.1, casa:1, src:'etichetta'},
   grana:    {n:'Grana grattugiato',                   u:'g',  c:'Latticini', k:398, p:33,  ca:0,   g:29,   casa:1, src:'etichetta'},
   gsnack:   {n:'Grana snack (busta)',                    u:'busta', un:['busta','buste'], conf:'grana_snack', c:'Latticini', k:392, p:33, ca:0, g:28},
-  filante:  {n:'Scamorza / provola',                  u:'g',  c:'Latticini', k:320, p:25,  ca:2,   g:24},
+  filante:  {n:'Scamorza / provola',                  u:'g',  c:'Latticini', k:262, p:20,  ca:0.5, g:20,   casa:1, src:'etichetta'},
   mozzarella:{n:'Mozzarella',                         u:'g',  c:'Latticini', k:250, p:18,  ca:1,   g:19},
 
   /* proteine */
@@ -393,7 +393,7 @@ const ING = {
   manzo:    {n:'Hamburger / macinato di manzo magro (≤5 % grassi)', u:'g', c:'Proteine', k:137, p:21, ca:0, g:5},
   nasello:  {n:'Filetti di nasello (surgelati)',      u:'g',  c:'Proteine',  k:75,  p:16,  ca:0,   g:1},
   salmone:  {n:'Salmone (filetto)',                   u:'g',  c:'Proteine',  k:200, p:20,  ca:0,   g:13},
-  tonno:    {n:'Tonno al naturale (scatoletta da 80 g)', u:'scatoletta', un:['scatoletta','scatolette'], conf:'tonno', c:'Proteine', k:116, p:26, ca:0, g:1},
+  tonno:    {n:'Tonno al naturale (scatoletta da 56 g)', u:'scatoletta', un:['scatoletta','scatolette'], conf:'tonno', c:'Proteine', k:101, p:24, ca:0, g:0.5, casa:1, src:'etichetta'},
 
   /* salumi */
   cotto:    {n:'Prosciutto cotto',                    u:'g',  c:'Salumi',    k:143, p:20,  ca:0,   g:7,    casa:1, src:'etichetta'},
@@ -405,12 +405,12 @@ const ING = {
 
   /* cereali */
   pasta:    {n:'Pasta De Cecco (a crudo)',            u:'g',  c:'Cereali',   k:351, p:14,  ca:69,  g:1.5,  casa:1, src:'etichetta'},
-  riso:     {n:'Riso (a crudo)',                      u:'g',  c:'Cereali',   k:340, p:7,   ca:78,  g:0.6},
+  riso:     {n:'Riso (a crudo)',                      u:'g',  c:'Cereali',   k:349, p:7.4, ca:78,  g:0.6,  casa:1, src:'etichetta'},
   pane:     {n:'Pan bauletto (fetta da 25 g)',        u:'fetta', un:['fetta','fette'], w:25, c:'Cereali', k:268, p:8.5, ca:49, g:3.2, casa:1, src:'etichetta'},
 
   /* verdura e frutta */
   zucchine: {n:'Zucchine',                            u:'g',  c:'Verdura',   k:17,  p:1.3, ca:2,   g:0.3},
-  spinaci:  {n:'Spinaci',                             u:'g',  c:'Verdura',   k:23,  p:2.9, ca:1,   g:0.4},
+  spinaci:  {n:'Spinaci surgelati (foglie)',          u:'g',  c:'Verdura',   k:29,  p:2.8, ca:1.5, g:0.7,  casa:1, src:'etichetta'},
   carote:   {n:'Carote',                              u:'g',  c:'Verdura',   k:41,  p:0.9, ca:9.6, g:0.2},
   patate:   {n:'Patate',                              u:'g',  c:'Verdura',   k:77,  p:2,   ca:17,  g:0.1},
   mela:     {n:'Mela (~150 g)',                       u:'mela', un:['mela','mele'], w:150, c:'Frutta', k:50, p:0.3, ca:12, g:0.2},
@@ -831,14 +831,15 @@ function colazione(){
 }
 const CENA_LIBERA = {kcal:650, p:30, c:72, g:26};      // ipotesi dichiarata: una cena libera «ragionevole»
 
+/* gsnack:2 = due buste da 16,67 g (≈ 33 g di grana, come i 30 g previsti all'inizio) */
 /* spuntino di mattina: SEMPRE senza frigo e senza preparazione (niente tonno, niente pane) */
 const SM = {
-  am1:{nome:'Grana snack e mela',            ing:{gsnack:1, mela:1}},
+  am1:{nome:'Grana snack e mela',            ing:{gsnack:2, mela:1}},
   am2:{nome:'Mandorle e banana',             ing:{mandorle:20, banana:1}},
-  am3:{nome:'Grana snack e noci',            ing:{gsnack:1, noci:15}},
-  am5:{nome:'Grana snack e banana',          ing:{gsnack:1, banana:1}},
-  am6:{nome:'Grana snack, mandorle e mela',  ing:{gsnack:1, mandorle:15, mela:1}},
-  am7:{nome:'Grana snack e mandorle',        ing:{gsnack:1, mandorle:20}}
+  am3:{nome:'Grana snack e noci',            ing:{gsnack:2, noci:15}},
+  am5:{nome:'Grana snack e banana',          ing:{gsnack:2, banana:1}},
+  am6:{nome:'Grana snack, mandorle e mela',  ing:{gsnack:2, mandorle:15, mela:1}},
+  am7:{nome:'Grana snack e mandorle',        ing:{gsnack:2, mandorle:20}}
 };
 /* spuntino del pomeriggio: «casa» = si mangia a casa (può essere fresco), «lavoro» = regge senza frigo */
 const SP = {
@@ -846,9 +847,9 @@ const SP = {
   pm2:{nome:'Pan bauletto e prosciutto cotto',       ing:{pane:2, cotto:60},               dove:'casa'},
   pm3:{nome:'Yogurt greco, mela e noci',             ing:{greco:1, mela:1, noci:10},       dove:'casa'},
   pm4:{nome:'Pan bauletto e pollo al forno',         ing:{pane:2, pollo_aff:70},           dove:'casa'},
-  pw1:{nome:'Grana snack, banana e mandorle',        ing:{gsnack:1, banana:1, mandorle:10},dove:'lavoro'},
-  pw2:{nome:'Pan bauletto, grana snack e mela',      ing:{pane:1, gsnack:1, mela:1},       dove:'lavoro'},
-  pw3:{nome:'Noci, mela e grana snack',              ing:{noci:10, mela:1, gsnack:1},     dove:'lavoro'}
+  pw1:{nome:'Grana snack, banana e mandorle',        ing:{gsnack:2, banana:1, mandorle:10},dove:'lavoro'},
+  pw2:{nome:'Pan bauletto, grana snack e mela',      ing:{pane:1, gsnack:2, mela:1},       dove:'lavoro'},
+  pw3:{nome:'Noci, mela e grana snack',              ing:{noci:10, mela:1, gsnack:2},     dove:'lavoro'}
 };
 
 /* ══════════════════════════════════════════════════════════
@@ -1258,7 +1259,7 @@ const MISURE = [
   {k:'frollini',    l:'Frollini a colazione',            u:'g',  h:'pesali una volta e conta quanti sono'},
   {k:'greco',       l:'Vasetto di yogurt greco',         u:'g',  h:'scritto sulla confezione'},
   {k:'grana_snack', l:'Busta di grana «snack»',          u:'g',  h:'scritto sulla confezione'},
-  {k:'tonno',       l:'Tonno sgocciolato per scatoletta',u:'g',  h:'peso sgocciolato scritto sulla scatoletta'},
+  {k:'tonno',       l:'Tonno per scatoletta',            u:'g',  h:'peso scritto sulla scatoletta'},
   {k:'uova',        l:'Un uovo sgusciato',               u:'g',  h:'taglia M o L sulla confezione'}
 ];
 function setConf(k, v){

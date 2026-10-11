@@ -4,23 +4,24 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Piano Alimentare</title>
+<meta name="app-versione" content="3.0.0">
 <meta name="theme-color" content="#16261F">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Piano Alimentare">
-<meta name="description" content="Piano alimentare ciclico di 4 settimane: cosa mangiare, come prepararlo e cosa comprare.">
+<meta name="description" content="Piano alimentare ciclico di 3 settimane, una per turno di lavoro: cosa mangiare, come prepararlo e cosa comprare.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Piano Alimentare">
 <meta property="og:title" content="Piano Alimentare">
-<meta property="og:description" content="Piano ciclico di 4 settimane: cosa mangiare oggi, ricette passo passo e lista della spesa.">
+<meta property="og:description" content="Piano ciclico di 3 settimane, una per turno: cosa mangiare oggi, ricette passo passo e lista della spesa.">
 <meta property="og:url" content="https://cristian-2005-20.github.io/Dieta/">
 <meta property="og:image" content="https://cristian-2005-20.github.io/Dieta/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Piano Alimentare">
-<meta name="twitter:description" content="Piano ciclico di 4 settimane: cosa mangiare oggi, ricette passo passo e lista della spesa.">
+<meta name="twitter:description" content="Piano ciclico di 3 settimane, una per turno: cosa mangiare oggi, ricette passo passo e lista della spesa.">
 <meta name="twitter:image" content="https://cristian-2005-20.github.io/Dieta/og.png">
 <link id="mf" rel="manifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -68,7 +69,7 @@ input{font-family:inherit;font-size:inherit;color:inherit}
 .top h1{font-size:21px;font-weight:600;margin-top:2px}
 .top .sub{font-size:12.5px;color:#A8BCB0;margin-top:3px}
 
-/* signature: the 28-day cycle ring */
+/* signature: the 21-day ring (three weeks of the cycle) */
 .ring{width:62px;height:62px;flex:0 0 62px}
 .ring .track{stroke:#2B4038;stroke-width:5;fill:none}
 .ring .seg{stroke-width:5;fill:none;stroke-linecap:butt}
@@ -295,6 +296,19 @@ input{font-family:inherit;font-size:inherit;color:inherit}
 .toast.on{opacity:1}
 .empty{text-align:center;padding:30px 16px;color:var(--ink-3);font-size:14px}
 .empty b{display:block;font-family:var(--display);font-size:16px;color:var(--ink-2);margin-bottom:5px}
+.chart .ms{stroke:var(--ink-3);stroke-width:1;stroke-dasharray:3 3}
+.wk-row .med.par{opacity:.5}
+.pre-date{width:100%;margin-top:10px;padding:11px 12px;border:1px solid #EDDCB4;border-radius:11px;background:#fff;font-size:14px;font-family:inherit;color:var(--ink)}
+
+.chip{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;padding:2px 7px;border-radius:20px;
+  background:var(--paper);color:var(--ink-3);border:1px solid var(--line);vertical-align:middle;font-weight:500;white-space:nowrap}
+.chip.on{background:var(--basil-soft);color:var(--basil);border-color:#C5D3C8}
+.seg{display:flex;gap:6px;width:116px;flex:0 0 116px}
+.seg .bopt{flex:1}
+.pan-row .u{width:40px}
+.pan-row .need{white-space:normal}
+.kv b{white-space:nowrap}
+.bfast .eta{font-family:var(--mono);font-size:10.5px;color:var(--ink-3);margin-top:5px;letter-spacing:.02em}
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -336,237 +350,309 @@ input{font-family:inherit;font-size:inherit;color:inherit}
 <script>
 /* ══════════════════════════════════════════════════════════
    1. INGREDIENTI
+   Valori per 100 g (il latte per 100 ml).
+   «etichetta» = letto dalla confezione che hai in casa; gli altri sono medie di tabella
+   (CREA / USDA) e possono scostarsi del 5–15 % dal prodotto che compri.
+   u = unità in cui si pesa o si conta; per le unità «a pezzi» w = grammi di un pezzo.
    ══════════════════════════════════════════════════════════ */
-const ING = {
-  latte:      {n:'Latte parz. scremato',            u:'ml', c:'Latticini', k:46,  p:3.3, ca:4.9, g:1.6},
-  grana:      {n:'Grana / Parmigiano',              u:'g',  c:'Latticini', k:392, p:33,  ca:0,   g:28},
-  filante:    {n:'Provola / scamorza',              u:'g',  c:'Latticini', k:320, p:25,  ca:2,   g:24},
-  mozzarella: {n:'Mozzarella',                      u:'g',  c:'Latticini', k:250, p:18,  ca:1,   g:19},
-  stracchino: {n:'Stracchino',                      u:'g',  c:'Latticini', k:300, p:18,  ca:1,   g:25},
-  philadelphia:{n:'Philadelphia',                   u:'g',  c:'Latticini', k:250, p:6,   ca:4,   g:24},
-  uova:       {n:'Uova',                            u:'pz', c:'Proteine',  k:78,  p:6.3, ca:0.4, g:5.3, pz:1},
-  tacchino:   {n:'Petto di tacchino a fette',       u:'g',  c:'Proteine',  k:107, p:24,  ca:0,   g:1},
-  nasello:    {n:'Filetti di nasello / merluzzo',   u:'g',  c:'Proteine',  k:86,  p:17,  ca:0,   g:2},
-  tonno:      {n:'Tonno al naturale (sgocciolato)', u:'g',  c:'Proteine',  k:116, p:26,  ca:0,   g:1},
-  cotto:      {n:'Prosciutto cotto',                u:'g',  c:'Salumi',    k:145, p:20,  ca:1,   g:7},
-  crudo:      {n:'Prosciutto crudo',                u:'g',  c:'Salumi',    k:270, p:26,  ca:0,   g:18},
-  speck:      {n:'Speck',                           u:'g',  c:'Salumi',    k:300, p:28,  ca:0,   g:21},
-  fesa:       {n:'Fesa di tacchino a fette',        u:'g',  c:'Salumi',    k:110, p:22,  ca:1,   g:2},
-  lenticchie: {n:'Lenticchie precotte',             u:'g',  c:'Legumi',    k:105, p:8,   ca:15,  g:0.5},
-  fagioli:    {n:'Fagioli cannellini precotti',     u:'g',  c:'Legumi',    k:91,  p:6.5, ca:13,  g:0.5},
-  piselli:    {n:'Piselli (surgelati o precotti)',  u:'g',  c:'Legumi',    k:80,  p:5.5, ca:10,  g:0.5},
-  pasta_int:  {n:'Pasta integrale',                 u:'g',  c:'Cereali',   k:340, p:13,  ca:64,  g:2.5},
-  pasta:      {n:'Pasta (formato corto)',           u:'g',  c:'Cereali',   k:355, p:12,  ca:72,  g:1.5},
-  riso:       {n:'Riso',                            u:'g',  c:'Cereali',   k:340, p:7,   ca:78,  g:0.6},
-  pane:       {n:'Pane',                            u:'g',  c:'Cereali',   k:265, p:8.5, ca:50,  g:1.5},
-  biscotti:   {n:'Biscotti secchi',                 u:'g',  c:'Colazione', k:430, p:7,   ca:75,  g:11},
-  zucchine:   {n:'Zucchine',                        u:'g',  c:'Verdura',   k:17,  p:1.3, ca:2,   g:0.3},
-  spinaci:    {n:'Spinaci',                         u:'g',  c:'Verdura',   k:23,  p:2.9, ca:1,   g:0.4},
-  carote:     {n:'Carote',                          u:'g',  c:'Verdura',   k:41,  p:0.9, ca:9.6, g:0.2},
-  patate:     {n:'Patate',                          u:'g',  c:'Verdura',   k:77,  p:2,   ca:17,  g:0.1},
-  frutta:     {n:'Frutta (media, ~150 g)',          u:'pz', c:'Verdura',   k:90,  p:1,   ca:20,  g:0.3, pz:1},
-  passata:    {n:'Passata di pomodoro',             u:'g',  c:'Dispensa',  k:32,  p:1.5, ca:6,   g:0.2},
-  pesto:      {n:'Pesto',                           u:'g',  c:'Dispensa',  k:450, p:6,   ca:6,   g:45},
-  mandorle:   {n:'Mandorle',                        u:'g',  c:'Dispensa',  k:580, p:21,  ca:5,   g:50},
-  noci:       {n:'Noci sgusciate',                  u:'g',  c:'Dispensa',  k:650, p:15,  ca:4,   g:63},
-  olio:       {n:'Olio EVO',                        u:'g',  c:'Dispensa',  k:900, p:0,   ca:0,   g:100}
+/* confezioni e misure modificabili dalla scheda Piano → «Le tue misure» */
+const CONF_DEF = {
+  tazza:       200,   // ml di latte nella tazza (dato non noto: ipotesi)
+  frollini:     40,   // g di frollini a colazione (dato non noto: ipotesi)
+  greco:       150,   // g di un vasetto di yogurt greco (ipotesi: formato più comune)
+  grana_snack:  30,   // g di una busta di grana «snack» (ipotesi, da verificare sulla confezione)
+  tonno:        56,   // g sgocciolati di una scatoletta da 80 g (ipotesi, da verificare)
+  uova:         55    // g di un uovo medio sgusciato (taglia non nota: ipotesi)
 };
+const ING = {
+  /* colazione — etichette */
+  latte:    {n:'Latte Zymil',                         u:'ml', c:'Colazione', k:41,  p:3.2, ca:4.9, g:1.0,  casa:1, src:'etichetta'},
+  sonny:    {n:'Cioccolato solubile Sonny',           u:'g',  c:'Colazione', k:380, p:3.6, ca:85,  g:1.7,  casa:1, src:'etichetta'},
+  frollini: {n:'Frollini integrali',                  u:'g',  c:'Colazione', k:446, p:8.8, ca:66,  g:15,   casa:1, src:'etichetta'},
+
+  /* latticini */
+  greco:    {n:'Yogurt greco 0 % (vasetto)',          u:'vasetto', un:['vasetto','vasetti'], conf:'greco', c:'Latticini', k:57, p:10, ca:4, g:0.2},
+  grana:    {n:'Grana grattugiato',                   u:'g',  c:'Latticini', k:398, p:33,  ca:0,   g:29,   casa:1, src:'etichetta'},
+  gsnack:   {n:'Grana snack (busta)',                    u:'busta', un:['busta','buste'], conf:'grana_snack', c:'Latticini', k:392, p:33, ca:0, g:28},
+  filante:  {n:'Scamorza / provola',                  u:'g',  c:'Latticini', k:320, p:25,  ca:2,   g:24},
+  mozzarella:{n:'Mozzarella',                         u:'g',  c:'Latticini', k:250, p:18,  ca:1,   g:19},
+
+  /* proteine */
+  uova:     {n:'Uova',                                u:'uova', un:['uovo','uova'], conf:'uova', c:'Proteine', k:143, p:12.6, ca:0.7, g:9.9, casa:1},
+  tacchino: {n:'Petto di tacchino a fette',           u:'g',  c:'Proteine',  k:107, p:24,  ca:0,   g:1},
+  pollo:    {n:'Petto di pollo a fette',              u:'g',  c:'Proteine',  k:110, p:23,  ca:0,   g:1.5},
+  manzo:    {n:'Hamburger / macinato di manzo magro (≤5 % grassi)', u:'g', c:'Proteine', k:137, p:21, ca:0, g:5},
+  nasello:  {n:'Filetti di nasello (surgelati)',      u:'g',  c:'Proteine',  k:75,  p:16,  ca:0,   g:1},
+  salmone:  {n:'Salmone (filetto)',                   u:'g',  c:'Proteine',  k:200, p:20,  ca:0,   g:13},
+  tonno:    {n:'Tonno al naturale (scatoletta da 80 g)', u:'scatoletta', un:['scatoletta','scatolette'], conf:'tonno', c:'Proteine', k:116, p:26, ca:0, g:1},
+
+  /* salumi */
+  cotto:    {n:'Prosciutto cotto',                    u:'g',  c:'Salumi',    k:143, p:20,  ca:0,   g:7,    casa:1, src:'etichetta'},
+  pollo_aff:{n:'Petto di pollo al forno (affettato)', u:'g',  c:'Salumi',    k:96,  p:19,  ca:1.5, g:1.5,  casa:1, src:'etichetta'},
+
+  /* legumi */
+  legumi:   {n:'Legumi in scatola (lenticchie o cannellini)', u:'g', c:'Legumi', k:94, p:6.5, ca:12.3, g:0.6, casa:1, src:'etichetta'},
+  piselli:  {n:'Piselli surgelati',                   u:'g',  c:'Legumi',    k:80,  p:5.5, ca:10,  g:0.5},
+
+  /* cereali */
+  pasta:    {n:'Pasta De Cecco (a crudo)',            u:'g',  c:'Cereali',   k:351, p:14,  ca:69,  g:1.5,  casa:1, src:'etichetta'},
+  riso:     {n:'Riso (a crudo)',                      u:'g',  c:'Cereali',   k:340, p:7,   ca:78,  g:0.6},
+  pane:     {n:'Pan bauletto (fetta da 25 g)',        u:'fetta', un:['fetta','fette'], w:25, c:'Cereali', k:268, p:8.5, ca:49, g:3.2, casa:1, src:'etichetta'},
+
+  /* verdura e frutta */
+  zucchine: {n:'Zucchine',                            u:'g',  c:'Verdura',   k:17,  p:1.3, ca:2,   g:0.3},
+  spinaci:  {n:'Spinaci',                             u:'g',  c:'Verdura',   k:23,  p:2.9, ca:1,   g:0.4},
+  carote:   {n:'Carote',                              u:'g',  c:'Verdura',   k:41,  p:0.9, ca:9.6, g:0.2},
+  patate:   {n:'Patate',                              u:'g',  c:'Verdura',   k:77,  p:2,   ca:17,  g:0.1},
+  mela:     {n:'Mela (~150 g)',                       u:'mela', un:['mela','mele'], w:150, c:'Frutta', k:50, p:0.3, ca:12, g:0.2},
+  banana:   {n:'Banana (~100 g sbucciata)',           u:'banana', un:['banana','banane'], w:100, c:'Frutta', k:89, p:1.1, ca:21, g:0.3},
+
+  /* dispensa */
+  passata:  {n:'Passata di pomodoro',                 u:'g',  c:'Dispensa',  k:36,  p:1.6, ca:5.1, g:0.3,  casa:1, src:'etichetta'},
+  mandorle: {n:'Mandorle',                            u:'g',  c:'Dispensa',  k:592, p:25,  ca:2.4, g:51,   casa:1, src:'etichetta'},
+  noci:     {n:'Noci sgusciate',                      u:'g',  c:'Dispensa',  k:654, p:15.2, ca:13.7, g:65.2, casa:1, src:'etichetta'},
+  olio:     {n:'Olio extravergine Carli',             u:'g',  c:'Dispensa',  k:900, p:0,   ca:0,   g:100,  casa:1, src:'etichetta'}
+};
+const CATS = ['Proteine','Salumi','Latticini','Legumi','Cereali','Verdura','Frutta','Colazione','Dispensa'];
+
+/* le misure personali (S.conf) sovrascrivono i valori di CONF_DEF; in assenza di S usa i default */
+function confVal(key){
+  try{ if(typeof S !== 'undefined' && S && S.conf && S.conf[key] != null) return S.conf[key]; }catch(e){}
+  return CONF_DEF[key];
+}
+/* grammi di un'unità «a pezzi» */
+function wOf(k){ const n = ING[k]; return n.conf ? confVal(n.conf) : n.w; }
+const aPezzi = k => !!(ING[k].conf || ING[k].w);
+
+/* calcolo nutrizionale a partire dagli ingredienti (quantità nell'unità dell'ingrediente) */
 function nutri(ing){
-  let o={kcal:0,p:0,c:0,g:0};
+  const o = {kcal:0, p:0, c:0, g:0};
   for(const key in ing){
-    const n=ING[key]; if(!n) continue;
-    const f = n.pz ? ing[key] : ing[key]/100;
-    o.kcal+=n.k*f; o.p+=n.p*f; o.c+=n.ca*f; o.g+=n.g*f;
+    const n = ING[key]; if(!n) continue;
+    const grammi = aPezzi(key) ? ing[key]*wOf(key) : ing[key];
+    const f = grammi/100;
+    o.kcal += n.k*f; o.p += n.p*f; o.c += n.ca*f; o.g += n.g*f;
   }
-  for(const k in o) o[k]=Math.round(o[k]);
+  for(const k in o) o[k] = Math.round(o[k]);
   return o;
 }
-/* calcolo nutrizionale reale a partire dagli ingredienti */
-function nutri(ing){
-  let o={kcal:0,p:0,c:0,g:0};
-  for(const key in ing){
-    const n=ING[key]; if(!n) continue;
-    const f = n.pz ? ing[key] : ing[key]/100;
-    o.kcal+=n.k*f; o.p+=n.p*f; o.c+=n.ca*f; o.g+=n.g*f;
-  }
-  for(const k in o) o[k]=Math.round(o[k]);
-  return o;
+/* quantità leggibile: «65 g», «2 scatolette», «½ vasetto» */
+function numIt(q){
+  const r = Math.round(q*2)/2;
+  if(Math.abs(q-r) < 0.01 && r !== Math.floor(r)) return (Math.floor(r) ? Math.floor(r) : '') + '½';
+  return String(Math.round(q*10)/10).replace('.',',');
 }
-const CATS = ['Proteine','Salumi','Latticini','Legumi','Cereali','Verdura','Colazione','Dispensa'];
+function fmtQ(k, q){
+  const n = ING[k];
+  if(n.un) return numIt(q) + ' ' + (q === 1 ? n.un[0] : n.un[1]);
+  return Math.round(q*10)/10 + ' ' + n.u;
+}
 
 /* ══════════════════════════════════════════════════════════
-   2. RICETTE  (ingredienti = 1 porzione)
+   2. RICETTE  (ingredienti = 1 porzione; sale, pepe, erbe, limone: a piacere)
+   Niente aglio, cipolla, aceto, pomodoro crudo, funghi, peperoni, melanzane, broccoli, cavolfiore, ceci.
    ══════════════════════════════════════════════════════════ */
 const R = {
 
+/* ─────────── Pasta e riso freddi ─────────── */
 pf_tonno:{
-  nome:'Pasta fredda con tonno, zucchine e provola', tempo:20, porz:3, freddo:true,
-  ing:{pasta:85, zucchine:150, carote:70, tonno:130, filante:40, olio:10},
+  nome:'Pasta fredda con tonno, zucchine e scamorza', tipo:'Pasta e riso freddi', tempo:25, freddo:true,
+  ing:{pasta:65, tonno:2, zucchine:150, carote:60, filante:20, olio:6},
   libere:['Basilico','Limone','Sale, pepe'],
   passi:[
-    {t:'Cuoci la pasta', d:'Formato corto che regge il freddo: fusilli, farfalle o penne. Acqua salata.'},
-    {t:'Raffredda subito', d:'Scola un minuto prima del tempo e passala sotto acqua fredda corrente finché è completamente fredda. Blocca la cottura e le impedisce di impastarsi.'},
-    {t:'Un filo d\'olio subito', d:'Un cucchiaino appena, mescolando. Fa da pellicola e i pezzi non si attaccano mentre prepari il resto.'},
-    {t:'Zucchine e carote in friggitrice', d:'Zucchine a rondelle spesse e carote a bastoncini, un filo d\'olio e sale. 180 °C per 14–15 minuti, scuotendo il cestello a metà. Falle raffreddare.'},
-    {t:'Prepara il resto', d:'Tonno ben sgocciolato, provola a cubetti da un centimetro.'},
-    {t:'Assembla', d:'Tutto in ciotola con il resto dell\'olio, basilico spezzato a mano, limone, sale e pepe.'},
-    {t:'Fai riposare', d:'Almeno 30 minuti in frigo. I sapori hanno bisogno di tempo per legare: appena fatta sa di poco.'}
+    {t:'Cuoci la pasta', d:'Formato corto che regge il freddo: fusilli, farfalle o penne. Acqua salata, scolala un minuto prima del tempo scritto sulla confezione.'},
+    {t:'Raffreddala subito', d:'Sotto acqua fredda corrente finché è completamente fredda. Blocca la cottura e le impedisce di impastarsi.'},
+    {t:'Metà dell\'olio, subito', d:'Mescolala con metà dell\'olio della dose. Fa da pellicola: i pezzi non si attaccano mentre prepari il resto.'},
+    {t:'Zucchine e carote in friggitrice', d:'Zucchine a rondelle spesse e carote a bastoncini, un velo d\'olio e sale. 180 °C per 14–15 minuti, scuotendo il cestello a metà. Falle raffreddare.'},
+    {t:'Prepara il resto', d:'Tonno ben sgocciolato, scamorza a cubetti da un centimetro.'},
+    {t:'Assembla', d:'Tutto in ciotola con l\'olio rimasto, basilico spezzato a mano, limone, sale e pepe.'},
+    {t:'Fai riposare', d:'Almeno 30 minuti in frigo: i sapori hanno bisogno di tempo per legare, appena fatta sa di poco.'}
   ],
-  keep:'Tre giorni in frigo, e migliora col riposo. Il piatto più comodo del piano da portare fuori.'
+  keep:'Tre giorni in frigo, e migliora col riposo. Si mangia freddo, senza riscaldare: è il piatto ideale per il lunedì, cucinato la domenica.'
 },
 
 pf_piselli:{
-  nome:'Pasta fredda con tonno e piselli', tempo:20, porz:3, freddo:true,
-  ing:{pasta:85, tonno:120, piselli:90, carote:70, filante:32, olio:10},
+  nome:'Pasta fredda con tonno e piselli', tipo:'Pasta e riso freddi', tempo:25, freddo:true,
+  ing:{pasta:60, tonno:2, piselli:70, carote:50, filante:15, olio:6},
   libere:['Prezzemolo','Limone','Sale, pepe'],
   passi:[
-    {t:'Cuoci la pasta', d:'Formato corto in acqua salata, scolala un minuto prima.'},
-    {t:'Raffredda', d:'Sotto acqua fredda corrente, poi un filo d\'olio e una mescolata.'},
+    {t:'Cuoci la pasta', d:'Formato corto in acqua salata, scolata un minuto prima.'},
+    {t:'Raffredda', d:'Sotto acqua fredda corrente, poi metà dell\'olio e una mescolata.'},
     {t:'Cuoci i piselli', d:'In acqua bollente salata, 4–5 minuti se surgelati. Scolali e passali subito sotto acqua fredda: restano verdi e sodi invece di diventare grigi e molli.'},
-    {t:'Carote in friggitrice', d:'A bastoncini con un filo d\'olio e sale, 180 °C per 15 minuti. Falle raffreddare.'},
-    {t:'Assembla', d:'Pasta, piselli, carote, tonno sgocciolato e provola a cubetti.'},
-    {t:'Condisci', d:'Resto dell\'olio, prezzemolo, limone, sale e pepe. Mezz\'ora di frigo prima di mangiarla.'}
+    {t:'Carote in friggitrice', d:'A bastoncini con un velo d\'olio e sale, 180 °C per 15 minuti. Falle raffreddare.'},
+    {t:'Assembla', d:'Pasta, piselli, carote, tonno sgocciolato e scamorza a cubetti.'},
+    {t:'Condisci', d:'Olio rimasto, prezzemolo, limone, sale e pepe. Mezz\'ora di frigo prima di mangiarla.'}
   ],
-  keep:'Tre giorni in frigo. Si mangia freddo, nessun riscaldamento.'
-},
-
-pf_uova:{
-  nome:'Pasta fredda con uova saltate e tonno', tempo:25, porz:3, freddo:true,
-  ing:{pasta:80, uova:2, tonno:80, zucchine:150, carote:70, grana:18, olio:9},
-  libere:['Prezzemolo','Limone','Sale, pepe'],
-  passi:[
-    {t:'Cuoci la pasta', d:'Formato corto, scolala un minuto prima e raffreddala sotto acqua corrente.'},
-    {t:'Zucchine e carote in friggitrice', d:'A cubetti, filo d\'olio e sale, 180 °C per 14 minuti. Raffreddare.'},
-    {t:'Sbatti le uova', d:'Con sale, pepe e il grana grattugiato. Trenta secondi di forchetta.'},
-    {t:'Uova sbriciolate in padella', d:'Padella antiaderente con poco olio, fuoco medio-basso. Versa le uova e mescola in continuazione con una spatola, rompendole in pezzetti piccoli.'},
-    {t:'Toglile presto', d:'Quando sono ancora leggermente umide, non asciutte. Continuano a rassodarsi nel piatto e altrimenti diventano gommose. Falle raffreddare.'},
-    {t:'Assembla', d:'Tutto in ciotola con il tonno sgocciolato, il resto dell\'olio, prezzemolo, limone, sale e pepe.'}
-  ],
-  keep:'Due giorni in frigo, non tre: con l\'uovo dentro conviene non tirare troppo.'
+  keep:'Tre giorni in frigo. Si mangia fredda, nessun riscaldamento.'
 },
 
 pf_cotto:{
-  nome:'Pasta fredda con cotto e mozzarella', tempo:20, porz:3, freddo:true,
-  ing:{pasta:88, cotto:82, mozzarella:50, zucchine:150, piselli:70, olio:9},
+  nome:'Pasta fredda con prosciutto cotto e mozzarella', tipo:'Pasta e riso freddi', tempo:25, freddo:true,
+  ing:{pasta:58, cotto:90, mozzarella:30, zucchine:150, piselli:50, olio:4},
   libere:['Basilico','Sale, pepe'],
   passi:[
-    {t:'Cuoci la pasta', d:'Formato corto, scolala un minuto prima e raffredda sotto acqua corrente.'},
+    {t:'Cuoci la pasta', d:'Formato corto, scolata un minuto prima e raffreddata sotto acqua corrente.'},
     {t:'Cuoci i piselli', d:'4–5 minuti in acqua bollente salata, poi acqua fredda per fissare il colore.'},
-    {t:'Zucchine in friggitrice', d:'A rondelle con filo d\'olio e sale, 180 °C per 14 minuti. Raffreddare.'},
+    {t:'Zucchine in friggitrice', d:'A rondelle con un velo d\'olio e sale, 180 °C per 14 minuti. Falle raffreddare.'},
     {t:'Scola la mozzarella', d:'Tagliala a cubetti e lasciala in uno scolapasta 10 minuti. Se la metti gocciolante, il giorno dopo trovi il fondo del contenitore pieno d\'acqua e la pasta slavata.'},
     {t:'Taglia il cotto', d:'A striscioline o cubetti.'},
     {t:'Assembla', d:'Tutto in ciotola con l\'olio, basilico spezzato a mano, sale e pepe.'}
   ],
-  keep:'Due giorni in frigo. Con la mozzarella dentro non conviene andare oltre.'
-},
-
-pf_pesto:{
-  nome:'Pasta fredda al pesto con provola e mandorle', tempo:20, porz:3, freddo:true,
-  ing:{pasta:95, pesto:22, zucchine:180, filante:68, mandorle:10},
-  libere:['Sale','Basilico'],
-  passi:[
-    {t:'Cuoci la pasta', d:'Formato corto in acqua salata. Tieni da parte un mestolo di acqua di cottura.'},
-    {t:'Raffredda', d:'Sotto acqua fredda corrente fino a raffreddamento completo.'},
-    {t:'Zucchine in friggitrice', d:'A rondelle, filo d\'olio e sale, 180 °C per 14 minuti. Il pesto porta già i suoi grassi, non serve altro olio.'},
-    {t:'Tosta le mandorle', d:'Tritate grossolanamente, in padella a secco 2–3 minuti finché profumano. Tienile d\'occhio: passano da dorate a bruciate in trenta secondi.'},
-    {t:'Sciogli il pesto', d:'In una ciotola capiente con due cucchiai di acqua di cottura tenuta da parte, fino a crema liscia.'},
-    {t:'Assembla', d:'Pasta, zucchine, provola a cubetti e mandorle nella ciotola con il pesto. Mescola bene.'}
-  ],
-  warn:'Non scaldare mai il pesto sul fuoco. Il basilico si ossida, il colore vira allo scuro e il sapore diventa amaro.',
-  keep:'Tre giorni in frigo. Se il giorno dopo sembra asciutta, un cucchiaino d\'olio e una mescolata la rimettono a posto.'
+  keep:'Due giorni in frigo: con la mozzarella dentro non conviene andare oltre.'
 },
 
 riso_tonno:{
-  nome:'Riso freddo con tonno, carote e piselli', tempo:20, porz:3, freddo:true,
-  ing:{riso:85, tonno:130, carote:70, piselli:70, grana:18, olio:10, mandorle:6},
+  nome:'Riso freddo con tonno, carote e piselli', tipo:'Pasta e riso freddi', tempo:25, freddo:true,
+  ing:{riso:65, tonno:2, carote:60, piselli:60, grana:12, olio:6},
   libere:['Prezzemolo','Limone','Sale, pepe'],
   passi:[
     {t:'Cuoci il riso', d:'In acqua salata, secondo i tempi della confezione.'},
     {t:'Blocca la cottura', d:'Scolalo un minuto prima e passalo sotto acqua fredda. Così non si impasta in frigo.'},
     {t:'Piselli', d:'4–5 minuti in acqua bollente, poi acqua fredda.'},
-    {t:'Carote in friggitrice', d:'A cubetti piccoli con filo d\'olio e sale, 180 °C per 15 minuti. Raffreddare.'},
-    {t:'Tosta le mandorle', d:'Tritate, padella a secco, 2 minuti.'},
-    {t:'Condisci', d:'Unisci tutto con il tonno sgocciolato, olio, grana, prezzemolo, limone, sale e pepe.'}
+    {t:'Carote in friggitrice', d:'A cubetti piccoli con un velo d\'olio e sale, 180 °C per 15 minuti. Falle raffreddare.'},
+    {t:'Condisci', d:'Unisci tutto con il tonno sgocciolato, l\'olio rimasto, il grana, prezzemolo, limone, sale e pepe.'}
   ],
-  keep:'Tre giorni in frigo, si mangia freddo o a temperatura ambiente. Comodissimo da portare.'
+  keep:'Tre giorni in frigo, si mangia freddo o a temperatura ambiente.'
 },
 
-pasta_tonno:{
-  nome:'Pasta al pomodoro e tonno', tempo:20, porz:2,
-  ing:{pasta:95, passata:130, tonno:130, grana:22, olio:11},
+/* ─────────── Pasta e riso caldi ─────────── */
+pasta_pom_pollo:{
+  nome:'Pasta al pomodoro con straccetti di pollo e zucchine', tipo:'Pasta e riso caldi', tempo:25, freddo:false,
+  ing:{pasta:65, passata:100, pollo:130, zucchine:150, olio:7, grana:8},
+  libere:['Basilico o origano','Sale, pepe'],
+  passi:[
+    {t:'Metti su l\'acqua', d:'Sala quando bolle.'},
+    {t:'Rosola il pollo', d:'Striscioline larghe un centimetro, asciugate con carta da cucina e salate. Padella antiaderente molto calda con metà dell\'olio: 4–5 minuti a fuoco vivo, mescolando, finché dentro non è più rosa. Toglile dalla padella.'},
+    {t:'Zucchine', d:'A rondelle sottili nella stessa padella, 6–7 minuti a fuoco medio con un pizzico di sale.'},
+    {t:'Sugo', d:'Aggiungi la passata e l\'olio rimasto, 6–8 minuti finché si addensa. Rimetti il pollo.'},
+    {t:'Pasta', d:'Al dente, scolata e saltata 30 secondi nella padella con il sugo per farla legare.'},
+    {t:'Profuma', d:'Basilico o origano a fuoco spento, grana nel piatto.'}
+  ],
+  keep:'Si cucina in doppia porzione: metà la mangi stasera, metà è il pranzo di domani. Contenitore chiuso in frigo entro un\'ora dalla cottura. Domani: microonde 2 minuti con due cucchiai d\'acqua, mescolando a metà.'
+},
+
+pasta_pom_tonno:{
+  nome:'Pasta al pomodoro e tonno', tipo:'Pasta e riso caldi', tempo:20, freddo:false,
+  ing:{pasta:65, passata:120, tonno:2, grana:12, olio:7, zucchine:100},
   libere:['Basilico o origano','Sale'],
   passi:[
     {t:'Acqua sul fuoco', d:'Salala quando bolle.'},
-    {t:'Cuoci il sugo', d:'Olio e passata in padella, sale, fuoco medio, 10 minuti finché si addensa leggermente.'},
+    {t:'Zucchine e sugo', d:'Zucchine a cubetti in padella con l\'olio, 5 minuti; poi la passata con un pizzico di sale, altri 8–10 minuti a fuoco medio finché si addensa.'},
     {t:'Aggiungi il tonno', d:'Ben sgocciolato, negli ultimi 2–3 minuti. Prima no: cuocendo a lungo si asciuga e diventa stopposo.'},
     {t:'Salta la pasta', d:'Al dente, scolata, 30 secondi in padella con il sugo per farla legare.'},
     {t:'Profuma', d:'Basilico o origano a fuoco spento, grana nel piatto.'}
   ],
-  keep:'Tre giorni in frigo. Se puoi conserva sugo e pasta separati, altrimenti riscalda in padella con due cucchiai d\'acqua.'
+  keep:'Tre giorni in frigo; se puoi, conserva sugo e pasta separati. Riscalda in padella con due cucchiai d\'acqua o al microonde 2 minuti.'
 },
 
 pasta_zuc_uovo:{
-  nome:'Pasta con zucchine e uovo', tempo:20, porz:3,
-  ing:{pasta_int:85, zucchine:180, uova:2, grana:35, olio:10, mandorle:8},
+  nome:'Pasta con zucchine, uovo e prosciutto cotto', tipo:'Pasta e riso caldi', tempo:20, freddo:false,
+  ing:{pasta:58, uova:2, grana:12, cotto:50, zucchine:180, olio:2},
   libere:['Sale, pepe nero','Basilico'],
   passi:[
     {t:'Metti su l\'acqua', d:'Un litro ogni 100 g di pasta. Sala quando bolle.'},
     {t:'Rosola le zucchine', d:'A rondelle sottili, 3–4 mm, in padella con l\'olio a fuoco medio. 8–10 minuti con un pizzico di sale, finché sono dorate ai bordi ma ancora consistenti.'},
-    {t:'Aggiungi le mandorle', d:'Tritate grossolanamente, negli ultimi 2 minuti: si tostano e restano croccanti.'},
+    {t:'Aggiungi il cotto', d:'A striscioline, negli ultimi 2 minuti.'},
     {t:'Cuoci la pasta', d:'Al dente, un minuto in meno rispetto alla confezione.'},
-    {t:'Prepara la crema', d:'In una ciotola sbatti le uova con il grana grattugiato e una macinata di pepe.'},
+    {t:'Prepara la crema', d:'In una ciotola sbatti le uova con il grana e una macinata di pepe.'},
     {t:'Manteca a fuoco spento', d:'Scola tenendo un mestolo di acqua di cottura, versa la pasta sulle zucchine e spegni. Aggiungi uova e grana mescolando senza fermarti: il calore residuo crea la crema.'}
   ],
   warn:'Il fuoco deve essere spento quando aggiungi le uova. Con la fiamma accesa si stracciano e ti ritrovi una frittata dentro la pasta.',
-  keep:'Tre giorni in frigo. Riscalda in padella con due cucchiai d\'acqua a fuoco basso. Non congelare: l\'uovo diventa gommoso.'
+  keep:'Si cucina in doppia porzione (stasera e pranzo di domani). Domani riscalda in padella con due cucchiai d\'acqua a fuoco basso, oppure al microonde a potenza media. Non congelare: l\'uovo diventa gommoso.'
 },
 
-lenticchie:{
-  nome:'Insalata di lenticchie con uovo saltato', tempo:20, porz:2, freddo:true,
-  ing:{lenticchie:260, zucchine:130, uova:1, grana:33, pane:45, olio:13},
+pasta_legumi:{
+  nome:'Pasta e legumi al pomodoro', tipo:'Pasta e riso caldi', tempo:30, freddo:false,
+  ing:{pasta:45, legumi:150, passata:100, grana:20, cotto:60, zucchine:100, olio:3},
+  libere:['Rosmarino o salvia','Sale, pepe'],
+  passi:[
+    {t:'Sciacqua i legumi', d:'Lenticchie o cannellini della scatola, sotto acqua corrente per 30 secondi: il liquido di governo è salato e gonfia. Con i cannellini fai piano, si rompono.'},
+    {t:'Sugo di base', d:'Olio e passata in una pentola bassa, sale, 5 minuti a fuoco medio. Aggiungi le zucchine a cubetti.'},
+    {t:'Legumi', d:'Uniscili al sugo con mezzo bicchiere d\'acqua e cuoci 8–10 minuti a fuoco dolce. Schiaccia con la forchetta una parte dei legumi: il sugo diventa cremoso senza aggiungere altro.'},
+    {t:'Cuoci la pasta a parte', d:'In acqua salata, scolala un minuto prima. Poi un minuto nel sugo, mescolando.'},
+    {t:'Chiudi', d:'Fuoco spento, il prosciutto cotto a cubetti, il grana e il rosmarino tritato. Aggiungi un po\' d\'acqua di cottura se è troppo asciutta.'}
+  ],
+  keep:'Si cucina in doppia porzione (stasera e pranzo di domani). Il giorno dopo si addensa: scaldala con un goccio d\'acqua, 2 minuti al microonde.'
+},
+
+ragu:{
+  nome:'Pasta al ragù di manzo magro (senza cipolla)', tipo:'Pasta e riso caldi', tempo:40, freddo:false,
+  ing:{pasta:65, manzo:110, passata:120, carote:50, zucchine:100, grana:10, olio:3},
+  libere:['Rosmarino','Sale, pepe'],
+  passi:[
+    {t:'Verdure al posto del soffritto', d:'Carota grattugiata e zucchine tritate fini in pentola con l\'olio e due cucchiai d\'acqua, 5 minuti a fuoco medio. È la base che al posto della cipolla dà dolcezza al ragù.'},
+    {t:'Rosola la carne', d:'Aggiungi il macinato, sgranalo con il cucchiaio e lascialo cuocere 6–8 minuti, finché non è più rosa e l\'acqua è evaporata. Sale e pepe.'},
+    {t:'Passata e cottura', d:'Versa la passata, copri a metà e cuoci 20–25 minuti a fuoco basso. Se si asciuga troppo aggiungi mezzo bicchiere d\'acqua.'},
+    {t:'Cuoci la pasta', d:'Al dente, scolata e saltata 30 secondi nel ragù.'},
+    {t:'Servi', d:'Grana nel piatto e rosmarino tritato.'}
+  ],
+  warn:'Il macinato deve essere di manzo magro (≤5 % di grassi). Quello standard da hamburger può avere il 15–20 % di grassi: sui 110 g di questa ricetta sono circa 85–130 kcal in più a porzione (valori USDA del macinato crudo; la cottura ne elimina una parte).',
+  keep:'Si cucina in doppia porzione (stasera e pranzo di domani). Il ragù il giorno dopo è più buono. Scalda 2 minuti al microonde con un goccio d\'acqua. Si congela bene (in porzioni singole).'
+},
+
+riso_pollo:{
+  nome:'Riso con pollo e zucchine', tipo:'Pasta e riso caldi', tempo:25, freddo:false,
+  ing:{riso:65, pollo:140, zucchine:200, grana:10, olio:7},
+  libere:['Limone','Prezzemolo','Sale, pepe'],
+  passi:[
+    {t:'Cuoci il riso', d:'In acqua salata secondo la confezione, scolato un minuto prima.'},
+    {t:'Rosola il pollo', d:'Striscioline di un centimetro, asciugate e salate. Padella antiaderente molto calda con metà dell\'olio, 4–5 minuti a fuoco vivo mescolando. Toglile.'},
+    {t:'Zucchine', d:'A cubetti piccoli nella stessa padella con l\'olio rimasto, 7–8 minuti a fuoco medio.'},
+    {t:'Unisci', d:'Rimetti il pollo, aggiungi il riso e salta un minuto per amalgamare.'},
+    {t:'Finisci', d:'Grana, prezzemolo, limone e pepe a fuoco spento.'}
+  ],
+  keep:'Si cucina in doppia porzione (stasera e pranzo di domani). Contenitore chiuso in frigo entro un\'ora. Domani: microonde 2 minuti con un cucchiaio d\'acqua. Il riso va consumato entro 24 ore.'
+},
+
+pasta_tacc_zuc:{
+  nome:'Pasta con tacchino, zucchine e grana', tipo:'Pasta e riso caldi', tempo:25, freddo:false,
+  ing:{pasta:65, tacchino:140, zucchine:200, grana:12, olio:7},
+  libere:['Limone','Rosmarino','Sale, pepe'],
+  passi:[
+    {t:'Metti su l\'acqua', d:'Sala quando bolle.'},
+    {t:'Taglia il tacchino', d:'A striscioline larghe un centimetro, nel senso contrario alle fibre: restano tenere. Asciugale e salale.'},
+    {t:'Cuoci il tacchino', d:'Padella antiaderente molto calda con metà dell\'olio, 3–4 minuti mescolando. Oltre diventa stopposo. Toglilo.'},
+    {t:'Zucchine', d:'A rondelle sottili nella stessa padella con l\'olio rimasto, 7–8 minuti a fuoco medio.'},
+    {t:'Pasta', d:'Al dente, scolata e saltata un minuto con zucchine e tacchino, con un goccio di acqua di cottura.'},
+    {t:'Chiudi', d:'Grana, un filo di limone, rosmarino tritato e pepe.'}
+  ],
+  keep:'Si cucina in doppia porzione (stasera e pranzo di domani). Domani: microonde 2 minuti con due cucchiai d\'acqua.'
+},
+
+/* ─────────── Carne e pesce ─────────── */
+straccetti:{
+  nome:'Straccetti di tacchino con zucchine e patate', tipo:'Carne e pesce', tempo:30, freddo:false,
+  ing:{tacchino:150, zucchine:200, patate:180, pane:1, grana:10, olio:8},
   libere:['Prezzemolo','Limone','Sale, pepe'],
   passi:[
-    {t:'Sciacqua le lenticchie', d:'Sotto acqua corrente per 30 secondi. Il liquido di governo è molto salato e gonfia.'},
-    {t:'Zucchine in friggitrice', d:'A cubetti con filo d\'olio e sale, 180 °C per 14 minuti.'},
-    {t:'Uovo sbriciolato', d:'Sbattilo con sale e pepe, poi in padella antiaderente a fuoco medio-basso mescolando in continuazione. Toglilo quando è ancora leggermente umido.'},
-    {t:'Fai intiepidire', d:'Lenticchie, zucchine e uovo in una ciotola. Aspetta che scendano di temperatura prima di condire.'},
-    {t:'Condisci', d:'Olio, succo di mezzo limone, prezzemolo tritato, sale e pepe. Grana a scaglie al momento di mangiare, pane a fianco.'}
+    {t:'Patate in friggitrice', d:'A cubetti da 2 cm, un terzo dell\'olio, sale e rosmarino. 190 °C per 18–20 minuti, scuotendo il cestello a metà.'},
+    {t:'Taglia il tacchino', d:'A striscioline larghe un centimetro, nel senso contrario alle fibre. Tagliate così restano tenere.'},
+    {t:'Zucchine a rondelle', d:'Sottili, così cuociono in padella insieme alla carne.'},
+    {t:'Padella rovente', d:'Un terzo dell\'olio a fuoco vivo, poi gli straccetti asciugati. 3–4 minuti mescolando: cuociono in fretta perché sono sottili.'},
+    {t:'Toglili e cuoci le zucchine', d:'Stessa padella con l\'olio rimasto, 8 minuti a fuoco medio, sale alla fine.'},
+    {t:'Unisci', d:'Rimetti gli straccetti con le zucchine, prezzemolo e limone, un minuto insieme. Grana sulle patate, il pane a fianco.'}
   ],
-  keep:'Due giorni in frigo. Si mangia fredda o a temperatura ambiente, non serve scaldarla.'
+  keep:'Si cucina in doppia porzione (stasera e pranzo di domani). Domani: tacchino e zucchine 2 minuti al microonde; le patate tornano croccanti in friggitrice, 4 minuti a 180 °C.'
 },
 
-fagioli:{
-  nome:'Insalata di fagioli con uovo saltato', tempo:20, porz:2, freddo:true,
-  ing:{fagioli:285, zucchine:130, uova:1, grana:33, pane:48, olio:13},
-  libere:['Prezzemolo o salvia','Limone','Sale, pepe'],
-  passi:[
-    {t:'Sciacqua i fagioli', d:'Sotto acqua corrente, 30 secondi, con delicatezza: i cannellini si rompono facilmente.'},
-    {t:'Zucchine in friggitrice', d:'A rondelle con filo d\'olio e sale, 180 °C per 14 minuti.'},
-    {t:'Uovo sbriciolato', d:'In padella a fuoco medio-basso mescolando in continuazione, tolto quando è ancora leggermente umido.'},
-    {t:'Fai intiepidire', d:'Tutto in ciotola, lascia scendere di temperatura.'},
-    {t:'Condisci', d:'Olio, limone, prezzemolo o qualche foglia di salvia tritata, sale e pepe. Grana e pane a fianco.'}
-  ],
-  keep:'Due giorni in frigo. Come le lenticchie: si mangia freddo, comodo da portare.'
-},
-
-tacc_zuc_pat:{
-  nome:'Tacchino con zucchine e patate in friggitrice', tempo:30, porz:3,
-  ing:{tacchino:172, zucchine:180, patate:170, pane:55, grana:20, olio:15},
+tacc_patate:{
+  nome:'Tacchino con patate e zucchine in friggitrice', tipo:'Carne e pesce', tempo:30, freddo:false,
+  ing:{tacchino:150, patate:200, zucchine:200, pane:1, grana:8, olio:8},
   libere:['Rosmarino','Limone','Sale, pepe'],
   passi:[
     {t:'Patate in friggitrice', d:'A cubetti da 2 cm, un terzo dell\'olio, sale e rosmarino. 190 °C per 18–20 minuti, scuotendo il cestello a metà.'},
-    {t:'Poi le zucchine', d:'A rondelle spesse, filo d\'olio e sale. 180 °C per 13–15 minuti. Falle in un secondo giro: hanno tempi diversi dalle patate e insieme una delle due esce sbagliata.'},
+    {t:'Poi le zucchine', d:'A rondelle spesse, un velo d\'olio e sale. 180 °C per 13–15 minuti. Falle in un secondo giro: hanno tempi diversi dalle patate e insieme una delle due esce sbagliata.'},
     {t:'Scalda la padella a vuoto', d:'Antiaderente, fuoco vivo, due minuti senza olio. Una padella tiepida fa lessare la carne invece di rosolarla.'},
     {t:'Asciuga il tacchino', d:'Tampona le fettine con carta da cucina e sala un lato solo. Se sono bagnate non rosolano.'},
-    {t:'Cuocilo', d:'2–3 minuti per lato con il resto dell\'olio. Dorato fuori, non più rosa al centro. Oltre i 3 minuti diventa stopposo.'},
+    {t:'Cuocilo', d:'2–3 minuti per lato con l\'olio rimasto. Dorato fuori, non più rosa al centro. Oltre i 3 minuti diventa stopposo.'},
     {t:'Servi', d:'Limone sul tacchino, grana sulle patate, pane a fianco.'}
   ],
-  keep:'Tre giorni in frigo, carne e contorni separati. Riscalda il tacchino 60–90 secondi al microonde. Le patate tornano croccanti in friggitrice, 4 minuti a 180 °C.'
+  keep:'Si cucina in doppia porzione (stasera e pranzo di domani). Carne e contorni in contenitori separati. Domani: tacchino 60–90 secondi al microonde; le patate tornano croccanti in friggitrice, 4 minuti a 180 °C.'
 },
 
-tacc_spi_car:{
-  nome:'Tacchino con spinaci e carote', tempo:25, porz:3,
-  ing:{tacchino:172, spinaci:200, carote:130, pane:68, grana:22, olio:17},
+tacc_spi:{
+  nome:'Tacchino con spinaci e carote', tipo:'Carne e pesce', tempo:25, freddo:false,
+  ing:{tacchino:150, spinaci:200, carote:120, pane:2, grana:10, olio:9},
   libere:['Rosmarino','Limone','Sale, pepe'],
   passi:[
     {t:'Carote in friggitrice', d:'A bastoncini, un terzo dell\'olio, sale e rosmarino. 180 °C per 15–18 minuti.'},
@@ -576,156 +662,241 @@ tacc_spi_car:{
     {t:'Salta gli spinaci', d:'Stessa padella, olio rimasto, 3–4 minuti a fuoco medio. Sale alla fine.'},
     {t:'Servi', d:'Limone sul tacchino, grana sulle carote, pane a fianco.'}
   ],
-  keep:'Tre giorni in frigo. Gli spinaci si riscaldano in padella in due minuti.'
+  keep:'Si cucina in doppia porzione (stasera e pranzo di domani). Domani: tacchino e spinaci 90 secondi al microonde (spinaci con un goccio d\'acqua).'
 },
 
-straccetti:{
-  nome:'Straccetti di tacchino con zucchine', tempo:25, porz:3,
-  ing:{tacchino:172, zucchine:200, patate:150, pane:58, grana:20, olio:15},
-  libere:['Prezzemolo','Limone','Sale, pepe'],
+pollo_patate:{
+  nome:'Pollo con patate e carote in friggitrice', tipo:'Carne e pesce', tempo:35, freddo:false,
+  ing:{pollo:150, patate:200, carote:120, pane:1, olio:9},
+  libere:['Rosmarino','Limone','Sale, pepe'],
   passi:[
-    {t:'Patate in friggitrice', d:'A cubetti, un terzo dell\'olio, sale e rosmarino. 190 °C per 18–20 minuti.'},
-    {t:'Taglia il tacchino', d:'A striscioline larghe un centimetro, nel senso contrario alle fibre. Tagliate così restano tenere.'},
-    {t:'Zucchine a rondelle', d:'Sottili, così cuociono in padella insieme alla carne.'},
-    {t:'Padella rovente', d:'Un terzo dell\'olio a fuoco vivo, poi gli straccetti asciugati. 3–4 minuti mescolando: cuociono in fretta perché sono sottili.'},
-    {t:'Toglili e cuoci le zucchine', d:'Stessa padella con l\'olio rimasto, 8 minuti a fuoco medio, sale alla fine.'},
-    {t:'Unisci', d:'Rimetti gli straccetti con le zucchine, prezzemolo e limone, un minuto insieme.'}
+    {t:'Patate e carote in friggitrice', d:'Patate a cubetti da 2 cm e carote a bastoncini, metà dell\'olio, sale e rosmarino. 190 °C per 18–20 minuti, scuotendo il cestello a metà.'},
+    {t:'Prepara il pollo', d:'Il petto a bocconcini di 3 cm, asciugati con carta da cucina. Condisci con l\'olio rimasto, sale e pepe.'},
+    {t:'Cuoci il pollo', d:'Padella antiaderente molto calda, 6–8 minuti girando i bocconcini; oppure in friggitrice a 180 °C per 10–12 minuti. È pronto quando dentro non è più rosa e il succo che esce è trasparente.'},
+    {t:'Servi', d:'Limone sul pollo, pane a fianco.'}
   ],
-  keep:'Tre giorni in frigo. Riscalda in padella a fuoco basso con un cucchiaio d\'acqua.'
+  warn:'Il pollo va cotto del tutto: niente rosa al centro. Non serve però oltre i 12 minuti in friggitrice, altrimenti diventa asciutto.',
+  keep:'Si cucina in doppia porzione (stasera e pranzo di domani). Domani: pollo 60–90 secondi al microonde con un goccio d\'acqua; patate e carote in friggitrice 4 minuti a 180 °C.'
+},
+
+polpette:{
+  nome:'Polpette di tacchino al pomodoro con patate e zucchine', tipo:'Carne e pesce', tempo:40, freddo:false,
+  ing:{tacchino:140, pane:1, latte:30, grana:12, passata:120, patate:150, zucchine:150, olio:7},
+  libere:['Prezzemolo','Noce moscata','Sale, pepe'],
+  passi:[
+    {t:'Il tacchino macinato', d:'Chiedi al banco di macinare il petto di tacchino (ha circa 110 kcal/100 g). Il macinato confezionato di tacchino può avere più grassi: leggi l\'etichetta.'},
+    {t:'Impasto', d:'Fetta di pan bauletto ammollata nel latte e strizzata, sbriciolata nella carne con il grana, prezzemolo tritato, sale, pepe e una grattata di noce moscata. Mescola con le mani finché è omogeneo.'},
+    {t:'Forma le polpette', d:'Palline da circa 30 g (4–5 per porzione), con le mani leggermente umide.'},
+    {t:'Patate in friggitrice', d:'A cubetti da 2 cm con un terzo dell\'olio e sale: 190 °C per 18–20 minuti. Le zucchine a rondelle dopo, 180 °C per 13–15 minuti.'},
+    {t:'Cuoci le polpette', d:'In friggitrice a 180 °C per 10–12 minuti, girandole a metà; oppure in padella con un velo d\'olio, 8 minuti, girandole.'},
+    {t:'Pomodoro', d:'Passata a scaldare 6–8 minuti con un pizzico di sale e l\'olio rimasto; le polpette dentro per gli ultimi 3 minuti.'}
+  ],
+  keep:'Si cucina in doppia porzione (stasera e pranzo di domani). Le polpette nel sugo tengono bene in frigo e si riscaldano in 2 minuti al microonde. Si congelano crude, già formate.'
+},
+
+hamburger:{
+  nome:'Hamburger di manzo con patate e carote', tipo:'Carne e pesce', tempo:35, freddo:false,
+  ing:{manzo:160, patate:200, carote:100, pane:1, olio:3},
+  libere:['Rosmarino','Pepe','Prezzemolo','Limone','Sale'],
+  passi:[
+    {t:'Patate e carote in friggitrice', d:'Patate a spicchi, carote a bastoncini, l\'olio, sale e rosmarino. 190 °C per 18–20 minuti, scuotendo a metà.'},
+    {t:'Forma l\'hamburger', d:'160 g di macinato di manzo magro, sale, pepe e prezzemolo tritato. Impasta il meno possibile e appiattisci a disco di 2 cm di spessore, con una fossetta al centro per non farlo gonfiare in cottura.'},
+    {t:'Padella molto calda', d:'Antiaderente, senza olio: la carne ha già i suoi grassi. 4 minuti per lato, senza schiacciarlo con la spatola (perderebbe il succo). Oppure in friggitrice, 180 °C per 10–12 minuti.'},
+    {t:'Verifica la cottura', d:'Il centro non deve più essere rosa. Il macinato va sempre cotto del tutto: i batteri stanno in tutto il pezzo, non solo in superficie.'},
+    {t:'Pane e limone', d:'Il pan bauletto abbrustolito a fianco (o come panino), un goccio di limone sulla carne.'}
+  ],
+  warn:'Se compri hamburger già formati, controlla in etichetta i grassi: i classici sono al 15–20 % e sui 160 g di questa ricetta aggiungono circa 125–185 kcal a porzione (valori USDA del macinato crudo; la cottura ne elimina una parte). Meglio il macinato magro di manzo (≤5 %), da chiedere al banco.',
+  keep:'Meglio mangiarlo subito: è la cena pianificata del weekend, la cucini al momento. Gli avanzi (se ne fai) tengono 1 giorno in frigo.'
 },
 
 nasello:{
-  nome:'Nasello in friggitrice con patate e carote', tempo:35, porz:2,
-  ing:{nasello:210, patate:195, carote:100, pane:55, grana:18, olio:15},
+  nome:'Nasello in friggitrice con patate e carote', tipo:'Carne e pesce', tempo:35, freddo:false,
+  ing:{nasello:220, patate:200, carote:120, pane:1, olio:10},
   libere:['Prezzemolo','Rosmarino','Limone','Sale'],
   passi:[
     {t:'Scongela in anticipo', d:'Se il pesce è surgelato: in frigo la sera prima, oppure sotto acqua fredda corrente ancora nella busta. Mai acqua calda.'},
     {t:'Patate e carote in friggitrice', d:'Patate a cubetti e carote a bastoncini, metà olio, sale e rosmarino. 190 °C per 18–20 minuti.'},
-    {t:'Asciuga il pesce', d:'Tampona i filetti con carta da cucina. Condisci con il resto dell\'olio, sale e prezzemolo.'},
+    {t:'Asciuga il pesce', d:'Tampona i filetti con carta da cucina. Condisci con l\'olio rimasto, sale e prezzemolo.'},
     {t:'Cuoci il pesce', d:'In friggitrice a 180 °C per 10–12 minuti. Su carta forno forata o direttamente nel cestello unto, perché si attacca facilmente.'},
     {t:'Verifica', d:'È pronto quando la carne è opaca e si sfalda con una leggera pressione della forchetta.'},
-    {t:'Servi', d:'Limone appena tolto dal cestello, grana sulle verdure, pane a fianco.'}
+    {t:'Servi', d:'Limone appena tolto dal cestello, il pane a fianco.'}
   ],
-  warn:'Non girare il pesce a metà cottura. In friggitrice non serve e i filetti si rompono: si cuoce bene anche da fermo.',
-  keep:'Due giorni in frigo, non di più. Riscalda in friggitrice 4 minuti a 160 °C: al microonde diventa gommoso e riempie la cucina di odore.'
+  warn:'Non girare il pesce a metà cottura: in friggitrice non serve e i filetti si rompono.',
+  keep:'È la cena pianificata del weekend: si cucina al momento. Se avanza, 1 giorno in frigo e si riscalda in friggitrice 4 minuti a 160 °C: al microonde diventa gommoso.'
 },
 
-frittata_provola:{
-  nome:'Frittata con provola e zucchine', tempo:20, porz:1,
-  ing:{uova:3, filante:54, zucchine:180, pane:55, grana:14, olio:10},
+salmone:{
+  nome:'Salmone con riso e spinaci', tipo:'Carne e pesce', tempo:25, freddo:false,
+  ing:{salmone:150, riso:55, spinaci:200, olio:0},
+  libere:['Limone','Prezzemolo o aneto','Sale, pepe'],
+  passi:[
+    {t:'Cuoci il riso', d:'In acqua salata secondo la confezione. Tienilo in caldo scolato.'},
+    {t:'Asciuga il salmone', d:'Tampona il filetto con carta da cucina e sala. Il salmone ha già i suoi grassi: non serve olio per cuocerlo.'},
+    {t:'Cuocilo', d:'Padella antiaderente calda, lato della pelle sotto, 4 minuti; gira e altri 3 minuti. Oppure in friggitrice, 180 °C per 8–10 minuti. Dentro deve essere opaco ma ancora succoso.'},
+    {t:'Spinaci', d:'Freschi o scongelati, in padella con l\'olio, 3–4 minuti. Sale alla fine.'},
+    {t:'Servi', d:'Limone sul salmone, riso e spinaci a fianco.'}
+  ],
+  keep:'Cena pianificata del weekend: si cucina al momento, quando è meglio mangiarlo.'
+},
+
+/* ─────────── Uova e legumi ─────────── */
+frittata_zuc:{
+  nome:'Frittata con zucchine, prosciutto cotto e scamorza', tipo:'Uova e legumi', tempo:25, freddo:false,
+  ing:{uova:3, cotto:30, filante:20, grana:10, zucchine:200, olio:6, pane:1},
   libere:['Sale, pepe'],
   passi:[
-    {t:'Zucchine in friggitrice', d:'A rondelle con un filo d\'olio e sale, 180 °C per 14 minuti. Falle intiepidire.'},
+    {t:'Zucchine in friggitrice', d:'A rondelle con un velo d\'olio e sale, 180 °C per 14 minuti. Falle intiepidire.'},
     {t:'Sbatti le uova', d:'Con sale, pepe e grana grattugiato, forchetta, 30 secondi. Non di più: sbattendo troppo incorpori aria e poi si sgonfia.'},
-    {t:'Unisci le zucchine', d:'Nelle uova, mescola per distribuirle.'},
-    {t:'Scalda la padella', d:'Antiaderente da 20–22 cm con il resto dell\'olio, fuoco medio-basso.'},
+    {t:'Unisci', d:'Zucchine e prosciutto cotto a striscioline nelle uova, mescola per distribuirli.'},
+    {t:'Scalda la padella', d:'Antiaderente da 20–22 cm con l\'olio rimasto, fuoco medio-basso.'},
     {t:'Versa e aspetta', d:'Non toccarla per 3–4 minuti, finché i bordi si staccano da soli.'},
-    {t:'Provola e chiusura', d:'Cubetti su metà della superficie, poi piega a metà con una spatola: molto più facile che girarla. Altri 2 minuti.'}
+    {t:'Scamorza e chiusura', d:'Cubetti su metà della superficie, poi piega a metà con una spatola: molto più facile che girarla. Altri 2 minuti. Pane a fianco.'}
   ],
-  keep:'Si fa in venti minuti, conviene farla al momento. Se la prepari prima tiene due giorni in frigo ed è buona anche fredda.'
+  keep:'Pranzo del sabato: si cucina al momento. Se avanza, 1 giorno in frigo: è buona anche fredda o scaldata 40 secondi al microonde.'
 },
 
 frittata_spinaci:{
-  nome:'Frittata con spinaci e carote', tempo:25, porz:1,
-  ing:{uova:3, spinaci:180, filante:44, carote:100, pane:50, grana:16, olio:9},
+  nome:'Frittata con spinaci e scamorza, carote e pane', tipo:'Uova e legumi', tempo:25, freddo:false,
+  ing:{uova:3, spinaci:170, filante:20, carote:90, pane:1, grana:8, olio:6},
   libere:['Sale, pepe','Noce moscata'],
   passi:[
-    {t:'Carote in friggitrice', d:'A bastoncini con filo d\'olio e sale, 180 °C per 15 minuti. Sono il contorno, non vanno nella frittata.'},
+    {t:'Carote in friggitrice', d:'A bastoncini con un velo d\'olio e sale, 180 °C per 15 minuti. Sono il contorno, non vanno nella frittata.'},
     {t:'Strizza gli spinaci', d:'Se surgelati: scongelali e strizzali con le mani con decisione. L\'acqua residua è il motivo numero uno delle frittate slegate.'},
     {t:'Saltali', d:'Padella con poco olio, 3 minuti. Falli intiepidire: se li unisci bollenti cominciano a cuocere le uova nella ciotola.'},
     {t:'Sbatti le uova', d:'Sale, pepe, grana e una grattata di noce moscata. Trenta secondi.'},
-    {t:'Cuoci', d:'Spinaci nelle uova, poi in padella antiaderente con il resto dell\'olio, fuoco medio-basso, 3–4 minuti senza toccare.'},
-    {t:'Provola e chiusura', d:'Cubetti su metà, poi piega. Altri 2–3 minuti. Carote e pane a fianco.'}
+    {t:'Cuoci', d:'Spinaci nelle uova, poi in padella antiaderente con l\'olio rimasto, fuoco medio-basso, 3–4 minuti senza toccare.'},
+    {t:'Scamorza e chiusura', d:'Cubetti su metà, poi piega. Altri 2–3 minuti. Carote e pane a fianco.'}
   ],
-  keep:'Due giorni in frigo. Ottima fredda, si porta bene in contenitore.'
+  keep:'Pranzo del sabato: si cucina al momento. Se avanza, 1 giorno in frigo ed è ottima anche fredda.'
 },
 
+insalata_legumi:{
+  nome:'Insalata di legumi con tonno e uovo saltato', tipo:'Uova e legumi', tempo:20, freddo:true,
+  ing:{legumi:170, uova:1, tonno:1, zucchine:150, pane:1, grana:12, olio:6},
+  libere:['Prezzemolo','Limone','Sale, pepe'],
+  passi:[
+    {t:'Sciacqua i legumi', d:'Lenticchie o cannellini della scatola, sotto acqua corrente per 30 secondi. Il liquido di governo è molto salato e gonfia.'},
+    {t:'Zucchine in friggitrice', d:'A cubetti con un velo d\'olio e sale, 180 °C per 14 minuti.'},
+    {t:'Uovo sbriciolato', d:'Sbattilo con sale e pepe, poi in padella antiaderente a fuoco medio-basso mescolando in continuazione. Toglilo quando è ancora leggermente umido: finisce di rassodarsi nel piatto.'},
+    {t:'Fai intiepidire', d:'Legumi, zucchine e uovo in una ciotola. Aspetta che scendano di temperatura prima di condire. Aggiungi il tonno ben sgocciolato.'},
+    {t:'Condisci', d:'Olio, succo di mezzo limone, prezzemolo tritato, sale e pepe. Grana a scaglie al momento di mangiare, pane a fianco.'}
+  ],
+  keep:'Pranzo della domenica: si cucina al momento. Si mangia fredda o a temperatura ambiente; avanzata, 1 giorno in frigo.'
+},
+
+/* ─────────── Piatti freddi e panini ─────────── */
 piatto_freddo:{
-  nome:'Piatto freddo di affettati e stracchino', tempo:10, porz:1, freddo:true,
-  ing:{cotto:98, speck:28, stracchino:50, zucchine:130, carote:90, pane:70, olio:9},
+  nome:'Piatto freddo di prosciutto, pollo e scamorza con verdure e pane', tipo:'Piatti freddi e panini', tempo:15, freddo:true,
+  ing:{cotto:80, pollo_aff:70, filante:30, carote:100, zucchine:150, pane:2, olio:5},
   libere:['Limone','Sale, pepe'],
   passi:[
-    {t:'Zucchine e carote in friggitrice', d:'A rondelle e bastoncini, filo d\'olio e sale. 180 °C per 14–15 minuti. Puoi anche prepararle il giorno prima e tenerle in frigo.'},
-    {t:'Componi il piatto', d:'Affettati distesi senza sovrapporli troppo, stracchino a cucchiaiate a fianco.'},
-    {t:'Condisci le verdure', d:'Resto dell\'olio, limone, sale e pepe. Servile a temperatura ambiente, non fredde di frigo: sanno di più.'},
-    {t:'Pane', d:'A fianco, oppure usalo per lo stracchino.'}
+    {t:'Zucchine e carote in friggitrice', d:'A rondelle e bastoncini, un velo d\'olio e sale. 180 °C per 14–15 minuti. Puoi anche prepararle il giorno prima.'},
+    {t:'Componi il piatto', d:'Prosciutto cotto e petto di pollo affettati distesi senza sovrapporli troppo, scamorza a fette a fianco.'},
+    {t:'Condisci le verdure', d:'Olio rimasto, limone, sale e pepe. Servile a temperatura ambiente, non fredde di frigo: sanno di più.'},
+    {t:'Pane', d:'Il pan bauletto a fianco, oppure usalo per fare dei piccoli tramezzini con affettato e scamorza.'}
   ],
-  keep:'Le verdure in friggitrice tengono tre giorni, gli affettati vanno consumati entro la data della confezione. È la cena da tenere per le sere in cui non hai voglia di cucinare: dieci minuti e sei a tavola.'
+  keep:'Pranzo della domenica: dieci minuti e sei a tavola. Gli affettati vanno consumati entro la data della confezione; le verdure in friggitrice tengono tre giorni.'
+},
+
+panino_pollo:{
+  nome:'Panini con pollo alla piastra e zucchine', tipo:'Piatti freddi e panini', tempo:25, freddo:false,
+  ing:{pane:4, pollo:130, zucchine:200, grana:8, olio:5},
+  libere:['Limone','Origano','Sale, pepe'],
+  passi:[
+    {t:'Zucchine in friggitrice', d:'A fette sottili nel senso della lunghezza, un velo d\'olio e sale. 180 °C per 10–12 minuti, finché sono morbide e dorate.'},
+    {t:'Il pollo', d:'Petto a fettine sottili (se è spesso, appiattiscilo col batticarne), asciugato e salato. Padella antiaderente molto calda con l\'olio: 2–3 minuti per lato, finché non è più rosa.'},
+    {t:'Pane', d:'Le fette di pan bauletto nella padella o nel tostapane per un minuto.'},
+    {t:'Componi', d:'Due panini da due fette: pollo, zucchine, scaglie di grana, un goccio di limone e origano.'}
+  ],
+  keep:'Pranzo del sabato: si cucina al momento. Sono più buoni caldi, non conviene prepararli prima.'
 }
 };
 
 /* ══════════════════════════════════════════════════════════
-   3. COLAZIONI
+   3. COLAZIONE E SPUNTINI
    ══════════════════════════════════════════════════════════ */
-/* colazione: sempre la stessa */
-const COLAZIONE = {nome:'Latte e biscotti', ing:{latte:300, biscotti:45, frutta:1}};
+/* colazione: la tua, fissa — latte, mezzo cucchiaio di Sonny (≈6 g), frollini, in più uno yogurt greco per le proteine */
+function colazione(){
+  return {nome:'Latte, cioccolato e frollini + yogurt greco',
+          ing:{latte:confVal('tazza'), sonny:6, frollini:confVal('frollini'), greco:1}};
+}
+const CENA_LIBERA = {kcal:650, p:30, c:72, g:26};      // ipotesi dichiarata: una cena libera «ragionevole»
 
-/* spuntino di meta' mattina — ridotto, zero preparazione */
+/* spuntino di mattina: SEMPRE senza frigo e senza preparazione (niente tonno, niente pane) */
 const SM = {
-  grana:      {nome:'Grana',             ing:{grana:33}},
-  mandorle:   {nome:'Mandorle',          ing:{mandorle:22}},
-  noci:       {nome:'Noci',              ing:{noci:20}},
-  grana_mand: {nome:'Grana e mandorle',  ing:{grana:17, mandorle:12}}
+  am1:{nome:'Grana snack e mela',            ing:{gsnack:1, mela:1}},
+  am2:{nome:'Mandorle e banana',             ing:{mandorle:20, banana:1}},
+  am3:{nome:'Grana snack e noci',            ing:{gsnack:1, noci:15}},
+  am5:{nome:'Grana snack e banana',          ing:{gsnack:1, banana:1}},
+  am6:{nome:'Grana snack, mandorle e mela',  ing:{gsnack:1, mandorle:15, mela:1}},
+  am7:{nome:'Grana snack e mandorle',        ing:{gsnack:1, mandorle:20}}
 };
-
-/* spuntino del pomeriggio — piu' sostanzioso */
+/* spuntino del pomeriggio: «casa» = si mangia a casa (può essere fresco), «lavoro» = regge senza frigo */
 const SP = {
-  fesa:       {nome:'Fesa di tacchino e pane',   ing:{fesa:90, pane:20}},
-  cotto_pane: {nome:'Prosciutto cotto e pane',   ing:{cotto:68, pane:25}},
-  mozzarella: {nome:'Mozzarella e pane',         ing:{mozzarella:48, pane:18}},
-  speck_pane: {nome:'Speck e pane',              ing:{speck:26, pane:28}},
-  stracchino: {nome:'Stracchino e pane',         ing:{stracchino:36, pane:24}},
-  phila_pane: {nome:'Philadelphia e pane',       ing:{philadelphia:30, pane:30}},
-  frutto_gr:  {nome:'Frutto e grana',            ing:{frutta:1, grana:16}}
+  pm1:{nome:'Yogurt greco, banana e mandorle',       ing:{greco:1, banana:1, mandorle:10}, dove:'casa'},
+  pm2:{nome:'Pan bauletto e prosciutto cotto',       ing:{pane:2, cotto:60},               dove:'casa'},
+  pm3:{nome:'Yogurt greco, mela e noci',             ing:{greco:1, mela:1, noci:10},       dove:'casa'},
+  pm4:{nome:'Pan bauletto e pollo al forno',         ing:{pane:2, pollo_aff:70},           dove:'casa'},
+  pw1:{nome:'Grana snack, banana e mandorle',        ing:{gsnack:1, banana:1, mandorle:10},dove:'lavoro'},
+  pw2:{nome:'Pan bauletto, grana snack e mela',      ing:{pane:1, gsnack:1, mela:1},       dove:'lavoro'},
+  pw3:{nome:'Noci, mela e grana snack',              ing:{noci:10, mela:1, gsnack:1},     dove:'lavoro'}
 };
 
 /* ══════════════════════════════════════════════════════════
-   4. LE 4 SETTIMANE
-   blocchi: gg = indici giorno (0 = lunedì ... 6 = domenica)
+   4. I TURNI E LE TRE SETTIMANE
+   Le settimane si chiamano come il turno che fai: l'ordine di rotazione (7:00 → 8:24 → 9:24)
+   è un'ipotesi, modificabile da Piano → «Calendario dei turni».
+   Giorni: 0 = lunedì … 6 = domenica.
+   Regola di cucina: la cena di lunedì–giovedì si cucina in DOPPIA porzione e il giorno dopo è il pranzo
+   (per questo p[d+1] = c[d]). Il pranzo del lunedì è un piatto freddo preparato la domenica.
+   Sabato e domenica a pranzo si cucina al momento.
+   Cene: 2 libere + 1 pianificata (cp) fra venerdì, sabato e domenica; la sera la scegli tu.
    ══════════════════════════════════════════════════════════ */
-const WEEKS = [
-  { n:1, tema:'La base',
-    sm:['grana','mandorle','grana_mand'],
-    sp:['fesa','cotto_pane','mozzarella'],
-    bl:[
-      {id:'A', cook:6, prev:true, pranzi:[0,1],   cene:[0],   pranzo:'pf_tonno',   cena:'tacc_zuc_pat'},
-      {id:'B', cook:1,            pranzi:[2,3],   cene:[1,2], pranzo:'lenticchie', cena:'frittata_provola'},
-      {id:'C', cook:3,            pranzi:[4,5,6], cene:[3,4], pranzo:'pasta_tonno',cena:'nasello'},
-      {id:'D', cook:6,            pranzi:[],      cene:[6],   pranzo:null,         cena:'straccetti'}
-    ]},
-  { n:2, tema:'Piselli e straccetti',
-    sm:['mandorle','grana','noci'],
-    sp:['cotto_pane','frutto_gr','speck_pane'],
-    bl:[
-      {id:'A', cook:6, prev:true, pranzi:[0,1],   cene:[0],   pranzo:'pf_uova',    cena:'tacc_spi_car'},
-      {id:'B', cook:1,            pranzi:[2,3],   cene:[1,2], pranzo:'fagioli',    cena:'straccetti'},
-      {id:'C', cook:3,            pranzi:[4,5,6], cene:[3,4], pranzo:'riso_tonno', cena:'frittata_spinaci'},
-      {id:'D', cook:6,            pranzi:[],      cene:[6],   pranzo:null,         cena:'tacc_zuc_pat'}
-    ]},
-  { n:3, tema:'Pesto e piatto freddo',
-    sm:['grana','noci','grana_mand'],
-    sp:['mozzarella','fesa','stracchino'],
-    bl:[
-      {id:'A', cook:6, prev:true, pranzi:[0,1],   cene:[0],   pranzo:'pasta_zuc_uovo', cena:'tacc_zuc_pat'},
-      {id:'B', cook:1,            pranzi:[2,3],   cene:[1,2], pranzo:'pf_cotto',   cena:'piatto_freddo'},
-      {id:'C', cook:3,            pranzi:[4,5,6], cene:[3,4], pranzo:'pf_pesto',   cena:'nasello'},
-      {id:'D', cook:6,            pranzi:[],      cene:[6],   pranzo:null,         cena:'straccetti'}
-    ]},
-  { n:4, tema:'Chiusura ciclo',
-    sm:['mandorle','grana','grana_mand'],
-    sp:['cotto_pane','phila_pane','fesa'],
-    bl:[
-      {id:'A', cook:6, prev:true, pranzi:[0,1],   cene:[0],   pranzo:'pf_uova',    cena:'tacc_spi_car'},
-      {id:'B', cook:1,            pranzi:[2,3],   cene:[1,2], pranzo:'fagioli',    cena:'frittata_provola'},
-      {id:'C', cook:3,            pranzi:[4,5,6], cene:[3,4], pranzo:'pf_piselli', cena:'tacc_zuc_pat'},
-      {id:'D', cook:6,            pranzi:[],      cene:[6],   pranzo:null,         cena:'nasello'}
-    ]}
+const TURNI = [
+  { id:'t1', nome:'Turno 7:00', breve:'7:00', orario:'7:00–12:00 · 13:00–15:36',
+    colazione:'5:00–6:00', am:'9:30', amDove:'al lavoro', pranzo:'12:15', pm:'16:30', pmDove:'a casa', pmNuoto:'17:30–18:00',
+    prep:'la sera prima',
+    nota:'Ti svegli prima di tutti: fra colazione e pranzo passano 6–7 ore, quindi lo spuntino di mattina è il più abbondante e va mangiato prima del picco di fame delle 10:30. Finisci alle 15:36: la merenda la fai a casa, quindi può essere fresca.' },
+  { id:'t2', nome:'Turno 8:24', breve:'8:24', orario:'8:24–12:30 · 13:30–16:00',
+    colazione:'6:00–6:45', am:'10:00', amDove:'al lavoro', pranzo:'12:45', pm:'16:30', pmDove:'a casa', pmNuoto:'17:30–18:00',
+    prep:'la sera prima',
+    nota:'Turno intermedio: spuntino di mattina verso le 10:00, poco prima del picco di fame. Alle 16:00 sei ancora al lavoro: la merenda la fai appena rientrato, a casa, quindi può essere fresca.' },
+  { id:'t3', nome:'Turno 9:24', breve:'9:24', orario:'9:24–13:00 · 14:00–18:00',
+    colazione:'7:00–7:30', am:'10:45', amDove:'al lavoro', pranzo:'13:15', pm:'16:00', pmDove:'al lavoro', pmNuoto:'16:00',
+    prep:'la sera prima o la mattina stessa',
+    nota:'Il turno più comodo per mangiare: il picco di fame delle 10:30 cade in mezzo al lavoro, la merenda la fai alle 16:00 ancora in ufficio (senza frigo: solo cose che reggono fuori) e hai la mattina libera, quindi puoi anche preparare il pranzo la mattina stessa. Esci alle 18:00: nei giorni di nuoto la merenda delle 16:00 è anche lo spuntino pre-piscina.' }
 ];
 
+const MENU = [
+  /* ── Turno 7:00 ── */
+  { turno:0,
+    p:['pf_tonno','pasta_pom_pollo','tacc_patate','pasta_zuc_uovo','ragu','frittata_spinaci','insalata_legumi'],
+    c:['pasta_pom_pollo','tacc_patate','pasta_zuc_uovo','ragu'],
+    cp:'nasello',
+    am:['am5','am3','am6','am1','am6','am5','am7'],
+    pm:['pm1','pm2','pm3','pm4','pm1','pm3','pm2'] },
+  /* ── Turno 8:24 ── */
+  { turno:1,
+    p:['riso_tonno','riso_pollo','tacc_spi','pasta_legumi','pollo_patate','panino_pollo','piatto_freddo'],
+    c:['riso_pollo','tacc_spi','pasta_legumi','pollo_patate'],
+    cp:'hamburger',
+    am:['am1','am5','am3','am7','am2','am1','am6'],
+    pm:['pm3','pm4','pm1','pm2','pm3','pm1','pm4'] },
+  /* ── Turno 9:24 ── */
+  { turno:2,
+    p:['pf_piselli','pasta_tacc_zuc','polpette','pasta_pom_tonno','straccetti','frittata_zuc','pf_cotto'],
+    c:['pasta_tacc_zuc','polpette','pasta_pom_tonno','straccetti'],
+    cp:'salmone',
+    am:['am1','am5','am3','am2','am1','am3','am7'],
+    pm:['pw1','pw2','pw3','pw1','pw2','pm1','pm3'] }
+];
 const GG   = ['Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato','Domenica'];
 const GG_S = ['LUN','MAR','MER','GIO','VEN','SAB','DOM'];
-const FREE_DAY = 5;            // sabato sera libera
-const PREP_DAYS = {1:['B'], 3:['C'], 6:['D','A']};   // mar, gio, dom sera
+const NUOTO_DEF = [0,2,4];          // nuoto di norma lun-mer-ven; si cambia dalla scheda Oggi
+const CENA_PIAN_DEF = 6;            // cena pianificata di default: domenica (ven e sab libere)
+/* rotazione dei turni (dato confermato dall'utente l'11/10/2026): la settimana che inizia lunedì 12/10/2026 è il Turno 9:24
+   (indice 2), poi 7:00 (0), 8:24 (1), di nuovo 9:24, e così via. Una scelta esplicita (Piano → Calendario dei turni) ha la precedenza. */
+const TURNO_ANCORA = {lun:'2026-10-12', turno:2};
 
 /* ══════════════════════════════════════════════════════════
    5. STORAGE  (window.storage in Claude · localStorage da file · memoria)
@@ -751,7 +922,7 @@ const Store = {
 /* ══════════════════════════════════════════════════════════
    6. STATO
    ══════════════════════════════════════════════════════════ */
-let S = { start:null, pantry:{}, scope:'cur', planWeek:0, bfast:{}, pesi:[] };
+let S = { start:null, dieta:null, turni:{}, nuoto:{}, cenaPian:{}, conf:{}, pantry:{}, scope:'cur', planWeek:0, pesi:[] };
 
 function mondayOf(d){
   const x = new Date(d); x.setHours(0,0,0,0);
@@ -760,50 +931,137 @@ function mondayOf(d){
 }
 function iso(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 
+/* turno di base (0 = 7:00, 1 = 8:24, 2 = 9:24) di una settimana: la rotazione 7:00 → 8:24 → 9:24 è ancorata alla settimana
+   del 12/10/2026 (TURNO_ANCORA), qualunque sia la data di inizio della dieta */
+function turnoBase(lun){
+  const sett = Math.round((dnum(lun) - dnum(TURNO_ANCORA.lun)) / 7);
+  return (((TURNO_ANCORA.turno + sett) % 3) + 3) % 3;
+}
+/* turno della settimana che inizia il lunedì «lun» (data ISO). Una scelta esplicita (S.turni) vale per quella
+   settimana e le settimane dopo seguono la rotazione 7:00 → 8:24 → 9:24 finché non ne trovano un'altra;
+   senza scelte vale la rotazione di base. */
+function turnoDi(lun){
+  let cur = lun, k = 0;
+  while(k < 156){
+    if(S.turni[cur] !== undefined) return (((S.turni[cur] + k) % 3) + 3) % 3;
+    cur = addGiorni(cur, -7); k++;
+  }
+  return turnoBase(lun);
+}
+
 function pos(){
   const today = new Date(); today.setHours(0,0,0,0);
-  const start = mondayOf(S.start ? new Date(S.start+'T00:00:00') : today);
-  const days  = Math.floor((today - start)/86400000);
-  const n     = ((days % 28) + 28) % 28;
-  return { w: Math.floor(n/7), d: n%7, abs:n, past: days < 0 };
+  const t = iso(today);
+  // data non impostata, oppure dieta non ancora iniziata: anteprima del primo giorno
+  if(!S.dieta || t < S.dieta){
+    const d0 = S.dieta ? (new Date(S.dieta+'T00:00:00').getDay()+6)%7 : 0;
+    const lun = S.start || iso(mondayOf(today));
+    return { lun, w:turnoDi(lun), d:d0, abs:0, pre:true, data:S.dieta || t };
+  }
+  const lun = iso(mondayOf(today));
+  return { lun, w:turnoDi(lun), d:(today.getDay()+6)%7, abs:dnum(t) - dnum(S.dieta), pre:false, data:t };
 }
 
 /* ══════════════════════════════════════════════════════════
-   7. CALCOLO FABBISOGNI
+   7. IL GIORNO, LE PORZIONI E I FABBISOGNI
    ══════════════════════════════════════════════════════════ */
+/* la sera pianificata del weekend (4 = venerdì, 5 = sabato, 6 = domenica) della settimana che inizia il lunedì «lun» */
+function cenaPianDi(lun){ const v = S.cenaPian[lun]; return (v===4 || v===5 || v===6) ? v : CENA_PIAN_DEF; }
+/* nuoto quel giorno? (data ISO e giorno della settimana 0–6) */
+function nuotoDi(data, d){ const v = S.nuoto[data]; return v === undefined ? NUOTO_DEF.includes(d) : !!v; }
+
+/* tutto quello che si mangia il giorno d della settimana che inizia il lunedì «lun» */
+function giornoPiano(lun, d){
+  const w = turnoDi(lun), m = MENU[w];
+  const cenaKey = d < 4 ? m.c[d] : (cenaPianDi(lun) === d ? m.cp : null);
+  return { w, m, d, pranzo:m.p[d], cena:cenaKey, libera:(cenaKey === null),
+           amKey:m.am[d], am:SM[m.am[d]], pmKey:m.pm[d], pm:SP[m.pm[d]] };
+}
+function sommaNutri(list){
+  return list.reduce((a,x)=>({kcal:a.kcal+x.kcal, p:a.p+x.p, c:a.c+x.c, g:a.g+x.g}), {kcal:0,p:0,c:0,g:0});
+}
+/* totale del giorno; la cena libera entra con la stima CENA_LIBERA (ipotesi dichiarata) */
+function nutriGiorno(g){
+  return sommaNutri([nutri(colazione().ing), nutri(g.am.ing), nutri(R[g.pranzo].ing), nutri(g.pm.ing),
+                     g.libera ? CENA_LIBERA : nutri(R[g.cena].ing)]);
+}
+
+/* come si presenta il pranzo del giorno d */
+function originePranzo(m, d){
+  if(d >= 1 && d <= 4 && m.p[d] === m.c[d-1]) return {tipo:'avanzo', txt:'Avanzo di ieri sera (porzione doppia): scaldalo 2 minuti al microonde'};
+  if(d === 0) return R[m.p[0]].freddo
+    ? {tipo:'domenica', txt:'Cucinato domenica: si mangia freddo'}
+    : {tipo:'domenica', txt:'Cucinato domenica: scaldalo al microonde'};
+  return {tipo:'momento', txt:'Si cucina al momento'};
+}
+
+/* che cosa si cucina nel giorno d: ricetta, porzioni da fare e per quale pasto */
+function cucinaOggi(lun, d){
+  const g = giornoPiano(lun, d), m = g.m, out = [];
+  if(d >= 5) out.push({key:g.pranzo, porz:1, txt:'Pranzo di oggi'});
+  if(g.cena){
+    const doppia = d < 4 && m.p[d+1] === g.cena;
+    out.push({key:g.cena, porz:doppia ? 2 : 1, txt:doppia ? 'Cena di stasera e pranzo di domani' : 'Cena di stasera'});
+  }
+  if(d === 6){
+    const prox = MENU[turnoDi(addGiorni(lun, 7))];
+    out.push({key:prox.p[0], porz:1, txt:'Pranzo di domani (lunedì)' + (prox.turno === 2 ? ': puoi anche prepararlo lunedì mattina' : '')});
+  }
+  return out;
+}
+
+/* orari suggeriti: nel weekend non si lavora, quindi solo le fasce generiche */
+function orariGiorno(w, d, nuoto){
+  const t = TURNI[w];
+  if(d >= 5) return { col:'quando ti alzi', am:'a metà mattina', pr:'a pranzo', pm:'nel pomeriggio', ce:nuoto ? '21:30 dopo il nuoto' : '19:15' };
+  return { col:t.colazione,
+           am:`${t.am} · ${t.amDove}`,
+           pr:`${t.pranzo} · a casa`,
+           pm:nuoto ? (t.pmDove === 'al lavoro' ? `${t.pm} · al lavoro: è anche lo spuntino prima della piscina`
+                                                : `${t.pmNuoto} · 90 minuti prima della piscina`)
+                    : `${t.pm} · ${t.pmDove}`,
+           ce:nuoto ? '21:30 dopo il nuoto' : '19:15' };
+}
+
+/* quantità da comprare/avere per una settimana del menù (indice 0–2): 7 colazioni, 7+7 spuntini,
+   7 pranzi, 4 cene (lun–gio) e la cena pianificata del weekend; ogni pasto è una porzione */
 function weekNeeds(wi){
-  const w = WEEKS[wi], out = {};
+  const m = MENU[wi], out = {};
   const add = (ing, mult=1) => { for(const k in ing) out[k] = (out[k]||0) + ing[k]*mult; };
-
-  add(COLAZIONE.ing, 7);                                   // colazione fissa, 7 giorni
-  for(let d=0; d<7; d++){ add(SM[w.sm[d%3]].ing); add(SP[w.sp[d%3]].ing); }
-
-  w.bl.forEach(b=>{
-    if(b.pranzo) add(R[b.pranzo].ing, b.pranzi.length);
-    if(b.cena)   add(R[b.cena].ing, b.cene.filter(g => g !== FREE_DAY).length);
-  });
+  add(colazione().ing, 7);
+  for(let d=0; d<7; d++){ add(SM[m.am[d]].ing); add(SP[m.pm[d]].ing); add(R[m.p[d]].ing); }
+  for(let d=0; d<4; d++) add(R[m.c[d]].ing);
+  add(R[m.cp].ing);
   return out;
 }
 function scopeNeeds(){
   const p = pos();
-  if(S.scope==='cur')  return weekNeeds(p.w);
-  if(S.scope==='next') return weekNeeds((p.w+1)%4);
+  if(S.scope === 'cur')  return weekNeeds(p.w);
+  if(S.scope === 'next') return weekNeeds(turnoDi(addGiorni(p.lun, 7)));
   const out = {};
-  for(let i=0;i<4;i++){ const n=weekNeeds(i); for(const k in n) out[k]=(out[k]||0)+n[k]; }
+  for(let i=0; i<3; i++){ const n = weekNeeds(i); for(const k in n) out[k] = (out[k]||0) + n[k]; }
   return out;
 }
-function roundBuy(v,u){
-  if(u==='pz') return Math.ceil(v);
-  if(v<50) return Math.ceil(v/5)*5;
+/* arrotonda per eccesso: pezzi interi, grammi a 5 o 10 */
+function roundBuy(v, k){
+  if(aPezzi(k)) return Math.ceil(v - 0.001);
+  if(v < 50) return Math.ceil(v/5)*5;
   return Math.ceil(v/10)*10;
+}
+/* quantità per la lista: «2 scatolette», «1,4 L», «12 fette (≈ 300 g)» */
+function fmtBuy(k, q){
+  const n = ING[k];
+  if(n.u === 'ml' && q >= 1000) return (q/1000).toFixed(1).replace('.',',') + ' L';
+  if(n.u === 'fetta') return `${q} ${q === 1 ? 'fetta' : 'fette'} (≈ ${Math.round(q*wOf(k))} g)`;
+  return fmtQ(k, q);
 }
 
 /* ══════════════════════════════════════════════════════════
-   8. HEADER + ANELLO DEL CICLO
+   8. HEADER + ANELLO (21 giorni: sono le tre settimane del ciclo e la finestra di taratura sul peso)
    ══════════════════════════════════════════════════════════ */
 function drawRing(){
   const p = pos(), el = document.getElementById('ring');
-  const cx=50, cy=50, r=41, N=28, gap=2.6, step=360/N;
+  const cx=50, cy=50, r=41, N=21, gap=3, step=360/N;
   const arc = (i,cls) => {
     const a0 = -90 + i*step + gap/2, a1 = -90 + (i+1)*step - gap/2;
     const rad = a => (a*Math.PI)/180;
@@ -811,122 +1069,90 @@ function drawRing(){
     const x1 = cx + r*Math.cos(rad(a1)), y1 = cy + r*Math.sin(rad(a1));
     return `<path class="seg ${cls}" d="M${x0.toFixed(2)} ${y0.toFixed(2)} A${r} ${r} 0 0 1 ${x1.toFixed(2)} ${y1.toFixed(2)}"/>`;
   };
+  const cur = p.abs % N, primo = p.abs < N;
   let s = `<circle class="track" cx="50" cy="50" r="41"/>`;
-  for(let i=0;i<N;i++){
-    const day = i%7;
+  for(let i=0; i<N; i++){
     let cls = '';
-    if(i === p.abs) cls = 'now';
-    else if(i < p.abs) cls = 'done';
-    else if(PREP_DAYS[day]) cls = 'cook';
+    if(!p.pre && i === cur) cls = 'now';
+    else if(!p.pre && i < cur) cls = 'done';
+    else if((p.pre || primo) && (i === ASSESTAMENTO || i === 20)) cls = 'cook';   // giorno 8: prima pesata valida · giorno 21: stima provvisoria (14 giorni di pesate); la decisione è dal giorno 28 (21 giorni di pesate)
     if(cls) s += arc(i,cls);
   }
-  s += `<text x="50" y="47" text-anchor="middle">${p.abs+1}</text>`;
-  s += `<text x="50" y="59" text-anchor="middle"><tspan class="sm">DI 28</tspan></text>`;
+  s += `<text x="50" y="47" text-anchor="middle">${p.pre ? 0 : p.abs+1}</text>`;
+  s += `<text x="50" y="59" text-anchor="middle"><tspan class="sm">GIORNO</tspan></text>`;
   el.innerHTML = s;
 }
 function drawHeader(){
-  const p = pos(), w = WEEKS[p.w];
-  const dt = new Date(); 
-  document.getElementById('hEyebrow').textContent = `Settimana ${w.n} · ${w.tema}`;
-  document.getElementById('hTitle').textContent   = GG[p.d];
-  document.getElementById('hSub').textContent     = dt.toLocaleDateString('it-IT',{day:'numeric',month:'long'});
+  const p = pos(), t = TURNI[p.w];
+  const dt = new Date();
+  if(p.pre){
+    document.getElementById('hEyebrow').textContent = 'Prima di iniziare';
+    document.getElementById('hTitle').textContent   = S.dieta ? `Si parte il ${dataBreve(S.dieta)}` : 'Scegli la data';
+  } else {
+    document.getElementById('hEyebrow').textContent = `${t.nome} · giorno ${p.abs+1}`;
+    document.getElementById('hTitle').textContent   = GG[p.d];
+  }
+  let sub = dt.toLocaleDateString('it-IT',{day:'numeric',month:'long'});
+  if(!p.pre && nuotoDi(p.data, p.d)) sub += ' · nuoto stasera';
+  document.getElementById('hSub').textContent = sub;
   drawRing();
 }
 
 /* ══════════════════════════════════════════════════════════
    9. VISTA — OGGI
    ══════════════════════════════════════════════════════════ */
-function pranzoDi(w,d){ return w.bl.find(b => b.pranzi.includes(d)); }
-function cenaDi(w,d){   return w.bl.find(b => b.cene.includes(d)); }
-/* giorni di frigo fra la cottura e il pasto */
-function eta(b,d,tipo){
-  if(tipo==='cena' && d===b.cook && !b.prev) return 0;
-  let g = d - b.cook; if(b.prev || g < 0) g += 7;
-  return g;
+const shortN = k => ING[k].n.split(' (')[0];
+const lcFirst = s => s.charAt(0).toLowerCase() + s.slice(1);
+const SENZA_DI = ['uova','mela','banana'];       // «3 uova», «1 mela»; gli altri: «65 g di pasta», «1 vasetto di yogurt greco»
+function ingTxt(ing, mult=1){
+  return Object.entries(ing).filter(([k,v]) => v > 0)
+    .map(([k,v]) => SENZA_DI.includes(ING[k].u) ? fmtQ(k, v*mult) : `${fmtQ(k, v*mult)} di ${lcFirst(shortN(k))}`).join(' · ');
 }
-function etaTxt(g){ return g===0 ? 'appena cucinato' : (g===1 ? 'cucinato ieri sera' : `cucinato ${g} giorni fa`); }
+function elenco(a){ return a.length<2 ? a.join('') : a.slice(0,-1).join(', ') + ' e ' + a[a.length-1]; }
 
-function ingLine(r){
-  return Object.entries(r.ing).map(([k,v]) => `${ING[k].n.split(' (')[0].toLowerCase()} ${v}${ING[k].u==='pz'?'':' '+ING[k].u}`).join(' · ');
+/* riquadro «cosa si cucina» */
+function cookNote(list, titolo){
+  if(!list.length) return '';
+  const righe = list.map(x => `${x.porz} × <b>${R[x.key].nome}</b> · ${x.txt}`);
+  return `<div class="cook-note"><div class="h">${titolo}</div><p>${righe.join('<br>')}</p></div>`;
 }
 
-function renderOggi(){
-  const p = pos(), w = WEEKS[p.w];
-  const bp = pranzoDi(w,p.d), bc = cenaDi(w,p.d);
-  const isFree = p.d === FREE_DAY;
-  const sm = SM[w.sm[p.d%3]], sp = SP[w.sp[p.d%3]];
-  const pr = R[bp.pranzo], ce = bc ? R[bc.cena] : null;
-  const nC=nutri(COLAZIONE.ing), nSM=nutri(sm.ing), nP=nutri(pr.ing), nSP=nutri(sp.ing);
-  const nE = (isFree || !ce) ? {kcal:0,p:0,c:0,g:0} : nutri(ce.ing);
-  const tot = {kcal:nC.kcal+nSM.kcal+nP.kcal+nSP.kcal+nE.kcal,
-               p:nC.p+nSM.p+nP.p+nSP.p+nE.p,
-               c:nC.c+nSM.c+nP.c+nSP.c+nE.c,
-               g:nC.g+nSM.g+nP.g+nSP.g+nE.g};
-
-  let h = '';
-
-  if(PREP_DAYS[p.d]){
-    const sess = PREP_DAYS[p.d].map(id => w.bl.find(x=>x.id===id)).filter(Boolean);
-    const righe = sess.map(nb=>{
-      const parti = [];
-      if(nb.pranzo && nb.pranzi.length) parti.push(`${nb.pranzi.length} × <b>${R[nb.pranzo].nome}</b>`);
-      if(nb.cena){
-        const fresche = nb.cene.filter(d=>d===p.d).length, dopo = nb.cene.length - fresche;
-        if(fresche && dopo) parti.push(`<b>${R[nb.cena].nome}</b> per stasera + ${dopo} porzione${dopo>1?'i':''}`);
-        else if(fresche)    parti.push(`<b>${R[nb.cena].nome}</b> per stasera`);
-        else                parti.push(`${nb.cene.length} × <b>${R[nb.cena].nome}</b>`);
-      }
-      return parti.join(' e ');
-    });
-    const ultimo = Math.max(...sess.flatMap(x=>[...x.pranzi,...x.cene].map(d=>{
-      let g=d-p.d; if(g<0) g+=7; return g;})));
-    h += `<div class="cook-note">
-      <div class="h">Stasera si cucina</div>
-      <p>${righe.join('. ')}. Ti copre ${ultimo===0?'per oggi':`fino a ${GG[(p.d+ultimo)%7].toLowerCase()}`}.</p>
+/* riquadro mostrato prima dell'inizio della dieta */
+function preCard(){
+  if(!S.dieta){
+    return `<div class="cook-note">
+      <div class="h">Quando inizi?</div>
+      <p>Scegli il primo giorno di dieta: da lì l'app conta i giorni, ti dice cosa cucinare e tiene separate le pesate di prima da quelle in dieta.</p>
+      <input type="date" class="pre-date" onchange="setDieta(this.value)">
     </div>`;
   }
-
-  h += simpleCard('Colazione', COLAZIONE, nC);
-  h += snackCard('Spuntino · mattina', sm, nSM, 'sm', w.sm, p.d%3);
-  h += mealCard('Pranzo', bp.pranzo, etaTxt(eta(bp,p.d,'pranzo')));
-  h += snackCard('Spuntino · pomeriggio', sp, nSP, 'sp', w.sp, p.d%3);
-  h += isFree
-    ? `<div class="meal free">
-         <div class="meal-top"><span class="meal-slot">Cena · sabato</span><span class="meal-kcal">—</span></div>
-         <h3>Cena libera</h3>
-         <div class="ing" style="color:#7B3560;opacity:.85">Mangia quello che vuoi, senza pesare niente.</div>
-       </div>`
-    : mealCard('Cena', bc.cena, etaTxt(eta(bc,p.d,'cena')));
-
-  h += `<div class="sec-label">Totale della giornata</div>
-    <div class="card">
-      <div class="kv"><span class="k">Calorie${isFree?' <small>la cena libera non è conteggiata</small>':''}</span><b>${tot.kcal} kcal</b></div>
-      <div class="kv"><span class="k">Proteine</span><b>${tot.p} g</b></div>
-      <div class="kv"><span class="k">Carboidrati</span><b>${tot.c} g</b></div>
-      <div class="kv"><span class="k">Grassi</span><b>${tot.g} g</b></div>
-      <div class="kv"><span class="k">Acqua<small>almeno, di più nei giorni di nuoto</small></span><b>2 L</b></div>
+  const oggi = iso(new Date());
+  const g = dnum(S.dieta) - dnum(oggi);
+  const dd = new Date(S.dieta+'T00:00:00');
+  const nome = dd.toLocaleDateString('it-IT',{weekday:'long', day:'numeric', month:'long'});
+  const w0 = turnoDi(S.start);
+  let h = `<div class="cook-note">
+      <div class="h">Si parte ${nome}</div>
+      <p>${g===1 ? 'Domani.' : `Tra ${g} giorni.`} Fino ad allora continua a pesarti ogni mattina: servono a sapere da dove parti.</p>
+    </div>
+    <div class="cook-note">
+      <div class="h">Che turno fai nella prima settimana?</div>
+      <p>Il piano è diviso per turno. Dalla seconda settimana l'app segue la rotazione 7:00 → 8:24 → 9:24; se non è la tua la cambi da Piano → Calendario dei turni.</p>
+      <div class="bfast-opts">${TURNI.map((t,i)=>`<button class="bopt ${w0===i?'on':''}" onclick="setTurnoSett('${S.start}',${i})">${t.breve}</button>`).join('')}</div>
     </div>`;
-
-  document.getElementById('v-oggi').innerHTML = h;
-}
-
-function ingTxt(ing){
-  return Object.entries(ing).map(([k,v]) =>
-    `${ING[k].n.split(' (')[0].split(' /')[0].toLowerCase()} ${v}${ING[k].u==='pz'?'':' '+ING[k].u}`).join(' · ');
-}
-
-function simpleCard(slot, item, n){
-  return `<div class="bfast">
-    <div class="meal-top"><span class="meal-slot">${slot}</span><span class="meal-kcal">${n.kcal} kcal · P ${n.p} g</span></div>
-    <h3 style="font-family:var(--display);font-size:17px;font-weight:600;margin-top:6px">${item.nome}</h3>
-    <div class="ing">${ingTxt(item.ing)}</div>
-  </div>`;
+  if(dd.getDay() === 1){
+    h += cookNote([{key:MENU[w0].p[0], porz:1, txt:'pranzo di lunedì'}], 'La domenica prima di iniziare cucini');
+  } else {
+    h += `<div class="cook-note"><div class="h">Consiglio</div>
+      <p>Il piano è scritto per la settimana che parte di lunedì. Partendo di ${GG[(dd.getDay()+6)%7].toLowerCase()} i primi giorni non hai avanzi pronti: cucina al momento ciò che trovi qui sotto.</p></div>`;
+  }
+  return h;
 }
 
 function mealCard(slot, key, eta){
   const r = R[key], n = nutri(r.ing);
   return `<button class="meal" onclick="openR('${key}')">
-    <div class="meal-top"><span class="meal-slot">${slot}${r.freddo?' · freddo':''}</span><span class="meal-kcal">${n.kcal} kcal · ${r.tempo} min</span></div>
+    <div class="meal-top"><span class="meal-slot">${slot}${r.freddo?' · freddo':''}</span><span class="meal-kcal">${n.kcal} kcal · P ${n.p} g · ${r.tempo} min</span></div>
     <h3>${r.nome}</h3>
     ${eta?`<div class="eta">${eta}</div>`:''}
     <div class="ing">${ingTxt(r.ing)}</div>
@@ -935,155 +1161,287 @@ function mealCard(slot, key, eta){
     </span>
   </button>`;
 }
-
-function snackCard(slot, item, n, tipo, opzioni, idx){
-  const src = tipo==='sm' ? SM : SP;
+function simpleCard(slot, nome, ing, n, quando, nota){
   return `<div class="bfast">
     <div class="meal-top"><span class="meal-slot">${slot}</span><span class="meal-kcal">${n.kcal} kcal · P ${n.p} g</span></div>
-    <h3 style="font-family:var(--display);font-size:17px;font-weight:600;margin-top:6px">${item.nome}</h3>
-    <div class="ing">${ingTxt(item.ing)}</div>
-    <div class="bfast-opts">
-      ${opzioni.map((k,i)=>`<button class="bopt ${i===idx?'on':''}" onclick="pickSnack('${tipo}',${i})">${src[k].nome.split(' ')[0]}</button>`).join('')}
-    </div>
+    <h3 style="font-family:var(--display);font-size:17px;font-weight:600;margin-top:6px">${nome}</h3>
+    ${quando?`<div class="eta">${quando}</div>`:''}
+    <div class="ing">${ingTxt(ing)}</div>
+    ${nota?`<div class="ing" style="color:var(--ink-3);margin-top:5px">${nota}</div>`:''}
+  </div>`;
+}
+function cenaLiberaCard(slot){
+  return `<div class="meal free">
+    <div class="meal-top"><span class="meal-slot">${slot}</span><span class="meal-kcal">~${CENA_LIBERA.kcal} kcal</span></div>
+    <h3>Cena libera</h3>
+    <div class="ing" style="color:#7B3560;opacity:.9">Mangia quello che vuoi, senza pesare niente. Punta a un piatto unico (carboidrati e proteine) con la verdura: circa ${CENA_LIBERA.kcal} kcal e almeno ${CENA_LIBERA.p} g di proteine, che è la stima che l'app conta. Una pizza intera o un hamburger con patatine fritte stanno spesso sopra le 900 kcal: se li scegli, il resto della giornata non cambia e il conto settimanale sale.</div>
   </div>`;
 }
 
-function pickSnack(tipo, i){
-  const p = pos(), w = WEEKS[p.w];
-  const lista = tipo==='sm' ? w.sm : w.sp;
-  const day = p.d;
-  // ruota la lista della settimana in modo che l'opzione scelta capiti oggi
-  const shift = ((i - (day%3)) % 3 + 3) % 3;
-  if(shift){ for(let n=0;n<shift;n++) lista.push(lista.shift()); }
-  renderOggi();
+function renderOggi(){
+  const p = pos(), g = giornoPiano(p.lun, p.d), t = TURNI[g.w];
+  const nuoto = nuotoDi(p.data, p.d);
+  const o = orariGiorno(g.w, p.d, nuoto);
+  const col = colazione();
+  const nC = nutri(col.ing), nSM = nutri(g.am.ing), nP = nutri(R[g.pranzo].ing), nSP = nutri(g.pm.ing);
+  const nE = g.libera ? CENA_LIBERA : nutri(R[g.cena].ing);
+  const tot = sommaNutri([nC, nSM, nP, nSP, nE]);
+  const orig = originePranzo(g.m, p.d);
+  const feriale = p.d < 5;
+
+  let h = '';
+  if(p.pre) h += preCard() + `<div class="sec-label">Anteprima del primo giorno</div>`;
+  else      h += cookNote(cucinaOggi(p.lun, p.d), 'Da cucinare oggi');
+
+  h += simpleCard('Colazione', col.nome, col.ing, nC, o.col, 'La tua colazione di sempre, con un vasetto di yogurt greco in più: i frollini da soli non danno proteine e a metà mattina la fame arriva prima.');
+  h += simpleCard('Spuntino · mattina', g.am.nome, g.am.ing, nSM, o.am, feriale ? 'Senza frigo e senza preparazione: lo porti da casa.' : '');
+  h += mealCard('Pranzo', g.pranzo, `${o.pr} · ${orig.txt}`);
+  h += simpleCard('Spuntino · pomeriggio', g.pm.nome, g.pm.ing, nSP, o.pm, (feriale && g.pm.dove === 'lavoro') ? 'Regge fuori dal frigo: lo mangi al lavoro.' : '');
+
+  if(p.d >= 4){
+    h += `<div class="bfast">
+      <div class="meal-top"><span class="meal-slot">Weekend · 2 cene libere</span></div>
+      <div class="ing" style="margin-top:6px">Fra venerdì, sabato e domenica una sera sola è pianificata (<b>${R[g.m.cp].nome}</b>), le altre due sono libere. Quale sera è quella pianificata?</div>
+      <div class="bfast-opts">${[4,5,6].map(x=>`<button class="bopt ${cenaPianDi(p.lun)===x?'on':''}" onclick="setCenaPian('${p.lun}',${x})">${GG[x].toUpperCase()}</button>`).join('')}</div>
+    </div>`;
+  }
+  h += g.libera ? cenaLiberaCard(`Cena · ${o.ce}`)
+                : mealCard(`Cena · ${o.ce}`, g.cena, '');
+
+  h += `<div class="sec-label">Totale della giornata</div>
+    <div class="card">
+      <div class="kv"><span class="k">Calorie${g.libera?`<small>compresa la cena libera, stimata ${CENA_LIBERA.kcal} kcal</small>`:''}</span><b>~${tot.kcal} kcal</b></div>
+      <div class="kv"><span class="k">Proteine</span><b>${tot.p} g</b></div>
+      <div class="kv"><span class="k">Carboidrati</span><b>${tot.c} g</b></div>
+      <div class="kv"><span class="k">Grassi</span><b>${tot.g} g</b></div>
+      <div class="kv"><span class="k">Acqua<small>almeno, di più nei giorni di nuoto</small></span><b>2 L</b></div>
+    </div>`;
+
+  if(!p.pre){
+    h += `<div class="sec-label">Nuoto</div>
+    <div class="card"><div class="kv">
+      <span class="k">Stasera in piscina?<small>${nuoto ? 'Cena alle 21:30 e merenda 90 minuti prima della piscina. Le ~300 kcal del nuoto non vanno «restituite»: sono già nel deficit.' : 'Cena alle 19:15.'}</small></span>
+      <span class="seg">
+        <button class="bopt ${nuoto?'on':''}" onclick="setNuoto('${p.data}',true)">SÌ</button>
+        <button class="bopt ${!nuoto?'on':''}" onclick="setNuoto('${p.data}',false)">NO</button>
+      </span></div></div>`;
+  }
+  document.getElementById('v-oggi').innerHTML = h;
+}
+function setNuoto(data, v){ S.nuoto[data] = v; Store.set('nuoto', S.nuoto); drawHeader(); renderOggi(); }
+function setCenaPian(lun, d){ S.cenaPian[lun] = d; Store.set('cenaPian', S.cenaPian); renderOggi(); renderPiano(); }
+function resetTurni(){
+  S.turni = {}; Store.set('turni', {});
+  S.planWeek = pos().w;
+  drawHeader(); renderOggi(); renderPiano(); renderDispensa(); renderPeso();
+}
+function setTurnoSett(lun, i){
+  S.turni[lun] = i; Store.set('turni', S.turni);
+  S.planWeek = pos().w;
+  drawHeader(); renderOggi(); renderPiano(); renderDispensa(); renderPeso();
 }
 
 /* ══════════════════════════════════════════════════════════
    10. VISTA — PIANO
    ══════════════════════════════════════════════════════════ */
+const MISURE = [
+  {k:'tazza',       l:'Latte nella tazza',               u:'ml', h:'quanto ne versi di solito'},
+  {k:'frollini',    l:'Frollini a colazione',            u:'g',  h:'pesali una volta e conta quanti sono'},
+  {k:'greco',       l:'Vasetto di yogurt greco',         u:'g',  h:'scritto sulla confezione'},
+  {k:'grana_snack', l:'Busta di grana «snack»',          u:'g',  h:'scritto sulla confezione'},
+  {k:'tonno',       l:'Tonno sgocciolato per scatoletta',u:'g',  h:'peso sgocciolato scritto sulla scatoletta'},
+  {k:'uova',        l:'Un uovo sgusciato',               u:'g',  h:'taglia M o L sulla confezione'}
+];
+function setConf(k, v){
+  const n = parseFloat(String(v).replace(',','.'));
+  if(v === '' || isNaN(n) || n <= 0) delete S.conf[k]; else S.conf[k] = n;
+  Store.set('conf', S.conf);
+  drawHeader(); renderOggi(); renderPiano(); renderRicette(); renderDispensa(); renderPeso();
+}
+function resetConf(){ S.conf = {}; Store.set('conf', {}); setConf('', ''); }
+
 function renderPiano(){
-  const wi = S.planWeek, w = WEEKS[wi], p = pos();
-  let h = `<div class="wk">${WEEKS.map((x,i)=>
-    `<button class="wtab ${i===wi?'on':''}" onclick="setWeek(${i})">SETT ${x.n}</button>`).join('')}</div>`;
+  const p = pos(), wi = S.planWeek, m = MENU[wi], t = TURNI[wi];
+  const nuotoWeek = d => NUOTO_DEF.includes(d);
+  let h = `<div class="wk">${TURNI.map((x,i)=>
+    `<button class="wtab ${i===wi?'on':''}" onclick="setWeek(${i})">TURNO ${x.breve}</button>`).join('')}</div>`;
 
   h += `<div class="card" style="margin-bottom:4px">
-    <div style="font-family:var(--display);font-size:17px;font-weight:600">Settimana ${w.n} — ${w.tema}</div>
-    <div style="font-size:13px;color:var(--ink-2);margin-top:5px">
-      Tre blocchi di cucina: lunedì, giovedì e sabato. Ogni blocco copre i giorni successivi.
-    </div>
+    <div style="font-family:var(--display);font-size:17px;font-weight:600">${t.nome} <span class="chip">${t.orario}</span> ${wi===p.w ? '<span class="chip on">questa settimana</span>' : ''}</div>
+    <div class="note" style="margin-top:8px">${t.nota}</div>
+    <div class="note" style="margin-top:8px"><b>Orari consigliati.</b> Colazione ${t.colazione} · spuntino ${t.am} (${t.amDove}) · pranzo ${t.pranzo} (a casa) · merenda ${t.pm} (${t.pmDove}; ${t.pmNuoto} nei giorni di nuoto) · cena 19:15, o 21:30 dopo il nuoto.</div>
+    <div class="note" style="margin-top:8px"><b>Come si cucina.</b> La cena di lunedì, martedì, mercoledì e giovedì si cucina in doppia porzione: il giorno dopo è il pranzo (si prepara ${t.prep}). Il pranzo del lunedì è un piatto freddo cucinato la domenica. Sabato e domenica a pranzo si cucina al momento.</div>
   </div>`;
 
   h += `<div class="sec-label">I sette giorni</div><div class="card">`;
   for(let d=0; d<7; d++){
-    const bp = pranzoDi(w,d), bc = cenaDi(w,d), isFree = d===FREE_DAY;
-    const cucina = PREP_DAYS[d];
+    const lib = d >= 4;
+    const o = originePranzo(m, d);
     h += `<div class="day-row">
-      <div class="dtag ${cucina?'cooking':''}">${GG_S[d]}${cucina?'<br><span style="font-size:9px">CUCINI</span>':''}</div>
+      <div class="dtag ${nuotoWeek(d)?'cooking':''}">${GG_S[d]}${nuotoWeek(d) ? '<br><span style="font-size:8px">NUOTO</span>' : ''}</div>
       <div class="day-body">
-        <div class="dline"><i>Col</i><span>${COLAZIONE.nome}</span></div>
-        <div class="dline"><i>Spunt</i><span>${SM[w.sm[d%3]].nome}</span></div>
-        <div class="dline"><i>Pranzo</i><button onclick="openR('${bp.pranzo}')">${R[bp.pranzo].nome}</button></div>
-        <div class="dline"><i>Merenda</i><span>${SP[w.sp[d%3]].nome}</span></div>
-        <div class="dline"><i>Cena</i>${isFree
-          ? '<span class="lib">Libera</span>'
-          : `<button onclick="openR('${bc.cena}')">${R[bc.cena].nome}</button>`}</div>
+        <div class="dline"><i>Col</i><span>${colazione().nome}</span></div>
+        <div class="dline"><i>Spunt</i><span>${SM[m.am[d]].nome}</span></div>
+        <div class="dline"><i>Pranzo</i><button onclick="openR('${m.p[d]}')">${R[m.p[d]].nome}</button></div>
+        ${(d>=1 && d<=4 && o.tipo==='avanzo') ? '<div class="dline"><i></i><span style="color:var(--ink-3);font-size:12px">avanzo di ieri sera</span></div>' : ''}
+        <div class="dline"><i>Merenda</i><span>${SP[m.pm[d]].nome}</span></div>
+        <div class="dline"><i>Cena</i>${lib
+          ? '<span class="lib">Libera (o la pianificata del weekend)</span>'
+          : `<button onclick="openR('${m.c[d]}')">${R[m.c[d]].nome}</button>`}</div>
       </div>
     </div>`;
   }
-  h += `</div>`;
+  h += `</div>
+  <div class="card"><div class="kv"><span class="k">Cena pianificata del weekend<small>una sola sera fra venerdì, sabato e domenica; le altre due sono libere. Scegli la sera da Oggi.</small></span></div>
+  <button class="rlink" onclick="openR('${m.cp}')"><div><h4>${R[m.cp].nome}</h4><p>${R[m.cp].tempo} MIN · ${nutri(R[m.cp].ing).kcal} KCAL</p></div>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button></div>`;
+
+  /* calendario dei turni: quattro settimane da questa */
+  const base = p.pre ? (S.start || p.lun) : p.lun;
+  h += `<div class="sec-label">Calendario dei turni</div>
+  <div class="card"><p class="note" style="margin-bottom:6px">Il piano segue il turno che fai in quella settimana. Se non cambi niente la rotazione parte dal turno 9:24 della settimana del 12/10 e prosegue 7:00 → 8:24 → 9:24; tocca un turno per correggerla (le settimane dopo ripartono da lì).</p>`;
+  for(let i=0; i<4; i++){
+    const lun = addGiorni(base, 7*i), fine = addGiorni(lun, 6), tu = turnoDi(lun);
+    h += `<div class="wk-row"><div class="per">${dt2it(lun)} – ${dt2it(fine)}<small>${i===0?(p.pre?'prima settimana':'questa settimana'):(i===1?'prossima':'')}</small></div>
+      <div class="bfast-opts" style="margin:0;width:210px">${TURNI.map((x,k)=>`<button class="bopt ${tu===k?'on':''}" onclick="setTurnoSett('${lun}',${k})">${x.breve}</button>`).join('')}</div></div>`;
+  }
+  h += `<button class="ghost" onclick="resetTurni()">Ripristina la rotazione di base</button></div>`;
+
+  h += `<div class="sec-label">Le tue misure</div>
+  <div class="card"><p class="note" style="margin-bottom:6px">Il piano conta le confezioni; qui dici quanto pesano davvero. Dove non lo so, ho messo un'ipotesi: correggila e tutte le calorie si ricalcolano.</p>`;
+  MISURE.forEach(x=>{
+    h += `<div class="pan-row"><span class="nm">${x.l}<br><span class="need">${x.h}</span></span>
+      <input type="number" inputmode="decimal" min="0" step="any" value="${S.conf[x.k] ?? CONF_DEF[x.k]}" onchange="setConf('${x.k}',this.value)" aria-label="${x.l}">
+      <span class="u">${x.u}</span></div>`;
+  });
+  h += `<button class="ghost" onclick="resetConf()">Ripristina i valori di partenza</button></div>`;
 
   h += `<div class="sec-label">Impostazioni</div>
   <div class="card">
     <div class="kv">
-      <span class="k">Inizio del ciclo<small>il lunedì da cui parte la settimana 1</small></span>
-      <input type="date" id="startDate" value="${S.start || iso(mondayOf(new Date()))}" onchange="setStart(this.value)">
+      <span class="k">Primo giorno di dieta<small>meglio un lunedì, dopo aver cucinato il pranzo del lunedì la domenica</small></span>
+      <input type="date" id="startDate" value="${S.dieta || ''}" onchange="setDieta(this.value)">
     </div>
-    <div class="kv"><span class="k">Oggi sei al giorno</span><b>${pos().abs+1} / 28</b></div>
+    <div class="kv"><span class="k">Oggi sei al giorno</span><b>${p.pre ? 'non ancora iniziata' : (p.abs+1)}</b></div>
   </div>`;
 
+  const mp = macroPiano(), rif = pesoRif(), I = mediaSettimana(), f = k => Math.round(I + k*1100);
   h += `<div class="sec-label">Su cosa è calcolato</div>
   <div class="card">
     <div class="kv"><span class="k">Struttura</span><b>5 pasti</b></div>
-    <div class="kv"><span class="k">Media giornaliera<small>media delle 24 giornate piene del ciclo</small></span><b>~2155 kcal</b></div>
-    <div class="kv"><span class="k">Proteine<small>1,36 g per kg di peso</small></span><b>~131 g</b></div>
-    <div class="kv"><span class="k">Carboidrati</span><b>~205 g</b></div>
-    <div class="kv"><span class="k">Grassi</span><b>~86 g</b></div>
-    <div class="kv"><span class="k">Fabbisogno stimato<small>stima, non misura: da verificare sulla bilancia</small></span><b>2700–2850</b></div>
+    <div class="kv"><span class="k">Giorni con la cena del piano<small>media dei giorni con la cena pianificata</small></span><b>~${mediaPiano()} kcal</b></div>
+    <div class="kv"><span class="k">Media settimanale<small>con le 2 cene libere del weekend contate ${CENA_LIBERA.kcal} kcal (ipotesi)</small></span><b>~${I} kcal</b></div>
+    <div class="kv"><span class="k">Proteine<small>${(mp.p/rif).toFixed(2).replace('.',',')} g per kg di peso</small></span><b>~${mp.p} g</b></div>
+    <div class="kv"><span class="k">Carboidrati</span><b>~${mp.c} g</b></div>
+    <div class="kv"><span class="k">Grassi</span><b>~${mp.g} g</b></div>
+    <div class="kv"><span class="k">Fabbisogno stimato<small>da formula, con circa 3.000 passi al giorno: da verificare sulla bilancia</small></span><b>~2.350 (2.100–2.550)</b></div>
   </div>`;
 
   h += `<div class="sec-label">Misura il tuo fabbisogno vero</div>
   <div class="card">
-    <p class="note">Il valore di 2700–2850 kcal è una <b>stima</b> ricavata da una formula, non una misura. L'unico modo per sapere il tuo fabbisogno reale è la bilancia.</p>
-    <p class="note">Pesati ogni mattina a digiuno per 14 giorni. Confronta la media della prima settimana con quella della seconda.</p>
-    <p class="note"><b>−0,5 kg</b> in 7 giorni → il tuo fabbisogno è circa 2700 kcal<br>
-    <b>−0,25 kg</b> → circa 2430 kcal<br>
-    <b>peso invariato</b> → il tuo fabbisogno è ~2155, cioè quanto stai mangiando<br>
-    <b>+0,3 kg</b> → sei sopra il mantenimento, va abbassato</p>
-    <p class="note">Con quel numero in mano il piano si taratura sul dato reale invece che su una formula.</p>
+    <p class="note">Il valore di circa 2.350 kcal (tra 2.100 e 2.550) viene da una formula e può sbagliare del 10–15 %, in più o in meno. Il dato vero lo dà la bilancia, ma solo da quando mangi le quantità del piano: prima non sai quanto mangiavi davvero.</p>
+    <p class="note"><b>Giorni 1–${ASSESTAMENTO}: non contano.</b> Cambiando alimentazione perdi acqua e glicogeno (1–2 kg), che non è grasso. La stima parte dall'ottavo giorno.</p>
+    <p class="note">Pesati ogni mattina a digiuno. Il peso oscilla di circa ±0,6 kg da un giorno all'altro: servono <b>14 giorni</b> di pesate per una stima provvisoria e <b>21</b> per una affidabile. La trovi nella sezione Peso.</p>
+    <p class="note">Come leggere la pendenza, mangiando circa ${I} kcal al giorno di media:<br>
+    <b>−0,5 kg</b> a settimana → il tuo fabbisogno è circa ${f(0.5)} kcal<br>
+    <b>−0,25 kg</b> → circa ${f(0.25)} kcal<br>
+    <b>peso invariato</b> → circa ${I} kcal: il piano è già al tuo mantenimento<br>
+    <b>+0,3 kg</b> → circa ${f(-0.3)} kcal: il piano è sopra il mantenimento</p>
   </div>`;
 
   h += `<div class="sec-label">Come tarare il piano</div>
   <div class="card">
-    <p class="note"><b>Pesati una o due volte a settimana</b>, sempre nelle stesse condizioni (mattina, a digiuno), e ragiona sulla media, non sul singolo numero.</p>
-    <p class="note">Meno di 0,3 kg a settimana → togli 150–200 kcal al giorno: 20 g di frutta secca, oppure 30 g di pasta.</p>
-    <p class="note">Più di 1 kg a settimana → aggiungi 150–200 kcal. Scendere troppo in fretta significa perdere anche massa muscolare.</p>
-    <p class="note">Tra 0,4 e 0,8 kg a settimana → il piano sta funzionando, non toccare niente.</p>
-    <p class="note" style="color:var(--ink-3);margin-top:14px">Calorie e macro sono calcolati dagli ingredienti su tabelle nutrizionali standard (CREA/USDA). I prodotti che compri davvero possono discostarsi del 10–15%: leggi le etichette se vuoi più precisione. Questo piano non sostituisce il parere di un medico o di un nutrizionista.</p>
+    <p class="note"><b>Pesati ogni mattina</b> a digiuno, dopo il bagno. Conta la tendenza, non il singolo numero.</p>
+    <p class="note">Dopo 21 giorni di pesate valide (dall'ottavo giorno di dieta):<br>
+    <b>meno di 0,25 kg a settimana</b> → togli 150 kcal al giorno (ad esempio 40 g di pasta in meno) oppure aggiungi 2.000 passi.<br>
+    <b>tra 0,25 e 0,8 kg a settimana</b> → il piano funziona, non toccare niente.<br>
+    <b>più di 0,8 kg a settimana</b> → aggiungi 150 kcal: scendere troppo in fretta fa perdere anche massa muscolare.</p>
+    <p class="note">Prima dei 21 giorni non cambiare le porzioni: il rumore della bilancia è più grande del segnale.</p>
+    <p class="note" style="color:var(--ink-3);margin-top:14px">Calorie e macro sono calcolati dagli ingredienti: i prodotti che hai in casa con i valori dell'etichetta, gli altri su tabelle nutrizionali standard (CREA/USDA). I prodotti che compri davvero possono discostarsi del 10–15 %. Questo piano non sostituisce il parere di un medico o di un nutrizionista.</p>
   </div>`;
 
   document.getElementById('v-piano').innerHTML = h;
 }
 function setWeek(i){ S.planWeek=i; renderPiano(); }
-function setStart(v){ S.start=v; Store.set('start',v); drawHeader(); renderOggi(); renderPiano(); renderDispensa(); }
+function setDieta(v){
+  if(!v) return;
+  S.dieta = v;
+  S.start = iso(mondayOf(new Date(v+'T00:00:00')));       // le settimane partono dal lunedì di quella settimana
+  Store.set('dieta', v); Store.set('start', S.start);
+  S.planWeek = pos().w;
+  drawHeader(); renderOggi(); renderPiano(); renderDispensa(); renderPeso();
+}
 
 /* ══════════════════════════════════════════════════════════
    11. VISTA — RICETTE
    ══════════════════════════════════════════════════════════ */
+const GRUPPI = ['Pasta e riso freddi','Pasta e riso caldi','Carne e pesce','Uova e legumi','Piatti freddi e panini'];
 function renderRicette(){
-  const groups = {
-    'Pasta fredda e riso': ['pf_tonno','pf_piselli','pf_uova','pf_cotto','pf_pesto','riso_tonno'],
-    'Pasta calda':         ['pasta_tonno','pasta_zuc_uovo'],
-    'Legumi':              ['lenticchie','fagioli'],
-    'Tacchino':            ['tacc_zuc_pat','tacc_spi_car','straccetti'],
-    'Pesce':               ['nasello'],
-    'Uova e piatti veloci':['frittata_provola','frittata_spinaci','piatto_freddo']
-  };
   let h = '';
-  for(const g in groups){
-    h += `<div class="sec-label">${g}</div><div class="card">`;
-    h += groups[g].map(k=>`<button class="rlink" onclick="openR('${k}')">
-      <div><h4>${R[k].nome}</h4><p>${R[k].tempo} MIN · ${nutri(R[k].ing).kcal} KCAL</p></div>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-    </button>`).join('');
+  GRUPPI.forEach(gr=>{
+    const keys = Object.keys(R).filter(k => R[k].tipo === gr);
+    if(!keys.length) return;
+    h += `<div class="sec-label">${gr}</div><div class="card">`;
+    h += keys.map(k=>{ const n = nutri(R[k].ing);
+      return `<button class="rlink" onclick="openR('${k}')">
+        <div><h4>${R[k].nome}</h4><p>${R[k].tempo} MIN · ${n.kcal} KCAL · P ${n.p} G</p></div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+      </button>`; }).join('');
     h += `</div>`;
-  }
+  });
   h += `<div class="sec-label">Regole valide sempre</div>
   <div class="card">
+    <p class="note"><b>Porzione doppia.</b> La cena di lunedì–giovedì si cucina per due: la metà che avanza va in frigo in un contenitore chiuso entro un'ora dalla cottura, ed è il pranzo del giorno dopo. Mangiala entro 24 ore (il riso, mai oltre).</p>
     <p class="note"><b>Friggitrice ad aria:</b> zucchine 180 °C per 13–15 min, patate 190 °C per 18–20 min, carote 180 °C per 15–18 min, nasello 180 °C per 10–12 min. Scuoti il cestello a metà. I tempi vanno tarati sul tuo modello nei primi giri.</p>
     <p class="note"><b>Uova:</b> mai sode. Sempre saltate in padella a fuoco medio-basso, tolte quando sono ancora leggermente umide.</p>
-    <p class="note"><b>Spuntini:</b> quello del mattino è ridotto, quello del pomeriggio più sostanzioso. Evita di farli entrambi con sola frutta secca o frutta: resteresti troppo basso di proteine.</p>
-    <p class="note"><b>Olio EVO e frutta secca:</b> già conteggiati nei piatti, pesali. Sono la parte che tiene basse pasta e pane.</p>
-    <p class="note"><b>Verdure libere:</b> le zucchine puoi aumentarle senza pesarle.</p>
-    <p class="note"><b>Giorni di nuoto:</b> puoi aggiungere 30 g di pasta o 40 g di pane a pranzo.</p>
+    <p class="note"><b>Spuntino di mattina:</b> senza frigo e senza preparazione (grana in busta, frutta secca, frutta). Niente tonno e niente pane. <b>Merenda:</b> a casa può essere fresca; nel turno 9:24, che la fai al lavoro, regge fuori dal frigo.</p>
+    <p class="note"><b>Olio e frutta secca:</b> pesali. Un cucchiaino d'olio sono circa 4–5 g, cioè circa 40 kcal: è la parte che conta di più e che si sbaglia di più a occhio.</p>
+    <p class="note"><b>Tonno:</b> non più di 3 porzioni (6 scatolette) a settimana: il piano resta sotto questo limite.</p>
+    <p class="note"><b>Giorni di nuoto:</b> nessun extra da mangiare. Il nuoto brucia circa 300 kcal nette per seduta e sono già nel deficit calcolato.</p>
+    <p class="note"><b>Verdure:</b> le quantità sono indicate; solo le zucchine puoi aumentarle senza pesarle.</p>
   </div>`;
-
   document.getElementById('v-ricette').innerHTML = h;
 }
 
 /* ══════════════════════════════════════════════════════════
    12. SCHEDA RICETTA
    ══════════════════════════════════════════════════════════ */
+let keySheet = null, porzSheet = 1;
+const isDoppia = key => MENU.some(m => m.c.includes(key));
+function usoRicetta(key){
+  const out = [];
+  MENU.forEach(m=>{
+    const tn = TURNI[m.turno].nome;
+    m.c.forEach((k,d)=>{ if(k === key) out.push(`${tn}: cena di ${GG[d].toLowerCase()}`); });
+    m.p.forEach((k,d)=>{ if(k === key) out.push(`${tn}: pranzo di ${GG[d].toLowerCase()}`); });
+    if(m.cp === key) out.push(`${tn}: cena pianificata del weekend`);
+  });
+  return out;
+}
 function openR(key){
-  const r = R[key], n = nutri(r.ing);
+  keySheet = key; porzSheet = isDoppia(key) ? 2 : 1;
+  renderSheet();
+  document.getElementById('sheet').classList.add('on');
+  document.getElementById('sheet').scrollTop = 0;
+  document.body.style.overflow='hidden';
+}
+function setPorz(n){ porzSheet = n; renderSheet(); }
+function renderSheet(){
+  const key = keySheet, r = R[key], n = nutri(r.ing), doppia = isDoppia(key);
   let h = `<h2>${r.nome}</h2>
     <div class="rmeta">
-      <span>${r.tempo} MIN</span><span>${n.kcal} KCAL</span><span>MEAL PREP ×${r.porz}</span>
+      <span>${r.tempo} MIN</span><span>${n.kcal} KCAL A PORZIONE</span><span>${doppia ? 'DOPPIA PORZIONE' : 'SI CUCINA AL MOMENTO'}</span>
       <span>P ${n.p} G</span><span>C ${n.c} G</span><span>G ${n.g} G</span>
     </div>`;
+  const uso = usoRicetta(key);
+  if(uso.length) h += `<p class="note" style="margin-top:10px">${uso.join(' · ')}</p>`;
 
-  h += `<div class="sec-label">Ingredienti per una porzione</div><div class="card"><ul class="ilist">`;
+  h += `<div class="sec-label">Ingredienti</div><div class="card">
+    <div class="bfast-opts" style="margin:0 0 6px">${[1,2,3].map(x=>`<button class="bopt ${porzSheet===x?'on':''}" onclick="setPorz(${x})">${x} ${x===1?'PORZIONE':'PORZIONI'}</button>`).join('')}</div>
+    <ul class="ilist">`;
   for(const k in r.ing){
-    h += `<li><span>${ING[k].n}</span><b>${r.ing[k]}${ING[k].u==='pz'?'':' '+ING[k].u}</b></li>`;
+    if(!(r.ing[k] > 0)) continue;
+    h += `<li><span>${ING[k].n}</span><b>${fmtQ(k, r.ing[k]*porzSheet)}</b></li>`;
   }
   (r.libere||[]).forEach(x => h += `<li><span class="free-txt">${x}</span><b class="free-txt">q.b.</b></li>`);
   h += `</ul></div>`;
@@ -1094,12 +1452,9 @@ function openR(key){
   if(r.warn) h += `<div class="warn">${r.warn}</div>`;
   h += `</div>`;
 
-  h += `<div class="sec-label">Conservazione</div><div class="keep"><b>Meal prep</b>${r.keep}</div>`;
+  h += `<div class="sec-label">Conservazione</div><div class="keep"><b>${doppia ? 'Porzione doppia' : 'Conservazione'}</b>${r.keep}</div>`;
 
   document.getElementById('sheetBody').innerHTML = h;
-  document.getElementById('sheet').classList.add('on');
-  document.getElementById('sheet').scrollTop = 0;
-  document.body.style.overflow='hidden';
 }
 function closeSheet(){
   document.getElementById('sheet').classList.remove('on');
@@ -1109,84 +1464,81 @@ function closeSheet(){
 /* ══════════════════════════════════════════════════════════
    13. VISTA — DISPENSA E SPESA
    ══════════════════════════════════════════════════════════ */
+function listaMancante(needs){
+  const missing = [];
+  for(const k in needs){
+    const have = S.pantry[k] || 0, gap = needs[k] - have;
+    if(gap > 0.001) missing.push([k, roundBuy(gap, k)]);
+  }
+  return missing;
+}
+function buyRows(missing){
+  let h = '';
+  CATS.forEach(c=>{
+    const rows = missing.filter(([k]) => ING[k].c === c);
+    if(!rows.length) return;
+    h += `<div class="buy-cat">${c}</div>`;
+    rows.forEach(([k,q]) => h += `<div class="buy-row">
+      <span class="nm">${ING[k].n}${ING[k].casa ? ' <span class="chip">ne hai già</span>' : ''}</span><span class="qt">${fmtBuy(k,q)}</span></div>`);
+  });
+  return h;
+}
+const UNITA_BREVE = {vasetto:'vasetti', busta:'buste', scatoletta:'scat.', fetta:'fette', uova:'uova', mela:'mele', banana:'banane'};
+function unitLbl(k){ const n = ING[k]; return n.un ? (UNITA_BREVE[n.u] || n.un[1]) : n.u; }
+function needTxt(k, v){ return fmtBuy(k, aPezzi(k) ? Math.round(v*10)/10 : Math.round(v)); }
 function renderDispensa(){
   const needs = scopeNeeds();
-  const labels = {cur:'Questa settimana', next:'La prossima', all:'Tutte e 4'};
+  const labels = {cur:'Questa settimana', next:'La prossima', all:'Tutte e 3'};
 
   let h = `<div class="sec-label">Calcola per</div>
   <div class="scope">${['cur','next','all'].map(s=>
-    `<button class="sbtn ${S.scope===s?'on':''}" onclick="setScope('${s}')">${labels[s].toUpperCase()}</button>`).join('')}</div>`;
+    `<button class="sbtn ${S.scope===s?'on':''}" onclick="setScope('${s}')">${labels[s].toUpperCase()}</button>`).join('')}</div>
+  <p class="note" style="margin-top:9px;color:var(--ink-3)">Conta i pasti di una settimana intera, lunedì–domenica. Il pranzo del lunedì si cucina la domenica prima: fai la spesa entro sabato. Le due cene libere del weekend non sono nella lista.</p>`;
 
-  // lista della spesa
-  const missing = [];
-  for(const k in needs){
-    const have = S.pantry[k] || 0;
-    const gap  = needs[k] - have;
-    if(gap > 0.001) missing.push([k, roundBuy(gap, ING[k].u)]);
-  }
-
+  const missing = listaMancante(needs);
   h += `<div class="sec-label">Da comprare</div><div class="buy">
-    <div class="buy-head"><h3>Lista della spesa</h3><span>${missing.length} VOCI</span></div>`;
-  if(!missing.length){
-    h += `<div class="ok-state"><b>Dispensa a posto</b>Hai già tutto quello che serve per ${labels[S.scope].toLowerCase()}.</div>`;
-  }else{
-    CATS.forEach(c=>{
-      const rows = missing.filter(([k])=>ING[k].c===c);
-      if(!rows.length) return;
-      h += `<div class="buy-cat">${c}</div>`;
-      rows.forEach(([k,q]) => h += `<div class="buy-row">
-        <span class="nm">${ING[k].n}</span><span class="qt">${q} ${ING[k].u}</span></div>`);
-    });
-  }
-  h += `</div>`;
+    <div class="buy-head"><h3>Lista della spesa</h3><span id="nVoci">${missing.length} VOCI</span></div><div id="buyBody">`;
+  h += missing.length ? buyRows(missing)
+    : `<div class="ok-state"><b>Dispensa a posto</b>Hai già tutto quello che serve per ${labels[S.scope].toLowerCase()}.</div>`;
+  h += `</div></div>`;
 
-  // dispensa
   h += `<div class="sec-label">Cosa hai in casa</div>
-  <div class="card"><p class="note" style="margin-bottom:4px">Scrivi le quantità che hai già. La lista qui sopra si aggiorna da sola sottraendole al fabbisogno.</p></div>`;
+  <div class="card"><p class="note" style="margin-bottom:4px">Scrivi le quantità che hai già, nell'unità indicata. La lista qui sopra si aggiorna da sola sottraendole al fabbisogno. Le voci con «ne hai già» sono quelle di cui hai letto l'etichetta: manca solo la quantità.</p></div>`;
 
   CATS.forEach(c=>{
-    const keys = Object.keys(ING).filter(k=>ING[k].c===c && needs[k]);
+    const keys = Object.keys(ING).filter(k => ING[k].c === c && needs[k]);
     if(!keys.length) return;
     h += `<div class="pan-cat">${c}</div><div class="card" style="padding:4px 16px">`;
     keys.forEach(k=>{
+      const n = ING[k];
       h += `<div class="pan-row">
-        <span class="nm">${ING[k].n}<br><span class="need">serve ${Math.round(needs[k])} ${ING[k].u}</span></span>
+        <span class="nm">${n.n}<br><span class="need">serve ${needTxt(k, needs[k])}</span></span>
         <input type="number" inputmode="decimal" min="0" step="any" value="${S.pantry[k] ?? ''}"
-               placeholder="0" oninput="setPan('${k}',this.value)" aria-label="${ING[k].n}">
-        <span class="u">${ING[k].u}</span>
+               placeholder="0" oninput="setPan('${k}',this.value)" aria-label="${n.n}">
+        <span class="u">${unitLbl(k)}</span>
       </div>`;
     });
     h += `</div>`;
   });
 
   h += `<button class="ghost" onclick="clearPan()">Azzera la dispensa</button>`;
-
   document.getElementById('v-dispensa').innerHTML = h;
 }
 function setScope(s){ S.scope=s; Store.set('scope',s); renderDispensa(); }
 
 let panTimer;
 function setPan(k,v){
-  const n = parseFloat(v);
+  const n = parseFloat(String(v).replace(',','.'));
   if(v==='' || isNaN(n)) delete S.pantry[k]; else S.pantry[k]=Math.max(0,n);
   Store.set('pantry', S.pantry);
   clearTimeout(panTimer);
   panTimer = setTimeout(()=>{                       // aggiorna solo la lista, senza perdere il focus
-    const needs = scopeNeeds(); const missing=[];
-    for(const key in needs){ const g = needs[key]-(S.pantry[key]||0); if(g>0.001) missing.push([key,roundBuy(g,ING[key].u)]); }
-    const box = document.querySelector('.buy'); if(!box) return;
-    let inner = `<div class="buy-head"><h3>Lista della spesa</h3><span>${missing.length} VOCI</span></div>`;
-    if(!missing.length){
-      inner += `<div class="ok-state"><b>Dispensa a posto</b>Hai già tutto quello che serve.</div>`;
-    }else{
-      CATS.forEach(c=>{
-        const rows = missing.filter(([x])=>ING[x].c===c);
-        if(!rows.length) return;
-        inner += `<div class="buy-cat">${c}</div>`;
-        rows.forEach(([x,q]) => inner += `<div class="buy-row"><span class="nm">${ING[x].n}</span><span class="qt">${q} ${ING[x].u}</span></div>`);
-      });
-    }
-    box.innerHTML = inner;
+    const missing = listaMancante(scopeNeeds());
+    const body = document.getElementById('buyBody'), nv = document.getElementById('nVoci');
+    if(!body || !nv) return;
+    nv.textContent = `${missing.length} VOCI`;
+    body.innerHTML = missing.length ? buyRows(missing)
+      : `<div class="ok-state"><b>Dispensa a posto</b>Hai già tutto quello che serve.</div>`;
   }, 250);
 }
 function clearPan(){ S.pantry={}; Store.set('pantry',{}); renderDispensa(); }
@@ -1195,22 +1547,95 @@ function clearPan(){ S.pantry={}; Store.set('pantry',{}); renderDispensa(); }
    13-bis. PESO
    ══════════════════════════════════════════════════════════ */
 const OBIETTIVO = 85;
+const ASSESTAMENTO = 7;         // i primi 7 giorni di dieta non entrano nella stima (acqua e glicogeno, non grasso)
 
-/* media calorica reale del piano, calcolata dalle ricette */
-function mediaPiano(){
-  const nC = nutri(COLAZIONE.ing); let tot=0, n=0;
-  WEEKS.forEach(w=>{
+/* kcal e macro di ogni giorno delle tre settimane, calcolati dalle ricette. La cena pianificata è quella
+   di default (domenica); le altre due sere del weekend sono libere e contano come CENA_LIBERA (ipotesi). */
+function giorniPiano(){
+  const out = [];
+  MENU.forEach((m,wi)=>{
     for(let d=0; d<7; d++){
-      if(d===FREE_DAY) continue;
-      const a=nutri(SM[w.sm[d%3]].ing), s2=nutri(SP[w.sp[d%3]].ing);
-      const pr=nutri(R[pranzoDi(w,d).pranzo].ing), ce=nutri(R[cenaDi(w,d).cena].ing);
-      tot += nC.kcal+a.kcal+pr.kcal+s2.kcal+ce.kcal; n++;
-    }});
-  return Math.round(tot/n);
+      const cenaKey = d < 4 ? m.c[d] : (d === CENA_PIAN_DEF ? m.cp : null);
+      const t = nutriGiorno({am:SM[m.am[d]], pm:SP[m.pm[d]], pranzo:m.p[d], cena:cenaKey, libera:cenaKey === null});
+      out.push({wi, d, free:cenaKey === null, kcal:t.kcal, p:t.p, c:t.c, g:t.g});
+    }
+  });
+  return out;
+}
+/* media dei giorni con la cena del piano (esclude le due sere libere) */
+function mediaPiano(){
+  const g = giorniPiano().filter(x=>!x.free);
+  return Math.round(g.reduce((a,x)=>a+x.kcal,0)/g.length);
+}
+/* media su tutti i 21 giorni: le cene libere sono già contate con la stima */
+function mediaSettimana(){
+  const g = giorniPiano();
+  return Math.round(g.reduce((a,x)=>a+x.kcal,0)/g.length);
+}
+function macroPiano(){
+  const g = giorniPiano(), m = k => Math.round(g.reduce((a,x)=>a+x[k],0)/g.length);
+  return {p:m('p'), c:m('c'), g:m('g')};
 }
 
 const dt2it = iso => { const [y,m,g]=iso.split('-'); return `${g}/${m}`; };
-const kg = v => v.toFixed(1).replace('.',',');
+const kg  = v => v.toFixed(1).replace('.',',');
+const kgs = v => (v>=0 ? '+' : '−') + kg(Math.abs(v));          // con segno
+const mediaKg = a => a.reduce((s,x)=>s+x.v,0)/a.length;
+
+/* giorni interi da una data ISO (in UTC: nessuno sfasamento per l'ora legale) */
+function dnum(s){ const [y,m,g]=s.split('-').map(Number); return Date.UTC(y,m-1,g)/86400000; }
+function addGiorni(s,n){ const [y,m,g]=s.split('-').map(Number); return new Date(Date.UTC(y,m-1,g+n)).toISOString().slice(0,10); }
+function dataBreve(s){ return new Date(s+'T00:00:00').toLocaleDateString('it-IT',{day:'numeric',month:'long'}); }
+
+/* valore critico t di Student al 95% (due code) per i gradi di libertà */
+const TCRIT = [0,12.71,4.30,3.18,2.78,2.57,2.45,2.36,2.31,2.26,2.23,2.20,2.18,2.16,2.14,2.13,2.12,2.11,2.10,2.09,2.09,2.08,2.07,2.07,2.06,2.06,2.06,2.05,2.05,2.05,2.04];
+function tcrit(df){ return df < TCRIT.length ? TCRIT[df] : (df<=40 ? 2.03 : (df<=60 ? 2.01 : 1.98)); }
+
+/* regressione lineare delle pesate: pendenza in kg/giorno, errore standard e intervallo al 95% */
+function regressione(arr){
+  const n = arr.length;
+  if(n < 3) return null;
+  const x0 = dnum(arr[0].d);
+  const xs = arr.map(a=>dnum(a.d)-x0), ys = arr.map(a=>a.v);
+  const mx = xs.reduce((a,b)=>a+b,0)/n, my = ys.reduce((a,b)=>a+b,0)/n;
+  let num=0, den=0;
+  xs.forEach((x,i)=>{ num += (x-mx)*(ys[i]-my); den += (x-mx)*(x-mx); });
+  if(!den) return null;
+  const slope = num/den, q = my - slope*mx;
+  let sse = 0;
+  xs.forEach((x,i)=>{ const e = ys[i]-(q+slope*x); sse += e*e; });
+  const sd = Math.sqrt(sse/(n-2)), se = sd/Math.sqrt(den), h = tcrit(n-2)*se;
+  return {slope, se, ic:[slope-h, slope+h], sd, n, giorni: Math.round(xs[n-1]-xs[0])+1};   // giorni = giorni di calendario coperti
+}
+
+/* pesate prima della dieta (o tutte, se la data non è impostata) */
+function pesiPre(){   return S.dieta ? S.pesi.filter(x=>x.d <  S.dieta) : S.pesi.slice(); }
+function pesiDieta(){ return S.dieta ? S.pesi.filter(x=>x.d >= S.dieta) : []; }
+/* pesate valide per la stima: dall'ottavo giorno di dieta */
+function pesiStima(){
+  if(!S.dieta) return [];
+  const lim = addGiorni(S.dieta, ASSESTAMENTO);
+  return S.pesi.filter(x=>x.d >= lim);
+}
+function giornoDieta(d){ return S.dieta ? dnum(d) - dnum(S.dieta) + 1 : null; }
+/* peso di riferimento per i g/kg: media delle ultime 14 pesate prima della dieta, altrimenti 96 */
+function pesoRif(){ const pre = pesiPre(); return pre.length ? mediaKg(pre.slice(-14)) : 96; }
+
+/* stima del fabbisogno reale: introito medio del piano meno (pendenza × 7700 kcal/kg).
+   Vale solo per le pesate in dieta, quando l'introito è quello del piano. */
+function stimaDieta(){
+  const v = pesiStima(), r = regressione(v);
+  if(!r || r.n < 6 || r.giorni < 14) return {ok:false, n:v.length, giorni: r ? r.giorni : 0};
+  const I = mediaSettimana(), [lo,hi] = r.ic;
+  return {ok:true, r, I, n:r.n, giorni:r.giorni, sicura: r.giorni >= 21,
+          stima: Math.round(I - r.slope*7700), da: Math.round(I - hi*7700), a: Math.round(I - lo*7700)};
+}
+/* regola pratica sul ritmo (kg a settimana, negativo = scendi) */
+function verdetto(s7){
+  if(s7 > -0.25) return 'Il peso non scende abbastanza: il deficit è troppo piccolo. Togli 150 kcal al giorno (ad esempio 40 g di pasta in meno) oppure aggiungi 2.000 passi al giorno.';
+  if(s7 < -0.8) return 'Scendi troppo in fretta: aggiungi 150 kcal (ad esempio 40 g di pasta o 25 g di mandorle) per non perdere massa muscolare.';
+  return 'Il ritmo è quello giusto, non cambiare niente.';
+}
 
 /* raggruppa le pesate per settimana (lunedì–domenica) */
 function settimane(){
@@ -1226,29 +1651,15 @@ function settimane(){
     return {inizio:k, n:v.length, media: v.reduce((a,b)=>a+b,0)/v.length};
   });
 }
-
-/* pendenza in kg/giorno con una regressione lineare sui punti */
-function trend(){
-  const p = S.pesi;
-  if(p.length < 4) return null;
-  const t0 = new Date(p[0].d+'T00:00:00').getTime();
-  const xs = p.map(x=>(new Date(x.d+'T00:00:00').getTime()-t0)/86400000);
-  const giorni = xs[xs.length-1];
-  if(giorni < 13) return null;                       // servono almeno 2 settimane
-  const ys = p.map(x=>x.v);
-  const mx = xs.reduce((a,b)=>a+b,0)/xs.length, my = ys.reduce((a,b)=>a+b,0)/ys.length;
-  let num=0, den=0;
-  xs.forEach((x,i)=>{ num += (x-mx)*(ys[i]-my); den += (x-mx)*(x-mx); });
-  if(!den) return null;
-  return {slope: num/den, giorni: Math.round(giorni), n: p.length};
-}
+/* variazione rispetto alla settimana prima, solo se entrambe hanno almeno 3 pesate */
+function deltaSett(w,i){ return (i>0 && w[i].n>=3 && w[i-1].n>=3) ? w[i].media - w[i-1].media : null; }
 
 function graficoSVG(){
   const p = S.pesi;
   if(p.length < 2) return '';
   const W=320, H=140, ml=30, mr=8, mt=10, mb=18;
-  const t0 = new Date(p[0].d+'T00:00:00').getTime();
-  const xs = p.map(x=>(new Date(x.d+'T00:00:00').getTime()-t0)/86400000);
+  const x0 = dnum(p[0].d);
+  const xs = p.map(x=>dnum(x.d)-x0);
   const ys = p.map(x=>x.v);
   const span = Math.max(xs[xs.length-1], 1);
   let lo = Math.min(...ys), hi = Math.max(...ys);
@@ -1268,6 +1679,15 @@ function graficoSVG(){
     g += `<line class="tgt" x1="${ml}" y1="${y.toFixed(1)}" x2="${W-mr}" y2="${y.toFixed(1)}"/>`;
     g += `<text x="${W-mr}" y="${(y-5).toFixed(1)}" text-anchor="end" fill="#E0A32E">obiettivo ${OBIETTIVO}</text>`;
   }
+  /* linea verticale all'inizio della dieta */
+  if(S.dieta){
+    const dx = dnum(S.dieta) - x0;
+    if(dx > 0 && dx <= span){
+      const x = X(dx);
+      g += `<line class="ms" x1="${x.toFixed(1)}" y1="${mt}" x2="${x.toFixed(1)}" y2="${H-mb}"/>`;
+      g += `<text x="${(x+4).toFixed(1)}" y="${mt+8}">dieta</text>`;
+    }
+  }
   g += `<path class="ar" d="${area}"/><path class="ln" d="${linea}"/>`;
   const salta = Math.ceil(pts.length/22);
   pts.forEach((q,i)=>{ if(i%salta && i!==pts.length-1) return;
@@ -1280,37 +1700,58 @@ function graficoSVG(){
 function testoExport(){
   const p = S.pesi;
   if(!p.length) return 'Nessuna pesata registrata.';
-  let t = `PESO — Piano Alimentare\nPiano seguito: ~${mediaPiano()} kcal/giorno\n\nPESATE (${p.length})\n`;
-  p.forEach(x=> t += `${x.d}  ${kg(x.v)} kg\n`);
+  const pre = pesiPre();
+  let t = `PESO — Piano Alimentare\n`;
+  t += `Piano: ~${mediaPiano()} kcal/giorno nei giorni con la cena del piano, ~${mediaSettimana()} kcal/giorno di media settimanale (2 cene libere a settimana contate ${CENA_LIBERA.kcal} kcal)\n`;
+  t += S.dieta ? `Primo giorno di dieta: ${S.dieta}\n`
+               : `Primo giorno di dieta: non impostato (tutte le pesate contano come PRIMA della dieta)\n`;
+  t += `\nPESATE (${p.length})\n`;
+  p.forEach(x=>{
+    const g = giornoDieta(x.d);
+    t += `${x.d}  ${kg(x.v)} kg` + (g!==null && g>=1 ? `  [giorno ${g}${g<=ASSESTAMENTO?', assestamento':''}]` : '') + `\n`;
+  });
   const w = settimane();
   if(w.length){
     t += `\nMEDIE SETTIMANALI\n`;
     w.forEach((x,i)=>{
-      const d = i ? x.media - w[i-1].media : null;
-      t += `Sett. dal ${x.inizio}: ${kg(x.media)} kg (${x.n} pesate)` + (d!==null ? `  ${d>=0?'+':''}${kg(d)}` : '') + `\n`;
+      const d = deltaSett(w,i);
+      t += `Sett. dal ${x.inizio}: ${kg(x.media)} kg (${x.n} pesate${x.n<3?', parziale':''})` + (d!==null ? `  ${kgs(d)}` : '') + `\n`;
     });
   }
-  const tr = trend();
-  if(tr){
-    const sett = tr.slope*7, stima = Math.round(mediaPiano() - tr.slope*7700);
-    t += `\nANDAMENTO\nVariazione: ${sett>=0?'+':''}${kg(sett)} kg a settimana su ${tr.giorni} giorni\n`;
-    t += `Fabbisogno stimato dal trend: ~${stima} kcal/giorno\n`;
-  } else {
-    t += `\nANDAMENTO\nServono almeno 4 pesate su 14 giorni per stimare il fabbisogno.\n`;
+  if(pre.length){
+    const rp = pre.length >= 8 ? regressione(pre) : null;
+    t += `\nPRIMA DELLA DIETA\nPesate: ${pre.length}, media ${kg(mediaKg(pre))} kg`;
+    if(rp) t += `\nTendenza: ${kgs(rp.slope*7)} kg a settimana (intervallo 95%: da ${kgs(rp.ic[0]*7)} a ${kgs(rp.ic[1]*7)}) su ${rp.giorni} giorni`;
+    t += `\nLe calorie di quel periodo non sono note: nessuna stima del fabbisogno.\n`;
+  }
+  if(S.dieta){
+    const st = stimaDieta(), din = pesiDieta();
+    t += `\nIN DIETA\nPesate dal primo giorno: ${din.length} (le prime ${ASSESTAMENTO} giornate non entrano nella stima)\n`;
+    if(st.ok){
+      t += `Tendenza: ${kgs(st.r.slope*7)} kg a settimana (intervallo 95%: da ${kgs(st.r.ic[0]*7)} a ${kgs(st.r.ic[1]*7)}) su ${st.giorni} giorni\n`;
+      t += `Fabbisogno stimato: ~${st.stima} kcal/giorno (da ${st.da} a ${st.a}), ${st.sicura?'affidabile':'provvisoria'}, con introito ~${st.I} kcal/giorno\n`;
+    } else {
+      t += `Stima non ancora disponibile: servono 14 giorni di pesate dall'ottavo giorno (ora ${st.n} pesate, ${st.giorni} giorni).\n`;
+    }
   }
   return t;
 }
 
 function renderPeso(){
   const p = S.pesi, ultimo = p.length ? p[p.length-1] : null;
-  const primo = p.length ? p[0] : null;
   let h = `<div class="sec-label">Registra una pesata</div>
     <div class="w-in">
       <input type="date" id="pData" value="${iso(new Date())}" max="${iso(new Date())}">
       <input type="number" id="pKg" inputmode="decimal" step="0.1" min="30" max="300" placeholder="kg">
       <button class="w-add" onclick="addPeso()">Salva</button>
     </div>
-    <p class="note" style="margin-top:9px;color:var(--ink-3)">Pesati al mattino, a digiuno, dopo il bagno. Il singolo numero oscilla anche di un chilo per acqua e sale: conta la media della settimana.</p>`;
+    <p class="note" style="margin-top:9px;color:var(--ink-3)">Pesati al mattino, a digiuno, dopo il bagno. Il singolo numero oscilla anche di un chilo per acqua e sale: conta la tendenza.</p>`;
+
+  if(!S.dieta){
+    h += `<div class="cook-note" style="margin-top:16px"><div class="h">Quando inizi la dieta?</div>
+      <p>Finché non imposti il primo giorno, tutte le pesate contano come «prima della dieta» e non viene calcolato nessun fabbisogno.</p>
+      <input type="date" class="pre-date" onchange="setDieta(this.value)"></div>`;
+  }
 
   if(!p.length){
     h += `<div class="card" style="margin-top:16px"><div class="empty"><b>Nessuna pesata</b>Registra il primo peso per iniziare a vedere l'andamento.</div></div>`;
@@ -1318,44 +1759,60 @@ function renderPeso(){
     return;
   }
 
-  const diff = p.length>1 ? ultimo.v - primo.v : 0;
+  const pre = pesiPre(), din = pesiDieta();
+  const base = pre.length ? mediaKg(pre.slice(-14)) : null;
+  const dalla = (din.length && base!==null) ? ultimo.v - base : null;
   h += `<div class="w-big">
     <div class="w-stat"><div class="lbl">Ultimo</div><div class="val">${kg(ultimo.v)}</div><div class="sub">${dt2it(ultimo.d)}</div></div>
-    <div class="w-stat"><div class="lbl">Dall'inizio</div><div class="val ${diff<0?'dn':(diff>0?'up':'')}">${diff>0?'+':''}${kg(diff)}</div><div class="sub">${p.length} pesate</div></div>
+    <div class="w-stat"><div class="lbl">Dalla partenza</div><div class="val ${dalla===null?'':(dalla<0?'dn':(dalla>0?'up':''))}">${dalla===null?'—':kgs(dalla)}</div><div class="sub">${base!==null?'partenza '+kg(base):'—'}</div></div>
     <div class="w-stat"><div class="lbl">All'obiettivo</div><div class="val">${kg(Math.max(0, ultimo.v-OBIETTIVO))}</div><div class="sub">restano</div></div>
   </div>`;
 
   if(p.length>1){ h += `<div class="sec-label">Andamento</div>` + graficoSVG(); }
 
-  const tr = trend();
-  h += `<div class="sec-label">Il tuo fabbisogno reale</div>`;
-  if(tr){
-    const sett = tr.slope*7, stima = Math.round(mediaPiano() - tr.slope*7700);
-    const ok = sett <= -0.35 && sett >= -0.9;
-    h += `<div class="tdee">
-      <div class="lbl">Stimato dal tuo andamento</div>
-      <div class="val">~${stima} kcal</div>
-      <p>Stai facendo <b>${sett>=0?'+':''}${kg(sett)} kg a settimana</b> su ${tr.giorni} giorni, mangiando circa ${mediaPiano()} kcal.
-      ${ok ? 'Il ritmo è quello giusto, non cambiare niente.'
-           : (sett > -0.35 ? (sett>=0 ? 'Non stai perdendo peso: il piano va abbassato di 200 kcal.' : 'Stai scendendo lentamente: valuta di togliere 150 kcal.')
-                           : 'Stai scendendo in fretta: aggiungi 150–200 kcal per non perdere massa muscolare.')}</p>
+  /* ── prima della dieta: serve solo a sapere da dove parti ── */
+  const rp = pre.length >= 8 ? regressione(pre) : null;
+  if(rp && rp.giorni >= 14){
+    const stabile = rp.ic[0] <= 0 && rp.ic[1] >= 0;
+    h += `<div class="sec-label">Prima della dieta</div><div class="card">
+      <p class="note">${pre.length} pesate in ${rp.giorni} giorni, media <b>${kg(mediaKg(pre))} kg</b>. Tendenza ${kgs(rp.slope*7)} kg a settimana (tra ${kgs(rp.ic[0]*7)} e ${kgs(rp.ic[1]*7)}).
+      ${stabile ? 'Il peso era stabile: mangiavi circa quanto consuma il tuo corpo.' : (rp.slope>0 ? 'Il peso saliva: mangiavi sopra il tuo mantenimento.' : 'Il peso scendeva già prima della dieta.')}</p>
+      <p class="note">Da questo periodo non si può ricavare il fabbisogno in kcal, perché non sai quanto mangiavi davvero. Lo stimo dalle settimane in dieta, quando le calorie sono quelle del piano.</p>
     </div>`;
+  }
+
+  /* ── in dieta: la stima del fabbisogno ── */
+  h += `<div class="sec-label">Il tuo fabbisogno reale</div>`;
+  if(!S.dieta){
+    h += `<div class="card"><p class="note">Imposta il primo giorno di dieta: la stima parte dall'ottavo giorno, quando mangi le quantità del piano.</p></div>`;
+  } else if(iso(new Date()) < S.dieta && !din.length){
+    h += `<div class="card"><p class="note">La dieta parte il ${dataBreve(S.dieta)}. La stima comparirà dopo 3 settimane di pesate.</p></div>`;
   } else {
-    const mancano = Math.max(0, 4 - p.length);
-    h += `<div class="card"><p class="note">Servono almeno 4 pesate distribuite su 14 giorni.
-      ${mancano ? `Ne mancano ancora ${mancano}.` : 'Continua a pesarti: il periodo non copre ancora due settimane.'}
-      Poi qui comparirà la stima del tuo fabbisogno reale, calcolata dal peso e non da una formula.</p></div>`;
+    const st = stimaDieta();
+    if(st.ok){
+      const s7 = st.r.slope*7;
+      h += `<div class="tdee">
+        <div class="lbl">${st.sicura ? 'Stimato dal tuo andamento' : 'Stima provvisoria'}</div>
+        <div class="val">~${st.stima} kcal</div>
+        <p>Probabilmente tra ${st.da} e ${st.a} kcal (intervallo al 95%). Stai facendo <b>${kgs(s7)} kg a settimana</b> (tra ${kgs(st.r.ic[0]*7)} e ${kgs(st.r.ic[1]*7)}) su ${st.giorni} giorni, mangiando in media ~${st.I} kcal (cene libere contate ${CENA_LIBERA.kcal} kcal).
+        ${st.sicura ? verdetto(s7) : 'Con meno di 21 giorni di dati l\'intervallo è ancora largo: decidi se toccare le porzioni solo dopo.'}</p>
+      </div>`;
+    } else {
+      h += `<div class="card"><p class="note"><b>Giorni 1–${ASSESTAMENTO}: non contano.</b> Cambiando alimentazione perdi acqua e glicogeno, che non è grasso. La stima usa le pesate dal ${dt2it(addGiorni(S.dieta, ASSESTAMENTO))}.</p>
+        <p class="note">Finora: ${st.n} pesat${st.n===1?'a valida':'e valide'} su ${st.giorni} giorni. Servono 14 giorni di pesate (almeno 6) per una stima provvisoria, 21 per una affidabile.</p></div>`;
+    }
   }
 
   const w = settimane();
   if(w.length>1){
+    const lunD = S.dieta ? iso(mondayOf(new Date(S.dieta+'T00:00:00'))) : null;
     h += `<div class="sec-label">Medie settimanali</div><div class="card">`;
     w.forEach((x,i)=>{
-      const d = i ? x.media - w[i-1].media : null;
+      const d = deltaSett(w,i);
       h += `<div class="wk-row">
-        <div class="per">Settimana dal ${dt2it(x.inizio)}<small>${x.n} pesat${x.n===1?'a':'e'}</small></div>
-        <div class="med">${kg(x.media)}</div>
-        <div class="dlt ${d===null?'':(d<0?'dn':(d>0?'up':''))}">${d===null?'—':(d>0?'+':'')+kg(d)}</div>
+        <div class="per">Settimana dal ${dt2it(x.inizio)}<small>${x.n} pesat${x.n===1?'a':'e'}${x.n<3?' · parziale':''}${lunD && x.inizio>=lunD?' · dieta':''}</small></div>
+        <div class="med ${x.n<3?'par':''}">${kg(x.media)}</div>
+        <div class="dlt ${d===null?'':(d<0?'dn':(d>0?'up':''))}">${d===null?'—':kgs(d)}</div>
       </div>`;
     });
     h += `</div>`;
@@ -1459,11 +1916,17 @@ function go(id){
    16. AVVIO
    ══════════════════════════════════════════════════════════ */
 (async function(){
-  S.start  = await Store.get('start')  || iso(mondayOf(new Date()));
-  S.pantry = await Store.get('pantry') || {};
-  S.scope  = await Store.get('scope')  || 'cur';
-  S.bfast  = await Store.get('bfast')  || {};
-  S.pesi   = await Store.get('pesi')   || [];
+  S.dieta    = await Store.get('dieta')    || null;
+  S.start    = S.dieta ? iso(mondayOf(new Date(S.dieta+'T00:00:00'))) : (await Store.get('start') || iso(mondayOf(new Date())));
+  S.scope    = await Store.get('scope')    || 'cur';
+  S.pesi     = await Store.get('pesi')     || [];
+  S.turni    = await Store.get('turni')    || {};
+  S.nuoto    = await Store.get('nuoto')    || {};
+  S.cenaPian = await Store.get('cenaPian') || {};
+  S.conf     = await Store.get('conf')     || {};
+  // versione dei dati: la dispensa della vecchia versione usava altre unità (es. tonno in grammi), si riparte da zero
+  if(await Store.get('ver') !== 3){ S.pantry = {}; Store.set('pantry', {}); Store.set('ver', 3); }
+  else S.pantry = await Store.get('pantry') || {};
   S.planWeek = pos().w;
   drawHeader(); renderOggi(); renderPiano(); renderRicette(); renderDispensa(); renderPeso();
 })();

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Piano Alimentare</title>
-<meta name="app-versione" content="3.2.0">
+<meta name="app-versione" content="3.2.1">
 <meta name="theme-color" content="#16261F">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -376,7 +376,7 @@ input{font-family:inherit;font-size:inherit;color:inherit}
 const CONF_DEF = {
   tazza:       200,   // ml di latte nella tazza (dato non noto: ipotesi)
   frollini:     40,   // g di frollini a colazione (dato non noto: ipotesi)
-  greco:       150,   // g di una porzione («vasetto») di yogurt greco: la confezione è da 500 g e Cristian la divide in porzioni da 150 g
+  greco:       150,   // g di un vasetto di yogurt proteico al caffè: è il vasetto singolo da 150 g, come scritto sulla confezione
   grana_snack: 16.67, // g di una busta di grana «snack» Biraghini: 6 buste in una confezione da 100 g (detto da Cristian)
   tonno:        56,   // g di una scatoletta Rio Mare «4 × 56 g» (letto sulla confezione: 55 kcal e 13 g di proteine a scatoletta)
   uova:         51,   // g di un uovo sgusciato: classe M (53–63 g con guscio, media 58 g) × ~88 % commestibile (stima)
@@ -390,7 +390,9 @@ const ING = {
   frollini: {n:'Frollini integrali',                  u:'g',  c:'Colazione', k:446, p:8.8, ca:66,  g:15,   casa:1, src:'etichetta'},
 
   /* latticini */
-  greco:    {n:'Yogurt greco 0 % (vasetto)',          u:'vasetto', un:['vasetto','vasetti'], conf:'greco', c:'Latticini', k:58, p:10, ca:4.5, g:0.1, casa:1, src:'etichetta'},
+  /* Neogal «Alto», yogurt ad alto contenuto proteico gusto caffè, vasetto da 150 g (la chiave resta «greco»: è quella salvata sul telefono).
+     Etichetta fotografata il 17/10/2026, per 100 g: 81 kcal, 8,3 g di proteine, 12 g di carboidrati (11,2 g di zuccheri), 0 g di grassi */
+  greco:    {n:'Yogurt proteico al caffè (vasetto)',      u:'vasetto', un:['vasetto','vasetti'], conf:'greco', c:'Latticini', k:81, p:8.3, ca:12, g:0, casa:1, src:'etichetta'},
   grana:    {n:'Grana grattugiato',                   u:'g',  c:'Latticini', k:398, p:33,  ca:0,   g:29,   casa:1, src:'etichetta'},
   gsnack:   {n:'Grana snack (busta)',                    u:'busta', un:['busta','buste'], conf:'grana_snack', c:'Latticini', k:392, p:33, ca:0, g:28},
   filante:  {n:'Scamorza / provola',                  u:'g',  c:'Latticini', k:262, p:20,  ca:0.5, g:20,   casa:1, src:'etichetta'},
@@ -440,7 +442,7 @@ const CATS = ['Proteine','Salumi','Latticini','Legumi','Cereali','Verdura','Frut
    e quelle di cui non conosco la confezione non compaiono: nessuna misura inventata. */
 const CONF_SPESA = {
   latte:   {size:1000, nome:['brick','brick'], dett:'da 1 L'},
-  greco:   {size:500,  g:true,                 dett:'da 500 g'},
+  greco:   {size:150,  g:true, nome:['vasetto','vasetti'], dett:'da 150 g'},
   gsnack:  {size:6,                            dett:'da 6 buste'},
   legumi:  {size:420,                          dett:'da 3 barattoli da 140 g'},
   filante: {size:250,                          dett:'da 250 g'},
@@ -865,9 +867,9 @@ panino_pollo:{
 /* ══════════════════════════════════════════════════════════
    3. COLAZIONE E SPUNTINI
    ══════════════════════════════════════════════════════════ */
-/* colazione: la tua, fissa — latte, mezzo cucchiaio di Sonny (≈6 g), frollini, in più uno yogurt greco per le proteine */
+/* colazione: la tua, fissa — latte, mezzo cucchiaio di Sonny (≈6 g), frollini, in più uno yogurt proteico per le proteine */
 function colazione(){
-  return {nome:'Latte, cioccolato e frollini + yogurt greco',
+  return {nome:'Latte, cioccolato e frollini + yogurt proteico',
           ing:{latte:confVal('tazza'), sonny:6, frollini:confVal('frollini'), greco:1}};
 }
 const CENA_LIBERA = {kcal:650, p:30, c:72, g:26};      // ipotesi dichiarata: una cena libera «ragionevole»
@@ -884,9 +886,9 @@ const SM = {
 };
 /* spuntino del pomeriggio: «casa» = si mangia a casa (può essere fresco), «lavoro» = regge senza frigo */
 const SP = {
-  pm1:{nome:'Yogurt greco, banana e mandorle',       ing:{greco:1, banana:1, mandorle:10}, dove:'casa'},
+  pm1:{nome:'Yogurt proteico, banana e mandorle',       ing:{greco:1, banana:1, mandorle:10}, dove:'casa'},
   pm2:{nome:'Pan bauletto e prosciutto cotto',       ing:{pane:2, cotto:60},               dove:'casa'},
-  pm3:{nome:'Yogurt greco, mela e noci',             ing:{greco:1, mela:1, noci:10},       dove:'casa'},
+  pm3:{nome:'Yogurt proteico, mela e noci',             ing:{greco:1, mela:1, noci:10},       dove:'casa'},
   pm4:{nome:'Pan bauletto e pollo al forno',         ing:{pane:2, pollo_aff:70},           dove:'casa'},
   pw1:{nome:'Grana snack, banana e mandorle',        ing:{gsnack:2, banana:1, mandorle:10},dove:'lavoro'},
   pw2:{nome:'Pan bauletto, grana snack e mela',      ing:{pane:1, gsnack:2, mela:1},       dove:'lavoro'},
@@ -1253,7 +1255,7 @@ function drawHeader(){
    ══════════════════════════════════════════════════════════ */
 const shortN = k => ING[k].n.split(' (')[0];
 const lcFirst = s => s.charAt(0).toLowerCase() + s.slice(1);
-const SENZA_DI = ['uova','mela','banana'];       // «3 uova», «1 mela»; gli altri: «65 g di pasta», «1 vasetto di yogurt greco»
+const SENZA_DI = ['uova','mela','banana'];       // «3 uova», «1 mela»; gli altri: «65 g di pasta», «1 vasetto di yogurt proteico»
 function ingTxt(ing, mult=1){
   return Object.entries(ing).filter(([k,v]) => v > 0)
     .map(([k,v]) => SENZA_DI.includes(ING[k].u) ? fmtQ(k, v*mult) : `${fmtQ(k, v*mult)} di ${lcFirst(shortN(k))}`).join(' · ');
@@ -1343,7 +1345,7 @@ function renderOggi(){
   if(p.pre) h += preCard() + `<div class="sec-label">Anteprima del primo giorno</div>`;
   else      h += cookNote(cucinaOggi(p.lun, p.d), 'Da cucinare oggi');
 
-  h += simpleCard('Colazione', col.nome, col.ing, nC, o.col, 'La tua colazione di sempre, con un vasetto di yogurt greco in più: i frollini da soli non danno proteine e a metà mattina la fame arriva prima.');
+  h += simpleCard('Colazione', col.nome, col.ing, nC, o.col, 'La tua colazione di sempre, con un vasetto di yogurt proteico in più: i frollini da soli non danno proteine e a metà mattina la fame arriva prima.');
   h += simpleCard('Spuntino · mattina', g.am.nome, g.am.ing, nSM, o.am, feriale ? 'Senza frigo e senza preparazione: lo porti da casa.' : '');
   h += mealCard('Pranzo', g.pranzo, `${o.pr} · ${orig.txt}${g.cambio.p ? ' · cambiato rispetto al piano' : ''}`);
   h += simpleCard('Spuntino · pomeriggio', g.pm.nome, g.pm.ing, nSP, o.pm, (feriale && g.pm.dove === 'lavoro') ? 'Regge fuori dal frigo: lo mangi al lavoro.' : '');
@@ -1479,7 +1481,7 @@ function setScad(k, v){
 const MISURE = [
   {k:'tazza',       l:'Latte nella tazza',               u:'ml', h:'quanto ne versi di solito'},
   {k:'frollini',    l:'Frollini a colazione',            u:'g',  h:'pesali una volta e conta quanti sono'},
-  {k:'greco',       l:'Vasetto di yogurt greco',         u:'g',  h:'scritto sulla confezione'},
+  {k:'greco',       l:'Vasetto di yogurt proteico',         u:'g',  h:'scritto sulla confezione'},
   {k:'grana_snack', l:'Busta di grana «snack»',          u:'g',  h:'scritto sulla confezione'},
   {k:'tonno',       l:'Tonno per scatoletta',            u:'g',  h:'peso scritto sulla scatoletta'},
   {k:'uova',        l:'Un uovo sgusciato',               u:'g',  h:'taglia M o L sulla confezione'},

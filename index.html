@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Piano Alimentare</title>
-<meta name="app-versione" content="3.3.0">
+<meta name="app-versione" content="3.3.1">
 <meta name="theme-color" content="#16261F">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -739,19 +739,20 @@ pollo_patate:{
   keep:'Si cucina in doppia porzione (stasera e pranzo di domani). Domani: pollo 60–90 secondi al microonde con un goccio d\'acqua; patate e carote in friggitrice 4 minuti a 180 °C.'
 },
 
+/* chiave storica: resta «polpette» perché i cambi alle cene salvati sul telefono (S.cambi) citano le ricette per chiave; dal 03/11/2026 il piatto non ha più polpette */
 polpette:{
-  nome:'Polpette di tacchino al pomodoro con patate e zucchine', tipo:'Carne e pesce', tempo:40, freddo:false,
-  ing:{tacchino:140, pane:1, latte:30, grana:12, passata:120, patate:150, zucchine:150, olio:7},
-  libere:['Prezzemolo','Noce moscata','Sale, pepe'],
+  nome:'Bocconcini di tacchino al pomodoro con patate e zucchine', tipo:'Carne e pesce', tempo:35, freddo:false,
+  ing:{tacchino:140, pane:1, grana:12, passata:120, patate:150, zucchine:150, olio:7},
+  libere:['Prezzemolo','Pepe','Sale'],
   passi:[
-    {t:'Il tacchino macinato', d:'Chiedi al banco di macinare il petto di tacchino (ha circa 110 kcal/100 g). Il macinato confezionato di tacchino può avere più grassi: leggi l\'etichetta.'},
-    {t:'Impasto', d:'Fetta di pan bauletto ammollata nel latte e strizzata, sbriciolata nella carne con il grana, prezzemolo tritato, sale, pepe e una grattata di noce moscata. Mescola con le mani finché è omogeneo.'},
-    {t:'Forma le polpette', d:'Palline da circa 30 g (4–5 per porzione), con le mani leggermente umide.'},
     {t:'Patate in friggitrice', d:'A cubetti da 2 cm con un terzo dell\'olio e sale: 190 °C per 18–20 minuti. Le zucchine a rondelle dopo, 180 °C per 13–15 minuti.'},
-    {t:'Cuoci le polpette', d:'In friggitrice a 180 °C per 10–12 minuti, girandole a metà; oppure in padella con un velo d\'olio, 8 minuti, girandole.'},
-    {t:'Pomodoro', d:'Passata a scaldare 6–8 minuti con un pizzico di sale e l\'olio rimasto; le polpette dentro per gli ultimi 3 minuti.'}
+    {t:'Taglia il tacchino', d:'Le fette di petto a pezzi di 2–3 cm, asciugati con carta da cucina; sale, pepe e prezzemolo tritato.'},
+    {t:'Rosola il tacchino', d:'Padella antiaderente molto calda con un terzo dell\'olio, i pezzi in un solo strato, senza affollarli: 3–4 minuti girandoli, finché sono dorati fuori.'},
+    {t:'Pomodoro', d:'La passata nella stessa padella con l\'olio rimasto e un pizzico di sale: 5–6 minuti a fuoco medio. Rimetti i pezzi di tacchino nel sugo per gli ultimi 3–4 minuti, finché dentro non sono più rosa.'},
+    {t:'Servi', d:'Patate e zucchine a fianco, il grana grattugiato sul tacchino, la fetta di pan bauletto per raccogliere il sugo.'}
   ],
-  keep:'Si cucina in doppia porzione (stasera e pranzo di domani). Le polpette nel sugo tengono bene in frigo e si riscaldano in 2 minuti al microonde. Si congelano crude, già formate.'
+  warn:'Il tacchino va cotto del tutto: niente rosa al centro. Meglio non prolungare oltre i 4 minuti nel sugo, perché il petto tende a diventare asciutto.',
+  keep:'Si cucina in doppia porzione (stasera e pranzo di domani). Il tacchino nel sugo tiene bene in frigo e si riscalda in 1–2 minuti al microonde con un goccio d\'acqua; patate e zucchine in friggitrice 4 minuti a 180 °C.'
 },
 
 hamburger:{
@@ -882,15 +883,15 @@ function colazione(){
 }
 const CENA_LIBERA = {kcal:650, p:30, c:72, g:26};      // ipotesi dichiarata: una cena libera «ragionevole»
 
-/* gsnack:2 = due buste da 16,67 g (≈ 33 g di grana, come i 30 g previsti all'inizio) */
+/* gsnack:1 = una busta da 16,67 g di grana (fino alla 3.3.0 erano due buste, ≈ 33 g: a Cristian ne basta una) */
 /* spuntino di mattina: SEMPRE senza frigo e senza preparazione (niente tonno, niente pane) */
 const SM = {
-  am1:{nome:'Grana snack e mela',            ing:{gsnack:2, mela:1}},
+  am1:{nome:'Grana snack e mela',            ing:{gsnack:1, mela:1}},
   am2:{nome:'Mandorle e banana',             ing:{mandorle:20, banana:1}},
-  am3:{nome:'Grana snack e noci',            ing:{gsnack:2, noci:15}},
-  am5:{nome:'Grana snack e banana',          ing:{gsnack:2, banana:1}},
-  am6:{nome:'Grana snack, mandorle e mela',  ing:{gsnack:2, mandorle:15, mela:1}},
-  am7:{nome:'Grana snack e mandorle',        ing:{gsnack:2, mandorle:20}}
+  am3:{nome:'Grana snack e noci',            ing:{gsnack:1, noci:15}},
+  am5:{nome:'Grana snack e banana',          ing:{gsnack:1, banana:1}},
+  am6:{nome:'Grana snack, mandorle e mela',  ing:{gsnack:1, mandorle:15, mela:1}},
+  am7:{nome:'Grana snack e mandorle',        ing:{gsnack:1, mandorle:20}}
 };
 /* spuntino del pomeriggio: «casa» = si mangia a casa (può essere fresco), «lavoro» = regge senza frigo */
 const SP = {
@@ -898,9 +899,9 @@ const SP = {
   pm2:{nome:'Pan bauletto e prosciutto cotto',       ing:{pane:2, cotto:60},               dove:'casa'},
   pm3:{nome:'Yogurt proteico, mela e noci',             ing:{greco:1, mela:1, noci:10},       dove:'casa'},
   pm4:{nome:'Pan bauletto e pollo al forno',         ing:{pane:2, pollo_aff:70},           dove:'casa'},
-  pw1:{nome:'Grana snack, banana e mandorle',        ing:{gsnack:2, banana:1, mandorle:10},dove:'lavoro'},
-  pw2:{nome:'Pan bauletto, grana snack e mela',      ing:{pane:1, gsnack:2, mela:1},       dove:'lavoro'},
-  pw3:{nome:'Noci, mela e grana snack',              ing:{noci:10, mela:1, gsnack:2},     dove:'lavoro'}
+  pw1:{nome:'Grana snack, banana e mandorle',        ing:{gsnack:1, banana:1, mandorle:10},dove:'lavoro'},
+  pw2:{nome:'Pan bauletto, grana snack e mela',      ing:{pane:1, gsnack:1, mela:1},       dove:'lavoro'},
+  pw3:{nome:'Noci, mela e grana snack',              ing:{noci:10, mela:1, gsnack:1},     dove:'lavoro'}
 };
 
 /* ══════════════════════════════════════════════════════════
